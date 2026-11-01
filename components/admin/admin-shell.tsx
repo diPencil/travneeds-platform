@@ -1,0 +1,643 @@
+'use client'
+import { BrandMark } from '@/components/brand-mark'
+import { currencyChoices, isCurrency, type Currency } from '@/lib/currency'
+
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  Bell,
+  CalendarCheck,
+  CarFront,
+  ChevronDown,
+  ClipboardList,
+  Compass,
+  CreditCard,
+  ExternalLink,
+  LayoutDashboard,
+  Images,
+  LogOut,
+  Mail,
+  Map,
+  MapPinned,
+  Menu,
+  MessageCircle,
+  Newspaper,
+  PanelLeftClose,
+  Route,
+  Search,
+  Settings,
+  ShoppingCart,
+  Sparkles,
+  Tags,
+  Ticket,
+  User,
+  Users,
+  X,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useCurrentUser } from '@/lib/use-current-user'
+import { useAdminNotifications, type AdminNotification } from '@/lib/admin-notifications'
+import { NotificationPanel as SharedNotificationPanel } from '@/components/notification-panel'
+import { Avatar } from './admin-ui'
+import { AdminBackButton } from './admin-back'
+import { LanguageToggle } from '@/components/language-selector'
+import { ENABLED_LOCALES, LOCALE_LABELS, LOCALE_REGIONS, LOCALE_SHORT_LABELS, sanitizeLocale, type EnabledLocale } from '@/lib/locale-config'
+import { readAdminProfile } from '@/lib/admin-store'
+import { useMobileDrawer } from '@/lib/use-mobile-drawer'
+import { Toaster } from './admin-toaster'
+
+function timeAgo(iso: string, ar: boolean): string {
+  const then = new Date(iso).getTime()
+  if (!Number.isFinite(then)) return ''
+  const seconds = Math.max(0, Math.floor((Date.now() - then) / 1000))
+  if (seconds < 60) return ar ? 'الآن' : 'Just now'
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return ar ? `منذ ${minutes} د` : `${minutes}m ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return ar ? `منذ ${hours} س` : `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  if (days < 30) return ar ? `منذ ${days} يوم` : `${days}d ago`
+  return new Date(iso).toLocaleDateString(ar ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short' })
+}
+
+function iconForAdminNotification(type: string) {
+  switch (type) {
+    case 'admin_booking_created':
+      return ShoppingCart
+    case 'admin_trip_request_submitted':
+      return Compass
+    case 'admin_car_request_submitted':
+      return CarFront
+    case 'admin_event_request_submitted':
+      return ClipboardList
+    case 'admin_payment_initiated':
+      return CreditCard
+    default:
+      return Bell
+  }
+}
+
+/**
+ * Minimum view permission (any-of) required to show each admin section.
+ * Dashboard stays visible to every staff identity as the shell landing
+ * page; every other section mirrors the `*.view` key its API enforces,
+ * so a bookings-only user never sees Payments, Users or Settings links.
+ * APIs remain the source of truth  -  this only keeps navigation honest.
+ */
+const NAV_VIEW_PERMISSIONS: Record<string, string[]> = {
+  '/admin/bookings': ['bookings.view'],
+  '/admin/payments': ['payments.view'],
+  '/admin/trips': ['tours.view'],
+  '/admin/destinations': ['destinations.view'],
+  '/admin/multi-day-categories': ['categories.view'],
+  '/admin/events': ['events.view'],
+  '/admin/event-requests': ['requests.view'],
+  '/admin/offers': ['offers.view'],
+  '/admin/blogs': ['blogs.view'],
+  '/admin/gallery': ['gallery.view'],
+  '/admin/cars': ['cars.view'],
+  '/admin/rent-cars': ['cars.view'],
+  '/admin/car-requests': ['requests.view'],
+  '/admin/trip-requests': ['requests.view'],
+  '/admin/customers': ['customers.view'],
+  '/admin/inbox': ['support.view'],
+  '/admin/notifications': ['support.view'],
+  '/admin/emails': ['emails.view'],
+  '/admin/reviews': ['reviews.view'],
+  '/admin/users': ['users.view', 'roles.view'],
+  '/admin/settings': ['settings.view'],
+  '/admin/website-cms/hero-sections': ['settings.view'],
+  '/admin/website-cms': ['settings.view'],
+  '/admin/website-cms/pages': ['settings.view'],
+  '/admin/website-cms/seo': ['settings.view'],
+  '/admin/website-cms/navigation': ['settings.view'],
+}
+
+function canSeeNavItem(
+  user: { roles?: string[]; permissions?: string[] },
+  href: string,
+): boolean {
+  if (user.roles?.includes('SUPER_ADMIN')) return true
+  const keys = NAV_VIEW_PERMISSIONS[href]
+  if (!keys) return true
+  const permissions = user.permissions ?? []
+  return keys.some((key) => permissions.includes(key))
+}
+
+const groups = [
+  {
+    label: 'نظرة عامة',
+    labelEn: 'OVERVIEW',
+    items: [
+      { href: '/admin/dashboard', icon: LayoutDashboard, en: 'Dashboard', ar: 'لوحة المؤشرات' },
+    ],
+  },
+  {
+    label: 'الحجوزات والعملاء',
+    labelEn: 'BOOKINGS & CUSTOMERS',
+    items: [
+      { href: '/admin/bookings', icon: ShoppingCart, en: 'Bookings', ar: 'الحجوزات' },
+      { href: '/admin/payments', icon: CreditCard, en: 'Payments', ar: 'المدفوعات' },
+      { href: '/admin/customers', icon: Users, en: 'Customers', ar: 'العملاء' },
+    ],
+  },
+  {
+    label: 'الرحلات والوجهات',
+    labelEn: 'TOURS & DESTINATIONS',
+    items: [
+      { href: '/admin/trips', icon: Map, en: 'Trips', ar: 'الرحلات' },
+      { href: '/admin/destinations', icon: MapPinned, en: 'Destinations', ar: 'الوجهات' },
+      { href: '/admin/multi-day-categories', icon: Tags, en: 'Multi Day Categories', ar: 'فئات الرحلات' },
+      { href: '/admin/trip-requests', icon: Compass, en: 'Trip Requests', ar: 'طلبات الرحلات' },
+    ],
+  },
+  {
+    label: 'إدارة السيارات',
+    labelEn: 'CAR MANAGEMENT',
+    items: [
+      { href: '/admin/cars', icon: CarFront, en: 'Rent Cars Fleet', ar: 'أسطول تأجير السيارات' },
+      { href: '/admin/rent-cars', icon: Route, en: 'Routes & Prices', ar: 'الأسعار والخطوط' },
+      { href: '/admin/car-requests', icon: ClipboardList, en: 'Car Requests', ar: 'طلبات السيارات' },
+    ],
+  },
+  {
+    label: 'إدارة الفعاليات',
+    labelEn: 'EVENT MANAGEMENT',
+    items: [
+      { href: '/admin/events', icon: CalendarCheck, en: 'Events', ar: 'الفعاليات' },
+      { href: '/admin/event-requests', icon: ClipboardList, en: 'Event Requests', ar: 'طلبات الفعاليات' },
+    ],
+  },
+  {
+    label: 'المحتوى والتسويق',
+    labelEn: 'CONTENT & MARKETING',
+    items: [
+      { href: '/admin/offers', icon: Ticket, en: 'Special Offers', ar: 'العروض الخاصة' },
+      { href: '/admin/blogs', icon: Newspaper, en: 'Blogs', ar: 'المدونة' },
+      { href: '/admin/gallery', icon: Images, en: 'Journey Gallery', ar: 'معرض الرحلات' },
+    ],
+  },
+  {
+    label: 'التواصل',
+    labelEn: 'COMMUNICATION',
+    items: [
+      { href: '/admin/inbox', icon: MessageCircle, en: 'Inbox', ar: 'صندوق المراسلة' },
+      { href: '/admin/emails', icon: Mail, en: 'Emails', ar: 'البريد' },
+      { href: '/admin/reviews', icon: Sparkles, en: 'Reviews', ar: 'التقييمات' },
+      { href: '/admin/notifications', icon: Bell, en: 'Notifications', ar: 'الإشعارات' },
+    ],
+  },
+  {
+    label: 'إدارة محتوى الموقع',
+    labelEn: 'WEBSITE CMS',
+    items: [
+      { href: '/admin/website-cms', icon: LayoutDashboard, en: 'Overview', ar: 'نظرة عامة' },
+      { href: '/admin/website-cms/hero-sections', icon: Images, en: 'Hero Sections', ar: 'الأقسام الرئيسية' },
+      { href: '/admin/website-cms/pages', icon: Newspaper, en: 'Pages & Sections', ar: 'الصفحات والأقسام' },
+      { href: '/admin/website-cms/navigation', icon: Route, en: 'Navigation Manager', ar: '' },
+      { href: '/admin/website-cms/seo', icon: Search, en: 'SEO Manager', ar: 'إدارة تحسين محركات البحث' },
+    ],
+  },
+  {
+    label: 'الإدارة',
+    labelEn: 'ADMINISTRATION',
+    items: [
+      { href: '/admin/users', icon: Users, en: 'Users & Roles', ar: 'المستخدمون والصلاحيات' },
+      { href: '/admin/settings', icon: Settings, en: 'Settings', ar: 'الإعدادات' },
+    ],
+  },
+]
+
+export function AdminShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const router = useRouter()
+  const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const sidebarRef = useRef<HTMLElement>(null)
+  const menuTriggerRef = useRef<HTMLButtonElement>(null)
+  const mobileDrawer = useMobileDrawer({ open: mobileOpen, onClose: () => setMobileOpen(false), panel: sidebarRef, trigger: menuTriggerRef, query: '(max-width: 860px)' })
+  const [locale, setLocale] = useState<'en' | 'ar'>('en')
+  // Storefront locale shared with the website (EN/ES/IT). The admin UI
+  // itself renders English (Arabic only for legacy stored sessions).
+  const [siteLocale, setSiteLocale] = useState<EnabledLocale>('en')
+  const [currency, setCurrency] = useState<Currency>('USD')
+  const [languageOpen, setLanguageOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [userMenu, setUserMenu] = useState(false)
+  const { user, loading: sessionLoading } = useCurrentUser()
+  const adminNotifications = useAdminNotifications()
+  const [adminAvatar, setAdminAvatar] = useState('')
+  useEffect(() => {
+    const profile = readAdminProfile()
+    setAdminAvatar(profile.avatar)
+    window.addEventListener('sp-profile', () => setAdminAvatar(readAdminProfile().avatar))
+    return () => window.removeEventListener('sp-profile', () => setAdminAvatar(readAdminProfile().avatar))
+  }, [])
+  const unreadCount = adminNotifications.unreadCount
+  useEffect(() => {
+    document.documentElement.classList.add('sp-admin-root')
+    const c = window.localStorage.getItem('sp-admin-collapsed')
+    if (c === '1') setCollapsed(true)
+    const l = window.localStorage.getItem('star-locale')
+    setLocale('en')
+    setSiteLocale(sanitizeLocale(l))
+    const cur = window.localStorage.getItem('star-currency')
+    if (isCurrency(cur)) setCurrency(cur)
+    return () => {
+      document.documentElement.classList.remove('sp-admin-root')
+    }
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.lang = locale
+    window.dispatchEvent(new Event('sp-admin-locale'))
+  }, [locale])
+
+  const changeLocale = useCallback((next: EnabledLocale) => {
+    window.localStorage.setItem('star-locale', next)
+    setSiteLocale(next)
+    setLocale('en')
+    window.dispatchEvent(new Event('sp-admin-locale'))
+  }, [])
+
+  const changeCurrency = useCallback((next: Currency) => {
+    window.localStorage.setItem('star-currency', next)
+    setCurrency(next)
+    // Same-tab pages (dashboard, payments, bookings…) listen for this and
+    // re-render converted amounts instantly, like the storefront does.
+    window.dispatchEvent(new Event('sp-currency'))
+  }, [])
+
+  useEffect(() => {
+    window.localStorage.setItem('sp-admin-collapsed', collapsed ? '1' : '0')
+  }, [collapsed])
+
+  useEffect(() => {
+    setNotificationsOpen(false)
+    setUserMenu(false)
+    setMobileOpen(false)
+  }, [pathname])
+
+  const logout = async () => {
+    setUserMenu(false)
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'same-origin',
+      })
+    } catch {
+      // Logout request failed; still redirect to login
+    }
+    router.push('/login')
+  }
+
+  const ar = locale === 'ar'
+  // Identity display: real staff name inline with the username, never the
+  // raw email prefix. Avatar prefers the server account photo and falls
+  // back to the local admin profile mirror only until it is saved.
+  const emailPrefix = user?.email?.split('@')[0] ?? 'Admin'
+  const fullName = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim()
+  const userName = user?.username?.trim() || ''
+  const displayName = fullName || userName || emailPrefix
+  const chipSub = userName ? `@${userName}` : ''
+  const sideSub = userName ? `@${userName}` : (user?.email ?? '')
+  const shellAvatar = user?.avatar || adminAvatar || undefined
+  // Until the session (roles + permissions) resolves, no real navigation
+  // item is rendered  -  only neutral placeholders. This guarantees an
+  // unauthorized link is never visible, even for a frame.
+  const navReady = !sessionLoading && user !== null
+  const visibleGroups = navReady
+    ? groups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => canSeeNavItem(user, item.href)),
+      }))
+      .filter((group) => group.items.length > 0)
+    : []
+  const searchResults = query.trim()
+    ? visibleGroups.flatMap((group) => group.items).filter((item) => `${item.en} ${item.ar}`.toLowerCase().includes(query.trim().toLowerCase()))
+    : []
+
+  return (
+    <div className={cn('sp-admin', collapsed && 'is-collapsed', ar && 'is-rtl')}>
+      <div
+        className={cn('sp-scrim', mobileOpen && 'show')}
+        onClick={() => setMobileOpen(false)}
+      />
+      <aside ref={sidebarRef} id="admin-mobile-menu" className={cn('sp-side', mobileOpen && 'open')} inert={mobileDrawer && !mobileOpen ? true : undefined} role={mobileDrawer && mobileOpen ? 'dialog' : undefined} aria-modal={mobileDrawer && mobileOpen ? true : undefined} aria-label={ar ? 'قائمة الإدارة' : 'Admin navigation'}>
+        <div className="sp-brand">
+          <Link href="/admin/dashboard" className="sp-brand-link">
+            <span className="sp-brand-mark"><BrandMark alt="" /></span>
+            {!collapsed && (
+              <span className="sp-brand-copy">
+                <strong>STAR PYRAMIDS</strong>
+                <small>{ar ? 'لوحة الإدارة' : 'INTERNAL DASHBOARD'}</small>
+              </span>
+            )}
+          </Link>
+          <button type="button" className="sp-icon-btn only-mobile" onClick={() => setMobileOpen(false)} aria-label={ar ? 'إغلاق القائمة' : 'Close menu'}><X size={20}/></button>
+        </div>
+
+        <nav className="sp-nav" aria-busy={!navReady}>
+          {!navReady && (
+            <p role="status" style={{ margin: '6px 8px 4px', color: '#9db4e8', fontSize: 12 }}>
+              {ar ? 'جارٍ تحميل القائمة…' : 'Loading menu…'}
+            </p>
+          )}
+          {(navReady ? visibleGroups : []).map((g) => (
+            <div key={g.label} className="sp-nav-group">
+              {!collapsed && <p>{ar ? g.label : g.labelEn}</p>}
+              {g.items.map((item) => {
+                const active = pathname === item.href || (item.href !== '/admin/website-cms' && pathname?.startsWith(item.href + '/'))
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    title={ar ? item.ar : item.en}
+                    className={cn('sp-nav-link', active && 'active')}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <item.icon size={18} />
+                    {!collapsed && <span>{ar ? item.ar : item.en}</span>}
+                  </Link>
+                )
+              })}
+            </div>
+          ))}
+          {!navReady && groups.map((g) => (
+            <div key={g.label} className="sp-nav-group" aria-hidden="true">
+              {!collapsed && <p>{ar ? g.label : g.labelEn}</p>}
+              {g.items.map((item) => (
+                <span key={item.href} className="sp-nav-link" style={{ pointerEvents: 'none' }}>
+                  <span style={{ width: 18, height: 18, borderRadius: 6, background: 'rgba(255,255,255,.14)' }} />
+                  {!collapsed && <span style={{ height: 12, borderRadius: 6, background: 'rgba(255,255,255,.14)', flex: 1 }} />}
+                </span>
+              ))}
+            </div>
+          ))}
+        </nav>
+
+        <div className="sp-side-user" title={user?.email ?? undefined}>
+          <Avatar name={displayName} size={38} online src={shellAvatar} />
+          {!collapsed && user && (
+            <div>
+              <strong>{displayName}</strong>
+              <small>{sideSub}</small>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      <div className="sp-main" inert={mobileDrawer && mobileOpen ? true : undefined}>
+        <header className="sp-top">
+          <button
+            ref={menuTriggerRef}
+            type="button"
+            className="sp-icon-btn only-mobile"
+            onClick={() => { setCollapsed(false); setMobileOpen(true) }}
+            aria-expanded={mobileOpen}
+            aria-controls="admin-mobile-menu"
+            aria-label={ar ? 'فتح القائمة' : 'Open menu'}
+          >
+            <Menu size={20} />
+          </button>
+          <button
+            type="button"
+            className={cn('sp-icon-btn', 'sp-collapse-btn', collapsed && 'is-collapsed')}
+            onClick={() => setCollapsed((v) => !v)}
+            aria-label={ar ? 'طي القائمة الجانبية' : 'Collapse sidebar'}
+            aria-expanded={!collapsed}
+            title={ar ? 'طي القائمة الجانبية' : 'Collapse sidebar'}
+          >
+            <PanelLeftClose size={18} />
+          </button>
+          <div className="sp-search">
+            <Search size={17} />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={ar ? 'بحث عن حجز أو رحلة أو عميل...' : 'Search bookings, trips, customers...'}
+              aria-label={ar ? 'البحث في أقسام الإدارة' : 'Search admin modules'}
+            />
+            {query && (
+              <button type="button" onClick={() => setQuery('')} aria-label="Clear">
+                <X size={15} />
+              </button>
+            )}
+            {query && <div className="sp-search-results" role="navigation" aria-label={ar ? 'نتائج البحث' : 'Search results'}>
+              {searchResults.length ? searchResults.map((item) => <Link key={item.href} href={item.href} onClick={() => setQuery('')}><item.icon size={16} /><span>{ar ? item.ar : item.en}</span></Link>) : <span>{ar ? 'لا توجد أقسام مطابقة' : 'No matching modules'}</span>}
+            </div>}
+          </div>
+          <div className="sp-top-actions">
+            <LanguageToggle label={LOCALE_SHORT_LABELS[siteLocale] + ' - ' + currency} onOpen={() => setLanguageOpen(true)} />
+            <Link
+              className="sp-icon-btn"
+              href="/"
+              aria-label={ar ? 'فتح الموقع' : 'View website'}
+              title={ar ? 'فتح الموقع' : 'View website'}
+            >
+              <ExternalLink size={18} />
+            </Link>
+            <button type="button" className="sp-icon-btn" aria-label={ar ? 'الإشعارات' : 'Notifications'} aria-expanded={notificationsOpen} onClick={() => { setNotificationsOpen((open) => !open); setUserMenu(false) }}>
+              <Bell size={18} />
+              {unreadCount > 0 && <i className="dot" aria-hidden="true" />}
+            </button>
+            {notificationsOpen && (
+              <AdminNotificationPanel
+                ar={ar}
+                state={adminNotifications}
+                onOpen={(href) => {
+                  setNotificationsOpen(false)
+                  if (href) router.push(href)
+                }}
+              />
+            )}
+            <div className="sp-user-wrap">
+              <button
+                type="button"
+                className="sp-user-chip"
+                aria-haspopup="menu"
+                aria-expanded={userMenu}
+                aria-label={ar ? 'قائمة الحساب' : 'Account menu'}
+                onClick={() => { setUserMenu((open) => !open); setNotificationsOpen(false) }}
+              >
+                <Avatar name={displayName} size={34} src={shellAvatar} />
+                <span>
+                  <strong>{displayName}</strong>
+                  <small>{chipSub}</small>
+                </span>
+                <ChevronDown size={15} />
+              </button>
+              {userMenu && <div className="sp-user-menu" role="menu">
+                <Link href="/admin/profile" role="menuitem" onClick={() => setUserMenu(false)}><User size={16} /><span><b>{ar ? 'البروفايل' : 'Profile'}</b><small>{user?.email}</small></span></Link>
+                <button type="button" role="menuitem" onClick={logout}><LogOut size={16} /><span><b>{ar ? 'تسجيل الخروج' : 'Logout'}</b></span></button>
+              </div>}
+            </div>
+          </div>
+        </header>
+        <main className="sp-content">
+          {children}
+        </main>
+      </div>
+      {languageOpen && (
+        <AdminLanguageModal
+          activeLocale={siteLocale}
+          ar={ar}
+          currency={currency}
+          onClose={() => setLanguageOpen(false)}
+          onSelect={changeLocale}
+          onCurrency={changeCurrency}
+        />
+      )}
+      <Toaster />
+    </div>
+  )
+}
+
+const adminCopy = {
+  en: { modalTitle: 'Language and Currency', curTitle: 'Currency', regTitle: 'Region and Language', soon: 'Soon', comingSoon: 'Coming soon' },
+  ar: { modalTitle: 'اللغة والعملة', curTitle: 'العملة', regTitle: 'المنطقة واللغة', soon: 'قريبًا', comingSoon: 'قريبًا' },
+} as const
+
+function AdminLanguageModal({
+  activeLocale,
+  ar,
+  currency,
+  onClose,
+  onSelect,
+  onCurrency,
+}: {
+  activeLocale: EnabledLocale
+  ar: boolean
+  currency: Currency
+  onClose: () => void
+  onSelect: (locale: EnabledLocale) => void
+  onCurrency: (currency: Currency) => void
+}) {
+  const copy = adminCopy[ar ? 'ar' : 'en']
+  const currencies = currencyChoices(activeLocale)
+  // Same region list as the storefront modal: driven by the shared locale
+  // config, so both modals stay identical by construction.
+  const regions = ENABLED_LOCALES.map((value) => [LOCALE_REGIONS[value], LOCALE_LABELS[value], value] as const)
+  return (
+    <div className="language-backdrop" role="presentation" onMouseDown={onClose}>
+      <div className="language-modal" role="dialog" aria-modal="true" aria-labelledby="language-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="language-modal-head">
+          <h2 id="language-title">{copy.modalTitle}</h2>
+          <button className="language-close" onClick={onClose} aria-label="Close language and currency"><X size={20} /></button>
+        </div>
+        <h3>{copy.curTitle}</h3>
+        <div className="language-options currency-options">
+          {currencies.map(([name, code, value]) => (
+            <button key={code} className={currency === value ? 'selected' : ''} onClick={() => { onCurrency(value); onClose() }} aria-pressed={currency === value}>
+              <span>{name}</span><strong>{code}</strong>
+            </button>
+          ))}
+        </div>
+        <h3>{copy.regTitle}</h3>
+        <div className="language-options region-options">
+          {regions.map(([region, language, value]) => (
+            <button key={region} type="button" className={value === activeLocale ? 'selected' : ''} onClick={() => { onSelect(value); onClose() }} aria-pressed={value === activeLocale}>
+              <span>{region}</span><strong>{language}</strong>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AdminNotificationPanel({
+  ar,
+  state,
+  onOpen,
+}: {
+  ar: boolean
+  state: {
+    recent: AdminNotification[]
+    unreadCount: number
+    loading: boolean
+    loadError: string
+    refresh: () => void
+    markRead: (id: string) => Promise<boolean>
+    markAllRead: () => Promise<boolean>
+  }
+  onOpen: (href: string | null) => void
+}) {
+  const { recent, unreadCount, loading, loadError, refresh, markRead, markAllRead } = state
+
+  const openNotification = async (item: AdminNotification) => {
+    await markRead(item.id)
+    onOpen(item.href)
+  }
+
+  return (
+    <SharedNotificationPanel
+      items={recent}
+      unreadCount={unreadCount}
+      loading={loading}
+      loadError={loadError}
+      title={ar ? 'الإشعارات' : 'Notifications'}
+      dialogLabel={ar ? 'الإشعارات' : 'Notifications'}
+      unreadLabel={unreadCount > 0 ? (ar ? `${unreadCount} غير مقروء` : `${unreadCount} unread`) : null}
+      markAllLabel={ar ? 'تعليم الكل كمقروء' : 'Mark all read'}
+      markingAllLabel={ar ? 'جارٍ التعليم…' : 'Marking…'}
+      loadingLabel={ar ? 'جارٍ تحميل الإشعارات' : 'Loading notifications'}
+      retryLabel={ar ? 'إعادة المحاولة' : 'Retry'}
+      emptyTitle={ar ? 'لا توجد إشعارات' : "You're all caught up"}
+      emptyHint={ar ? 'ستظهر هنا طلبات العملاء والمدفوعات الجديدة.' : 'New customer requests and payments will appear here.'}
+      iconForType={iconForAdminNotification}
+      formatTime={(iso) => timeAgo(iso, ar)}
+      linkItems={false}
+      onOpenItem={openNotification}
+      onMarkAll={() => markAllRead()}
+      onRetry={refresh}
+    />
+  )
+}
+
+export function PageHead({
+  eyebrow,
+  title,
+  titleAr,
+  sub,
+  subAr,
+  actions,
+  backHref,
+  backLabelEn,
+  backLabelAr,
+}: {
+  eyebrow: string
+  title: string
+  titleAr?: string
+  sub?: string
+  subAr?: string
+  actions?: React.ReactNode
+  backHref?: string
+  backLabelEn?: string
+  backLabelAr?: string
+}) {
+  const [locale, setLocale] = useState<'en' | 'ar'>('en')
+  useEffect(() => {
+    const syncLocale = () => setLocale('en')
+    syncLocale()
+    window.addEventListener('sp-admin-locale', syncLocale)
+    return () => window.removeEventListener('sp-admin-locale', syncLocale)
+  }, [])
+  return (
+    <div className="sp-pagehead">
+      <div className="sp-pagehead-title-row">
+        {backHref && <AdminBackButton href={backHref} labelEn={backLabelEn ?? 'Back'} labelAr={backLabelAr ?? 'رجوع'} />}
+        <div>
+          <p>{eyebrow}</p>
+          <h1>{locale === 'ar' && titleAr ? titleAr : title}</h1>
+          {sub && <span>{locale === 'ar' && subAr ? subAr : sub}</span>}
+        </div>
+      </div>
+      {actions && <div className="sp-pagehead-actions">{actions}</div>}
+    </div>
+  )
+}

@@ -1,0 +1,1517 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  key         String           @unique @db.VarChar(64)
+  name        String           @db.VarChar(100)
+  description String?          @db.VarChar(255)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  /// *
+  ///    * System roles are platform-owned and locked in the admin UI:
+  ///    * SUPER_ADMIN (full access, immutable) and CUSTOMER (storefront-only,
+  ///    * managed under Customers). All other roles are configurable.
+  isSystem    Boolean          @default(false)
+  grants      RolePermission[]
+  assignments UserRole[]
+
+  @@map("roles")
+}
+
+model User {
+  id                           String                @id @default(cuid())
+  publicId                     String                @unique @default(uuid()) @db.VarChar(64)
+  email                        String                @unique @db.VarChar(190)
+  emailNormalized              String                @unique @db.VarChar(190)
+  passwordHash                 String?               @db.VarChar(255)
+  status                       UserStatus            @default(PENDING)
+  emailVerifiedAt              DateTime?
+  lastLoginAt                  DateTime?
+  createdAt                    DateTime              @default(now())
+  updatedAt                    DateTime              @updatedAt
+  firstName                    String?               @db.VarChar(80)
+  lastName                     String?               @db.VarChar(80)
+  username                     String?               @unique @db.VarChar(64)
+  countryCode                  String?               @db.Char(2)
+  phone                        String?               @db.VarChar(32)
+  avatar                       String?               @db.VarChar(500)
+  setupTokens                  AccountSetupToken[]
+  bookings                     Booking[]
+  carRequests                  CarRequest[]
+  eventRequests                EventRequest[]
+  favorites                    FavoriteItem[]
+  notifications                Notification[]
+  reviews                      Review[]
+  sessions                     Session[]
+  auditActions                 StaffActionAudit[]    @relation("AuditActor")
+  assignedSupportConversations SupportConversation[] @relation("SupportAssignee")
+  supportConversations         SupportConversation[] @relation("SupportCustomer")
+  supportMessages              SupportMessage[]
+  tripRequests                 TripRequest[]
+  assignedEnquiries            WebsiteEnquiry[]      @relation("EnquiryAssignee")
+  roles                        UserRole[]
+
+  @@index([status])
+  @@map("users")
+}
+
+model UserRole {
+  id         String   @id @default(cuid())
+  userId     String
+  roleId     String
+  assignedAt DateTime @default(now())
+  assignedBy String?  @db.VarChar(64)
+  role       Role     @relation(fields: [roleId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+/// *
+///  * Canonical permission catalog (Phase 4A configurable RBAC).
+///  * `key` is `<module>.<action>` (e.g. `tours.edit`, `users.manage`).
+///  * Grants live on RolePermission; SUPER_ADMIN bypasses checks in code and
+///  * always holds the full set. CUSTOMER intentionally holds zero grants  - 
+///  * storefront access stays role-based under Customers.
+model Permission {
+  id        String           @id
+  key       String           @unique @db.VarChar(100)
+  module    String           @db.VarChar(64)
+  action    String           @db.VarChar(32)
+  label     String?          @db.VarChar(120)
+  createdAt DateTime         @default(now())
+  roleLinks RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  grantedBy    String?    @db.VarChar(64)
+  grantedAt    DateTime   @default(now())
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique @db.VarChar(128)
+  userId     String
+  expiresAt  DateTime
+  lastSeenAt DateTime @default(now())
+  ipAddress  String?  @db.VarChar(64)
+  userAgent  String?  @db.VarChar(255)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model AccountSetupToken {
+  id        String         @id @default(cuid())
+  tokenHash String         @unique @db.VarChar(128)
+  userId    String
+  type      SetupTokenType @default(PASSWORD_SETUP)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime       @default(now())
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("account_setup_tokens")
+}
+
+model SiteSetting {
+  key         String   @id @db.VarChar(100)
+  value       String   @db.Text
+  description String?  @db.VarChar(255)
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model FxRate {
+  id            String   @id @default(cuid())
+  baseCurrency  String   @db.Char(3)
+  quoteCurrency String   @db.Char(3)
+  rate          Decimal  @db.Decimal(18, 8)
+  isActive      Boolean  @default(true)
+  source        String   @default("manual") @db.VarChar(64)
+  effectiveAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([baseCurrency, quoteCurrency])
+  @@index([quoteCurrency, isActive])
+  @@map("fx_rates")
+}
+
+/// P0 Fix 03  -  server-side media storage registry.
+/// One row per stored image file. `storageKey` is the relative on-disk
+/// path (`<yyyy>/<mm>/<32 hex>.<ext>`) and the only value the media route
+/// accepts; `url` is its public same-origin form (`/media/<storageKey>`)
+/// and is what catalogue, avatar and settings columns store instead of a
+/// Base64 data URL. `mimeType` is derived from the file's magic bytes,
+/// never from the browser-declared type, so the serving Content-Type can
+/// never be attacker-chosen. Rows are append-only: nothing is cascaded or
+/// rewritten, so existing images and records are never removed.
+model MediaAsset {
+  id         String   @id @default(cuid())
+  publicId   String   @unique @default(uuid()) @db.VarChar(64)
+  storageKey String   @unique @db.VarChar(255)
+  url        String   @db.VarChar(500)
+  mimeType   String   @db.VarChar(100)
+  extension  String   @db.VarChar(16)
+  byteSize   Int
+  scope      String   @default("catalogue") @db.VarChar(32)
+  /// Plain reference (not a foreign key), matching StaffActionAudit.actorId:
+  /// audit history must survive account removal.
+  uploaderId String?  @db.VarChar(64)
+  createdAt  DateTime @default(now())
+
+  @@index([scope, createdAt])
+  @@index([uploaderId, createdAt])
+  @@map("media_assets")
+}
+
+model StaffActionAudit {
+  id         Int      @id @default(autoincrement())
+  actorId    String?
+  action     String   @db.VarChar(100)
+  entityType String?  @db.VarChar(100)
+  entityId   String?  @db.VarChar(64)
+  metadata   String?  @db.Text
+  createdAt  DateTime @default(now())
+  actor      User?    @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("staff_action_audit")
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  success   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("login_attempts")
+}
+
+model RegistrationAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("registration_attempts")
+}
+
+/// Phase 2B: customer trip request (Make Your Trip / account planner).
+/// The contact block is a historical snapshot taken at submit/edit time and
+/// is never rewritten by later profile changes. `userId` links the request
+/// to a registered CUSTOMER only when the submission happened under that
+/// customer's server session; guest submissions keep `userId` NULL and are
+/// identified solely by their contact snapshot. Staff-only discussion lives
+/// in internal TripRequestActivity rows and in NO customer-facing field.
+model TripRequest {
+  id              String                @id @default(cuid())
+  reference       String                @unique @db.VarChar(16)
+  userId          String?
+  contactName     String                @db.VarChar(80)
+  contactEmail    String                @db.VarChar(190)
+  contactPhone    String                @db.VarChar(32)
+  contactDialCode String                @db.VarChar(8)
+  nationality     String                @db.Char(2)
+  destinationSlug String?               @db.VarChar(80)
+  tourSlug        String?               @db.VarChar(80)
+  customTitle     String?               @db.VarChar(120)
+  requestedAddOns String                @default("[]") @db.Text
+  timeMode        TripRequestTimeMode   @default(EXACT)
+  preferredFrom   DateTime?             @db.Date
+  preferredTo     DateTime?             @db.Date
+  adults          Int                   @default(1)
+  children        Int                   @default(0)
+  infants         Int                   @default(0)
+  budgetMin       Int                   @default(0)
+  budgetMax       Int                   @default(0)
+  budgetCurrency  String                @default("USD") @db.Char(3)
+  flightOffer     Boolean               @default(false)
+  notes           String?               @db.Text
+  status          TripRequestStatus     @default(NEW)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  sourceSlug      String?               @db.VarChar(80)
+  sourceTitle     String?               @db.VarChar(200)
+  /// Lead source context (nullable = direct website request).
+  /// `sourceType` is a strict allowlist (e.g. `blog_vip_trip`); `sourceSlug`
+  /// is the originating record slug; `sourceTitle` is the title snapshot
+  /// taken at submit time. Set once at creation, never rewritten by edits.
+  sourceType      String?               @db.VarChar(32)
+  activities      TripRequestActivity[]
+  user            User?                 @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([contactEmail])
+  @@map("trip_requests")
+}
+
+model TripRequestActivity {
+  id         String      @id @default(cuid())
+  requestId  String
+  actorRole  String      @db.VarChar(16)
+  action     String      @db.VarChar(160)
+  note       String?     @db.Text
+  isInternal Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  request    TripRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, createdAt])
+  @@map("trip_request_activities")
+}
+
+/// Abuse-protection attempts for the public trip-request endpoint.
+/// Same architecture as login/registration attempts: counted per
+/// email-OR-ip inside a time window, pruned opportunistically.
+model TripRequestAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("trip_request_attempts")
+}
+
+/// Phase 2C: customer car request (Rent Car / account / admin workflow).
+/// Mirrors the Phase 2B trip-request architecture: the contact block is a
+/// historical snapshot taken at submit/edit time and is never rewritten by
+/// later profile changes. `userId` links the request to a registered
+/// CUSTOMER only when the submission happened under that customer's server
+/// session; guest submissions keep `userId` NULL and are identified solely
+/// by their contact snapshot. `vehicleSlug` is the requested preference;
+/// `assignedVehicleSlug` is the staff-assigned fleet vehicle (nullable).
+/// Staff-only discussion lives in internal CarRequestActivity rows and in
+/// NO customer-facing field.
+model CarRequest {
+  id                  String               @id @default(cuid())
+  reference           String               @unique @db.VarChar(16)
+  userId              String?
+  vehicleSlug         String               @db.VarChar(80)
+  assignedVehicleSlug String?              @db.VarChar(80)
+  tripType            CarTripType          @default(ONE_WAY)
+  pickup              String               @db.VarChar(160)
+  dropoff             String               @db.VarChar(160)
+  pickupDate          DateTime?            @db.Date
+  returnDate          DateTime?            @db.Date
+  passengers          Int                  @default(1)
+  contactName         String               @db.VarChar(80)
+  contactEmail        String               @db.VarChar(190)
+  contactPhone        String               @db.VarChar(32)
+  notes               String?              @db.Text
+  status              CarRequestStatus     @default(NEW)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  activities          CarRequestActivity[]
+  user                User?                @relation(fields: [userId], references: [id])
+
+  // Phase 6 (Rent Cars transfer pricing): optional structured references.
+  // All legacy columns above stay authoritative for display copy
+  // (pickup/dropoff keep a human-readable snapshot). Location slugs FK to
+  // active locations only conceptually (protected by service validation, no
+  // hard FK so legacy/renamed rows keep updating); `routeId` FKs to
+  // car_routes with SET NULL so route deletion never breaks old requests.
+  pickupLocationSlug  String?              @db.VarChar(80)
+  dropoffLocationSlug String?              @db.VarChar(80)
+  routeId             String?
+  pickupTime          String?              @db.VarChar(5)
+  returnTime          String?              @db.VarChar(5)
+
+  // Immutable quote snapshot captured server-side at submit/edit time.
+  // Prices are NEVER read from the client; when no configured rate exists
+  // (or Price on Request), the amount stays NULL and the basis is NULL.
+  quoteCurrency       String?              @db.Char(3)
+  quotedCents         Int?
+  quoteBasis          String?              @db.VarChar(16) // legs | multiplier | manual
+  quoteRoundTripCents Int?                 // full round-trip figure when tripType = ROUND_TRIP
+  quotedAt            DateTime?
+  quotePricingMetadata String?            @db.LongText
+
+  // Phantom relation referenced by CarRoute for integrity-free history.
+  route CarRoute? @relation(fields: [routeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([contactEmail])
+  @@index([routeId])
+  @@map("car_requests")
+}
+
+model CarRequestActivity {
+  id         String     @id @default(cuid())
+  requestId  String
+  actorRole  String     @db.VarChar(16)
+  action     String     @db.VarChar(160)
+  note       String?    @db.Text
+  isInternal Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  request    CarRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, createdAt])
+  @@map("car_request_activities")
+}
+
+/// Abuse-protection attempts for the public car-request endpoint.
+/// Same architecture as trip-request attempts: counted per
+/// email-OR-ip inside a time window, pruned opportunistically.
+model CarRequestAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("car_request_attempts")
+}
+
+/// Phase 2D: customer event request (Events / account / admin workflow).
+/// Mirrors the trip/car-request architecture: the contact block is a
+/// historical snapshot taken at submit time and is never rewritten by
+/// later profile changes. `userId` links the request to a registered
+/// CUSTOMER only when the submission happened under that customer's server
+/// session; guest submissions keep `userId` NULL and are identified solely
+/// by their contact snapshot. `eventSlug` is the requested event; the
+/// title/date/location columns are the snapshot taken at submit time.
+/// Customer requests are never edited after submission  -  customers may only
+/// cancel while new/reviewing. Staff-only discussion lives in internal
+/// EventRequestActivity rows and in NO customer-facing field.
+model EventRequest {
+  id              String                 @id @default(cuid())
+  reference       String                 @unique @db.VarChar(16)
+  userId          String?
+  eventSlug       String                 @db.VarChar(80)
+  eventTitle      String                 @db.VarChar(160)
+  eventDate       String                 @db.VarChar(120)
+  eventLocation   String                 @db.VarChar(160)
+  attendees       Int                    @default(1)
+  contactName     String                 @db.VarChar(80)
+  contactEmail    String                 @db.VarChar(190)
+  contactPhone    String                 @db.VarChar(32)
+  contactDialCode String                 @db.VarChar(8)
+  nationality     String                 @db.Char(2)
+  notes           String?                @db.Text
+  status          EventRequestStatus     @default(NEW)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  activities      EventRequestActivity[]
+  user            User?                  @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([contactEmail])
+  @@index([eventSlug])
+  @@map("event_requests")
+}
+
+model EventRequestActivity {
+  id         String       @id @default(cuid())
+  requestId  String
+  actorRole  String       @db.VarChar(16)
+  action     String       @db.VarChar(160)
+  note       String?      @db.Text
+  isInternal Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  request    EventRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, createdAt])
+  @@map("event_request_activities")
+}
+
+/// Abuse-protection attempts for the public event-request endpoint.
+/// Same architecture as trip/car-request attempts: counted per
+/// email-OR-ip inside a time window, pruned opportunistically.
+model EventRequestAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("event_request_attempts")
+}
+
+/// Phase 2E: customer booking (cart checkout workflow).
+/// Mirrors the request architectures: the contact block is a historical
+/// snapshot taken at checkout and never rewritten by later profile
+/// changes. `userId` links the booking to a registered CUSTOMER only
+/// when checkout happened under that customer server session; guest
+/// checkouts keep `userId` NULL. Commercial totals are server-computed
+/// from the canonical catalogue in integer cents and stored as DECIMAL;
+/// the browser is never trusted for prices, totals, status, payment
+/// state, references, or ownership. Currency is always `USD` (base);
+/// EUR/EGP switching stays presentation-only. `idempotencyKey` is a
+/// client-generated submission key that makes double clicks, retries,
+/// and re-renders resolve to ONE booking.
+model Booking {
+  id             String               @id @default(cuid())
+  reference      String               @unique @db.VarChar(16)
+  userId         String?
+  contactName    String               @db.VarChar(80)
+  contactEmail   String               @db.VarChar(190)
+  contactPhone   String               @db.VarChar(32)
+  notes          String?              @db.Text
+  currency       String               @default("USD") @db.Char(3)
+  subtotal       Decimal              @db.Decimal(10, 2)
+  discount       Decimal              @default(0.00) @db.Decimal(10, 2)
+  total          Decimal              @db.Decimal(10, 2)
+  status         BookingStatus        @default(PENDING)
+  paymentStatus  BookingPaymentStatus @default(PENDING)
+  idempotencyKey String?              @unique @db.VarChar(64)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  activities     BookingActivity[]
+  items          BookingItem[]
+  user           User?                @relation(fields: [userId], references: [id])
+  payments       Payment[]
+  accessTokens   BookingAccessToken[]
+  documents      BookingDocument[]
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([contactEmail])
+  @@map("bookings")
+}
+
+/// P0 Fix 04  -  guest booking access.
+///
+/// A booking reference is a human-facing reference, not a credential, so it
+/// never grants access by itself. Guests who check out without an account
+/// receive a separate opaque bearer token instead; this table is the
+/// server-side half of that credential.
+///
+/// `tokenHash` stores ONLY the SHA-256 hash of the token (same contract as
+/// `sessions` and `account_setup_tokens`): a database leak cannot be replayed
+/// against this endpoint. The raw token is returned to the guest exactly once
+/// (checkout response + confirmation email) and never leaves the server
+/// again. Tokens are bound to one booking reference, expire on a fixed TTL,
+/// and can be revoked without touching the booking record itself.
+model BookingAccessToken {
+  id         String    @id @default(cuid())
+  publicId   String    @unique @default(uuid()) @db.VarChar(64)
+  bookingRef String    @db.VarChar(16)
+  tokenHash  String    @unique @db.VarChar(64)
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+  booking    Booking   @relation(fields: [bookingRef], references: [reference], onDelete: Cascade)
+
+  @@index([bookingRef])
+  @@index([expiresAt])
+  @@map("booking_access_tokens")
+}
+
+/// Abuse protection for the public guest-booking lookup. Only FAILED token
+/// lookups are recorded, so this table is a brute-force signal rather than a
+/// traffic counter. Per-IP because the token itself is the secret here  - 
+/// there is no account bucket to attach.
+model BookingAccessAttempt {
+  id        String   @id @default(cuid())
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([ipAddress, createdAt])
+  @@map("booking_access_attempts")
+}
+
+/// Booking-time commercial snapshot per cart line. `tourSlug` is the
+/// canonical catalogue identifier; title/image/date/counts/prices are
+/// frozen at checkout so history stays readable if catalogue copy or
+/// prices change later. `addons` holds priced add-on titles only;
+/// on-request services are preserved on the customer note, never
+/// charged. Money columns are server-computed DECIMAL, never browser
+/// input.
+model BookingItem {
+  id         String  @id @default(cuid())
+  bookingId  String
+  tourSlug   String  @db.VarChar(120)
+  tourTitle  String  @db.VarChar(200)
+  tourImage  String? @db.VarChar(255)
+  travelDate String  @default("") @db.VarChar(10)
+  adults     Int     @default(1)
+  children   Int     @default(0)
+  infants    Int     @default(0)
+  addons     String  @db.LongText
+  adultUnit  Decimal @db.Decimal(10, 2)
+  childUnit  Decimal @db.Decimal(10, 2)
+  infantUnit Decimal @db.Decimal(10, 2)
+  addonTotal Decimal @db.Decimal(10, 2)
+  lineTotal  Decimal @db.Decimal(10, 2)
+  booking    Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+  @@map("booking_items")
+}
+
+model BookingActivity {
+  id         String   @id @default(cuid())
+  bookingId  String
+  actorRole  String   @db.VarChar(16)
+  action     String   @db.VarChar(160)
+  note       String?  @db.Text
+  isInternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId, createdAt])
+  @@map("booking_activities")
+}
+
+/// Abuse-protection attempts for the public checkout endpoint.
+/// Same architecture as request attempts: counted per email-OR-ip
+/// inside a time window, pruned opportunistically.
+model BookingAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("booking_attempts")
+}
+
+/// Phase 4D: password reset attempt tracking (forgot/reset rate limiting).
+/// Same architecture as login/registration attempts: counted per email-OR-ip
+/// inside a time window, pruned opportunistically.
+model PasswordResetAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("password_reset_attempts")
+}
+
+/// Phase 2F-A: provider-agnostic payment record for one booking.
+/// `amount` is the server-authoritative amount due, frozen from the
+/// booking total at initiation (integer cents in, DECIMAL stored).
+/// `amountPaid`/`amountRefunded` accumulate settled money only  -  they
+/// are written by server-side transitions (future provider webhooks
+/// or audited offline workflows), never by browser input.
+model Payment {
+  id                String         @id @default(cuid())
+  reference         String         @unique @db.VarChar(16)
+  bookingId         String
+  provider          String         @default("pending") @db.VarChar(64)
+  providerPaymentId String?        @unique @db.VarChar(128)
+  status            PaymentStatus  @default(PENDING)
+  currency          String         @default("USD") @db.Char(3)
+  amount            Decimal        @db.Decimal(10, 2)
+  amountPaid        Decimal        @default(0.00) @db.Decimal(10, 2)
+  amountRefunded    Decimal        @default(0.00) @db.Decimal(10, 2)
+  failureCode       String?        @db.VarChar(64)
+  failureMessage    String?        @db.VarChar(255)
+  idempotencyKey    String?        @unique @db.VarChar(64)
+  initiatedAt       DateTime       @default(now())
+  paidAt            DateTime?
+  failedAt          DateTime?
+  cancelledAt       DateTime?
+  refundedAt        DateTime?
+  metadata          String?        @db.Text
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  events            PaymentEvent[]
+  documents         BookingDocument[]
+  booking           Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId, createdAt])
+  @@index([status, createdAt])
+  @@map("payments")
+}
+
+/// Immutable payment history. Every server-side payment transition
+/// appends one row; rows are never updated or deleted except by
+/// booking cascade. Customer-facing views exclude internal rows.
+model Tour {
+  id              String   @id @default(cuid())
+  slug            String   @unique @db.VarChar(80)
+  aliases         String   @db.LongText
+  title           String   @db.VarChar(200)
+  titleAr         String?  @db.VarChar(200)
+  category        String   @db.VarChar(32)
+  destinationSlug String?  @db.VarChar(80)
+  cruiseType      String?  @db.VarChar(32)
+  departurePort   String?  @db.VarChar(80)
+  location        String   @db.VarChar(120)
+  price           Decimal  @db.Decimal(10, 2)
+  duration        String   @db.VarChar(80)
+  image           String   @db.VarChar(255)
+  gallery         String   @db.LongText
+  summary         String   @db.Text
+  groupSize       String?  @db.VarChar(40)
+  travelStyle     String?  @db.VarChar(40)
+  deal            String?  @db.LongText
+  detail          String?  @db.LongText
+  dayDetail       String?  @db.LongText
+  categorySlugs   String   @db.LongText
+  journeyVideos   String   @db.LongText
+  photoCredits    String   @db.LongText
+  status          String   @default("published") @db.VarChar(20)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  galleryCaptions String   @db.LongText
+  specialOffer    Offer?
+  /// Journey-gallery tour assignments (this tour's SELECTED_TOURS rows).
+  /// Read-only back-relation: assignments never duplicate gallery records.
+  galleryAssignments JourneyGalleryTour[]
+
+  @@map("tours")
+}
+
+model PaymentEvent {
+  id         String   @id @default(cuid())
+  paymentId  String
+  actorRole  String   @db.VarChar(16)
+  action     String   @db.VarChar(160)
+  note       String?  @db.Text
+  isInternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  payment    Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  /// Webhook deduplication identity (Phase 2F-B race safety). Set only
+  /// on provider-driven transitions; NULL everywhere else. MySQL unique
+  /// indexes admit multiple NULLs, so existing rows (all NULL) and
+  /// offline/manual transitions never conflict  -  only a redelivered
+  /// provider event collides, which is exactly the duplicate to absorb.
+  providerEventId String? @db.VarChar(128)
+
+  /// Phase D: per-refund evidence for commercial refund notes. Written
+  /// only by completed offline refunds going forward (the amount, method
+  /// and external reference of THIS event); NULL on every older row, so
+  /// historical refunds without per-event data stay ineligible for notes
+  /// instead of being reinterpreted.
+  amountCents       Int?
+  method            String? @db.VarChar(32)
+  externalReference String? @db.VarChar(255)
+
+  @@index([paymentId, createdAt])
+  @@unique([providerEventId])
+  @@map("payment_events")
+}
+
+/// Abuse-protection attempts for the payment-initiation endpoint.
+/// Same architecture as booking attempts: counted per email-OR-ip
+/// inside a time window, pruned opportunistically.
+model PaymentAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("payment_attempts")
+}
+
+/// Phase A: booking documents foundation. One row per ISSUED document
+/// with a globally unique number living in its own namespace  -  booking
+/// references (`SP-BK-*`) and payment references (`SP-PAY-*`) are never
+/// renumbered or reused here. `number` format: `<PREFIX>-<year>-<seq>`
+/// (e.g. `SP-RCPT-2026-000001`), allocated by transactional increments
+/// of `document_sequences`. `type` is the honest document kind; the
+/// print-only BookingPrintDocument is NOT a row  -  this table exists for
+/// future numbered issuance only, and nothing issues rows automatically
+/// (no webhook, email, or transition path calls it yet).
+///
+/// Money: `amountCents` is an immutable integer-cent snapshot in USD
+/// (the accounting currency) taken from verified Payment rows or the
+/// booking total at issuance; `currency` is always USD. There is no tax,
+/// VAT, or invoice-total modeling until legal configuration exists.
+/// `paymentId` links money documents (receipt) to the exact verified
+/// Payment row; booking-level documents leave it NULL. Proof
+/// submissions are activities, never payments, and never grant a
+/// receipt. `idempotencyKey` is caller-supplied per logical document
+/// (e.g. `receipt:SP-PAY-ABC123`)  -  a retry returns the original row
+/// with its original number instead of minting a second document.
+model BookingDocument {
+  id             String              @id @default(cuid())
+  number         String              @unique @db.VarChar(32)
+  type           BookingDocumentType
+  bookingId      String
+  paymentId      String?
+  amountCents    Int
+  currency       String              @default("USD") @db.Char(3)
+  idempotencyKey String?             @unique @db.VarChar(120)
+  issuedAt       DateTime            @default(now())
+  createdAt      DateTime            @default(now())
+  booking        Booking             @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  payment        Payment?            @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  /// Phase D: opaque voucher-verification token (raw, unguessable).
+  /// Set only on BOOKING_VOUCHER rows at issuance. The QR code encodes
+  /// the verification URL carrying it, so voucher PDFs stay verifiable
+  /// at any later download. MySQL unique indexes admit multiple NULLs,
+  /// so non-voucher rows are unaffected.
+  verificationToken String? @unique @db.VarChar(64)
+
+  /// Phase D: refund-note snapshot, anchored to exactly one persisted
+  /// refund event (`payment_events.id`). All NULL except on REFUND_NOTE
+  /// rows; frozen at issuance and never updated afterwards.
+  refundEventId           String?   @db.VarChar(64)
+  refundAmountCents       Int?
+  refundMethod            String?   @db.VarChar(32)
+  refundExternalReference String?   @db.VarChar(255)
+  refundDate              DateTime?
+
+  /// Phase D: frozen invoice service lines (JSON array of title, travel
+  /// date, traveler counts, unit prices, line total and add-ons),
+  /// snapshotted from the booking items at issuance. Set only on
+  /// INVOICE rows; the invoice renders from this snapshot so later
+  /// item changes can never move historical invoice values.
+  lineSnapshot String? @db.LongText
+
+  @@index([bookingId, type])
+  @@index([paymentId])
+  @@map("booking_documents")
+}
+
+/// Collision-safe document-number counters. One row per
+/// `<TYPE>:<year>` key; issuance does `UPDATE lastValue = lastValue + 1`
+/// inside the issuing transaction (the UPDATE takes the row lock, so
+/// concurrent issuances serialize) and formats the bumped value into the
+/// document number. Counters are infrastructure, never money  -  no
+/// booking or payment row is ever rewritten by them.
+model DocumentSequence {
+  key       String   @id @db.VarChar(64)
+  lastValue Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("document_sequences")
+}
+
+/// Phase 2G: customer saved trips (favorites). One row per saved
+/// catalogue item per customer  -  never a copy of the tour itself.
+/// Only the stable catalogue key is stored (`itemType` + `itemSlug`);
+/// titles, images, and prices always resolve live from the catalogue,
+/// so saved rows stay readable if catalogue copy changes. The
+/// `@@unique` constraint makes double-saving impossible.
+model FavoriteItem {
+  id        String   @id @default(cuid())
+  userId    String
+  itemType  String   @default("tour") @db.VarChar(32)
+  itemSlug  String   @db.VarChar(120)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemType, itemSlug])
+  @@index([userId, createdAt])
+  @@map("favorite_items")
+}
+
+/// Phase 2H: customer in-app notifications. One row per customer-facing
+/// domain event, owned by exactly one user  -  never shared, never
+/// client-created. Only display data is stored (type + title + message
+/// + optional relative target path); no sensitive payloads, no payment
+/// secrets, no internal staff notes. `readAt` (nullable) is the read
+/// marker: NULL means unread. New events from this phase onward only  - 
+/// historical records are never backfilled.
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String    @db.VarChar(48)
+  title     String    @db.VarChar(160)
+  message   String    @db.VarChar(500)
+  href      String?   @db.VarChar(255)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+model SupportConversation {
+  id              String                    @id @default(cuid())
+  reference       String                    @unique @db.VarChar(16)
+  customerId      String
+  subject         String?                   @db.VarChar(160)
+  status          SupportConversationStatus @default(OPEN)
+  assignedStaffId String?
+  lastMessageAt   DateTime                  @default(now())
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+  closedAt        DateTime?
+  assignee        User?                     @relation("SupportAssignee", fields: [assignedStaffId], references: [id])
+  customer        User                      @relation("SupportCustomer", fields: [customerId], references: [id], onDelete: Cascade)
+  messages        SupportMessage[]
+
+  @@index([customerId, updatedAt])
+  @@index([status, lastMessageAt])
+  @@index([assignedStaffId], map: "support_conversations_assignedStaffId_fkey")
+  @@map("support_conversations")
+}
+
+/// Phase 2I: plain-text support messages. `senderRole` is stamped
+/// server-side from the authenticated session ('customer' | 'staff')  - 
+/// the browser never declares who sends. `body` is validated plain
+/// text (1–2000 chars, no control characters); rendering must treat it
+/// as text, never HTML. `readAt` is the recipient-side read marker:
+/// NULL means unread by the other side. No attachments, reactions, or
+/// external-channel payloads in this phase.
+model SupportMessage {
+  id             String              @id @default(cuid())
+  conversationId String
+  senderId       String
+  senderRole     String              @db.VarChar(16)
+  body           String              @db.VarChar(2000)
+  readAt         DateTime?
+  createdAt      DateTime            @default(now())
+  conversation   SupportConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User                @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@index([senderId], map: "support_messages_senderId_fkey")
+  @@map("support_messages")
+}
+
+model EmailDelivery {
+  id                String      @id @default(cuid())
+  recipient         String      @db.VarChar(190)
+  recipientType     String      @db.VarChar(16)
+  eventType         String      @db.VarChar(48)
+  subject           String      @db.VarChar(200)
+  relatedReference  String?     @db.VarChar(64)
+  status            EmailStatus @default(PENDING)
+  providerMessageId String?     @db.VarChar(128)
+  attempt           Int         @default(0)
+  errorSummary      String?     @db.VarChar(500)
+  idempotencyKey    String?     @unique @db.VarChar(64)
+  createdAt         DateTime    @default(now())
+  sentAt            DateTime?
+  failedAt          DateTime?
+
+  @@index([recipient, createdAt])
+  @@index([eventType, createdAt])
+  @@index([status, createdAt])
+  @@index([relatedReference])
+  @@map("email_deliveries")
+}
+
+/// Phase 3B: editorial + discovery destination catalogue.
+/// Server-authoritative: public pages and admin read/write these rows.
+/// `showInOneDayTours=true` drives One Day Tours discovery sections;
+/// `showInDestinations=false` hides the editorial landing page while
+/// keeping catalogue/admin use; `isPublished=false` hides the record
+/// from all public surfaces. `detail` carries the full editorial payload
+/// (hero, facts, bestFor, experiences, rhythm, practical, tourSlugs).
+model Destination {
+  id                 String   @id @default(cuid())
+  slug               String   @unique @db.VarChar(80)
+  title              String   @db.VarChar(120)
+  nameAr             String?  @db.VarChar(120)
+  image              String   @db.VarChar(2000)
+  copy               String   @db.VarChar(2000)
+  copyAr             String?  @db.VarChar(2000)
+  showInOneDayTours  Boolean  @default(false)
+  showInDestinations Boolean  @default(true)
+  isPublished        Boolean  @default(true)
+  displayOrder       Int      @default(999)
+  detail             String   @db.LongText
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("destinations")
+}
+
+/// Phase 3B: multi-day travel category (theme) catalogue.
+/// Server-authoritative: public pages and admin read/write these rows.
+/// Membership lives on Tour.categorySlugs (many-to-many); one canonical
+/// tour object is never duplicated. `active=false` hides the category
+/// from all public surfaces.
+model MultiDayCategory {
+  id        String   @id @default(cuid())
+  slug      String   @unique @db.VarChar(80)
+  name      String   @db.VarChar(120)
+  nameAr    String   @db.VarChar(120)
+  copy      String   @db.VarChar(2000)
+  copyAr    String   @db.VarChar(2000)
+  image     String   @db.VarChar(2000)
+  order     Int      @default(999)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("multi_day_categories")
+}
+
+/// Phase 3C: event catalogue (festivals, seasonal journeys, city breaks).
+/// Server-authoritative: public pages and admin read/write these rows.
+/// `isPublished=false` hides the record from all public surfaces.
+/// Scalar display/schedule/venue/pricing fields live in columns;
+/// nested editorial content (gallery, highlights, program,
+/// included/excluded lists, add-ons) travels in `content` JSON.
+model Event {
+  id                String   @id @default(cuid())
+  slug              String   @unique @db.VarChar(80)
+  title             String   @db.VarChar(200)
+  titleAr           String?  @db.VarChar(200)
+  image             String   @db.VarChar(2000)
+  date              String   @db.VarChar(120)
+  startDate         String?  @db.VarChar(10)
+  endDate           String?  @db.VarChar(10)
+  startTime         String?  @db.VarChar(5)
+  endTime           String?  @db.VarChar(5)
+  timezone          String?  @db.VarChar(60)
+  location          String   @db.VarChar(120)
+  locationAr        String?  @db.VarChar(120)
+  venueName         String?  @db.VarChar(200)
+  venueNameAr       String?  @db.VarChar(200)
+  address           String?  @db.VarChar(500)
+  addressAr         String?  @db.VarChar(500)
+  city              String?  @db.VarChar(120)
+  cityAr            String?  @db.VarChar(120)
+  mapQuery          String?  @db.VarChar(200)
+  copy              String   @db.VarChar(2000)
+  copyAr            String?  @db.VarChar(2000)
+  category          String?  @db.VarChar(120)
+  categoryAr        String?  @db.VarChar(120)
+  featured          Boolean  @default(false)
+  intro             String?  @db.VarChar(2000)
+  introAr           String?  @db.VarChar(2000)
+  pricingType       String?  @db.VarChar(20)
+  price             Float?
+  currency          String?  @db.VarChar(8)
+  capacity          Int?
+  bookingDeadline   String?  @db.VarChar(10)
+  organizerName     String?  @db.VarChar(200)
+  organizerPhone    String?  @db.VarChar(60)
+  organizerWhatsapp String?  @db.VarChar(60)
+  organizerEmail    String?  @db.VarChar(200)
+  isPublished       Boolean  @default(true)
+  displayOrder      Int      @default(999)
+  content           String   @db.LongText
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  organizerNameAr   String?  @db.VarChar(200)
+
+  @@map("events")
+}
+
+/// Phase 3C: rental fleet catalogue.
+/// Server-authoritative: public fleet/request surfaces and admin
+/// read/write these rows. `isPublished=false` hides the vehicle from
+/// all public surfaces while it stays fully visible inside admin.
+model Car {
+  id           String   @id @default(cuid())
+  slug         String   @unique @db.VarChar(80)
+  title        String   @db.VarChar(200)
+  image        String   @db.VarChar(2000)
+  seats        String   @db.VarChar(60)
+  transmission String   @db.VarChar(60)
+  copy         String   @db.VarChar(2000)
+  credit       String?  @db.LongText
+  isPublished  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  routePrices  CarRoutePrice[]
+  pricingConfigurations CarRoutePricing[]
+
+  @@map("cars")
+}
+
+/// Phase 2 (Rent Cars): reusable structured pickup/drop-off location.
+/// Additive to the legacy workflow  -  existing CarRequest rows keep their
+/// free-text pickup/dropoff columns untouched; these rows back structured
+/// location selection and directional route pricing. Row visibility to the
+/// public matches `isActive=false` hiding (same idea as Car.isPublished).
+model CarLocation {
+  id        String          @id @default(cuid())
+  slug      String          @unique @db.VarChar(80)
+  nameEn    String          @db.VarChar(120)
+  nameEs    String?         @db.VarChar(120)
+  nameIt    String?         @db.VarChar(120)
+  nameAr    String?         @db.VarChar(120)
+  kind      CarLocationKind @default(CITY)
+  isActive  Boolean         @default(true)
+  sortOrder Int             @default(999)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  originRoutes      CarRoute[] @relation("carRouteOrigin")
+  destinationRoutes CarRoute[] @relation("carRouteDestination")
+
+  @@index([isActive, sortOrder])
+  @@map("car_locations")
+}
+
+/// Directional route between two structured locations. Route identity is the
+/// (origin, destination) pair: Cairo Airport → Giza and Giza → Cairo Airport
+/// are separate rows and may carry completely different vehicle prices.
+model CarRoute {
+  id              String      @id @default(cuid())
+  originSlug      String      @db.VarChar(80)
+  destinationSlug String      @db.VarChar(80)
+  isActive        Boolean     @default(true)
+  sortOrder       Int         @default(999)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  origin          CarLocation @relation("carRouteOrigin", fields: [originSlug], references: [slug], onDelete: Restrict, onUpdate: Cascade)
+  destination     CarLocation @relation("carRouteDestination", fields: [destinationSlug], references: [slug], onDelete: Restrict, onUpdate: Cascade)
+  prices          CarRoutePrice[]
+  pricingConfigurations CarRoutePricing[]
+
+  @@unique([originSlug, destinationSlug])
+  @@index([destinationSlug])
+  @@index([isActive])
+  @@map("car_routes")
+
+  // Requests that quote this route historically. Deleting the route keeps
+  // every request (snapshot fields survive with a NULL routeId).
+  requests CarRequest[]
+}
+
+/// Vehicle-specific rate for one route. All money is stored as integer minor
+/// units (`oneWayCents`, `roundTripCents`)  -  no floating-point arithmetic for
+/// financial amounts. Round-trip mode:
+///   MANUAL    → `roundTripCents` holds the staff-approved round-trip price.
+///   AUTOMATIC → the return leg is priced from the actual reverse-route rate
+///               when one exists (sum of the two directional leg prices);
+///               otherwise the configured multiplier applies to the outbound
+///               rate (`roundTripMultiplierBp`, hundredths: 200 = ×2.00).
+///               A reverse route is never assumed to cost the same.
+/// `carSlug` is an FK to cars.slug (deleting a vehicle removes its derived
+/// price rows); `routeId` is Restrict so pricing never silently loses its
+/// route. Pricing mode and currency belong to the unique vehicle-route parent;
+/// its tier rows cover non-overlapping passenger ranges.
+enum CarPricingMode {
+  FIXED_TOTAL
+  PER_PERSON
+}
+
+model CarRoutePricing {
+  id          String @id @default(cuid())
+  routeId     String
+  carSlug     String @db.VarChar(80)
+  currency    String @default("USD") @db.Char(3)
+  pricingMode CarPricingMode @default(FIXED_TOTAL)
+  car         Car @relation(fields: [carSlug], references: [slug], onDelete: Cascade, onUpdate: Cascade)
+  route       CarRoute @relation(fields: [routeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  tiers       CarRoutePrice[]
+
+  @@unique([routeId, carSlug])
+  @@unique([routeId, carSlug, currency])
+  @@index([carSlug])
+  @@map("car_route_pricing")
+}
+
+model CarRoutePrice {
+  id                    String           @id @default(cuid())
+  routeId               String
+  carSlug               String           @db.VarChar(80)
+  currency              String           @default("USD") @db.Char(3)
+  minPassengers         Int              @default(1)
+  maxPassengers         Int
+  oneWayCents           Int
+  roundTripMode         CarRoundTripMode @default(AUTOMATIC)
+  roundTripCents        Int?
+  roundTripMultiplierBp Int              @default(200)
+  isActive              Boolean          @default(true)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  car                   Car              @relation(fields: [carSlug], references: [slug], onDelete: Cascade, onUpdate: Cascade)
+  route                 CarRoute         @relation(fields: [routeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  configuration         CarRoutePricing @relation(fields: [routeId, carSlug, currency], references: [routeId, carSlug, currency], onDelete: Cascade, onUpdate: Cascade, map: "car_route_prices_configuration_fkey")
+
+  @@unique([routeId, carSlug, minPassengers, maxPassengers])
+  @@index([carSlug])
+  @@index([isActive])
+  @@map("car_route_prices")
+}
+
+/// Phase 3D: special-offer catalogue.
+/// Server-authoritative: public pages and admin read/write these rows.
+/// `isPublished=false` hides the record from all public surfaces.
+/// Scalar display/commercial fields live in columns; gallery,
+/// highlights and photo credits travel in `content` JSON so existing
+/// media is preserved exactly.
+model Offer {
+  id            String   @id @default(cuid())
+  slug          String   @unique @db.VarChar(80)
+  title         String   @db.VarChar(200)
+  image         String   @db.VarChar(2000)
+  badge         String   @db.VarChar(120)
+  copy          String   @db.VarChar(2000)
+  duration      String?  @db.VarChar(80)
+  rating        Float?
+  price         Float?
+  originalPrice Float?
+  deadline      String?  @db.VarChar(120)
+  isPublished   Boolean  @default(true)
+  displayOrder  Int      @default(999)
+  content       String   @db.LongText
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  tourSlug      String?  @unique @db.VarChar(80)
+  discountPercent Float?
+  startsAt      DateTime?
+  tour          Tour?    @relation(fields: [tourSlug], references: [slug], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("offers")
+}
+
+/// Phase 3D: blog/journal catalogue.
+/// Server-authoritative: public pages and admin read/write these rows.
+/// `isPublished=false` hides the record from all public surfaces.
+/// Scalar list fields live in columns; the full rich editorial payload
+/// (hero, facts, sections, tips, quote, checklist, CTA, sidebar)
+/// travels in `content` JSON so existing content is preserved exactly.
+model Blog {
+  id           String   @id @default(cuid())
+  slug         String   @unique @db.VarChar(80)
+  title        String   @db.VarChar(200)
+  image        String   @db.VarChar(2000)
+  category     String   @db.VarChar(120)
+  date         String   @db.VarChar(120)
+  excerpt      String   @db.VarChar(2000)
+  isPublished  Boolean  @default(true)
+  displayOrder Int      @default(999)
+  content      String   @db.LongText
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("blogs")
+}
+
+model CatalogueTranslation {
+  entityType String @db.VarChar(24)
+  slug       String @db.VarChar(80)
+  payload    String @db.LongText
+
+  @@id([entityType, slug])
+  @@map("catalogue_translations")
+}
+
+model Review {
+  id          String       @id @default(cuid())
+  publicId    String       @unique @default(uuid()) @db.VarChar(64)
+  userId      String
+  tourSlug    String       @db.VarChar(80)
+  title       String?      @db.VarChar(160)
+  rating      Int          @db.TinyInt
+  text        String       @db.Text
+  status      ReviewStatus @default(PENDING)
+  publishedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tourSlug])
+  @@index([tourSlug, status, createdAt])
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
+  @@map("reviews")
+}
+
+/// Abuse-protection attempts for the public review submission endpoint.
+/// Counted per user-OR-ip inside a time window, pruned opportunistically.
+model ReviewAttempt {
+  id        String   @id @default(cuid())
+  userId    String?
+  ipAddress String   @db.VarChar(64)
+  tourSlug  String   @db.VarChar(80)
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([ipAddress, createdAt])
+  @@index([tourSlug, createdAt])
+  @@map("review_attempts")
+}
+
+/// Website enquiry  -  public contact/lead form submissions.
+/// No account required. Server-only RBAC for admin access.
+model WebsiteEnquiry {
+  id            String           @id @default(cuid())
+  publicId      String           @unique @default(uuid()) @db.VarChar(64)
+  name          String           @db.VarChar(120)
+  email         String           @db.VarChar(190)
+  phone         String?          @db.VarChar(32)
+  subject       String           @db.VarChar(200)
+  message       String           @db.Text
+  sourcePage    String?          @db.VarChar(120)
+  status        EnquiryStatus    @default(NEW)
+  assignedToId  String?
+  internalNotes String?          @db.Text
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  assignedTo    User?            @relation("EnquiryAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([email, createdAt])
+  @@index([sourcePage, createdAt])
+  @@map("website_enquiries")
+}
+
+/// Abuse-protection attempts for the public enquiry submission endpoint.
+/// Counted per email-OR-ip inside a time window, pruned opportunistically.
+model EnquiryAttempt {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(190)
+  ipAddress String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("enquiry_attempts")
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum SetupTokenType {
+  PASSWORD_SETUP
+  PASSWORD_RESET
+}
+
+enum TripRequestStatus {
+  NEW
+  REVIEWING
+  PROPOSAL_READY
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum TripRequestTimeMode {
+  EXACT
+  APPROX
+  UNSURE
+}
+
+enum CarRequestStatus {
+  NEW
+  REVIEWING
+  CONFIRMED
+  CANCELLED
+}
+
+enum CarTripType {
+  ONE_WAY
+  ROUND_TRIP
+}
+
+enum EventRequestStatus {
+  NEW
+  REVIEWING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+/// Phase 4F: website enquiries  -  public contact/lead form submissions.
+/// No account required. Server-only RBAC for admin access.
+enum EnquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+/// Honest payment state only. Phase 2E never marks a booking paid:
+/// every booking is created PENDING (unpaid) and stays there until the
+/// Phase 2F payment gateway exists. PAID/REFUNDED are reserved values.
+enum BookingPaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+/// Phase 2F-A payment lifecycle. A Payment is the money record for one
+/// booking; the booking lifecycle (PENDING/CONFIRMED/...) and the
+/// payment lifecycle evolve independently  -  a confirmed booking is NOT
+/// automatically paid. `provider` is the gateway key that settled (or
+/// will settle) the payment; `pending` means created locally and
+/// awaiting provider handoff in Phase 2F-B. No card numbers, CVV, raw
+/// card details, or gateway credentials are ever stored here  - 
+/// `metadata` holds non-sensitive provider payload only.
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+/// Phase A document kinds. Request/Confirmation/Receipt are issuable
+/// today through the documents service; INVOICE, REFUND_NOTE and
+/// BOOKING_VOUCHER exist as named types only and stay blocked until
+/// their business rules and legal configuration are defined. Documents
+/// are issued explicitly  -  never automatically by booking, payment, or
+/// webhook transitions.
+enum BookingDocumentType {
+  BOOKING_REQUEST
+  BOOKING_CONFIRMATION
+  PAYMENT_RECEIPT
+  INVOICE
+  REFUND_NOTE
+  BOOKING_VOUCHER
+}
+
+/// Phase 2I: internal STAR PYRAMIDS support conversations (customer ↔
+/// staff). One conversation thread per customer support need; the
+/// customer UX centers on their latest thread while staff work from a
+/// cross-customer inbox. `customerId` is the owning customer (server
+/// session, never browser input). `assignedStaffId` is the staff owner
+/// (nullable, staff-set only). `subject` is an optional short context
+/// label (e.g. a booking reference the question relates to). `status`
+/// is OPEN or CLOSED; closed threads are read-only history  -  new
+/// customer messages open a fresh thread. `lastMessageAt` orders the
+/// staff inbox. External/WhatsApp channels are NOT modeled here.
+enum SupportConversationStatus {
+  OPEN
+  CLOSED
+}
+
+/// Phase 2J: email delivery outbox. One row per email attempt  -  the
+/// authoritative record of what was sent, to whom, and with what result.
+/// `status` is PENDING (queued), SENT (provider accepted), FAILED
+/// (permanent failure), or SKIPPED (suppressed by dedup/idempotency).
+/// `providerMessageId` is the provider's ID when available (nullable).
+/// `attempt` counts delivery attempts; `errorSummary` holds a safe,
+/// non-sensitive error description. No email bodies, no secrets, no
+/// raw provider responses are stored here.
+enum EmailStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
+/// Phase 4E: customer reviews for tours.
+/// Authenticated CUSTOMER users submit reviews; staff moderate.
+/// Public surfaces show ONLY PUBLISHED reviews.
+/// Rating summary (average/count) computed from published DB records.
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+}
+
+/// Journey Gallery  -  one centralized record serves BOTH the homepage rows
+/// (photo row for IMAGE, video row for VIDEO) and the tour-detail video
+/// carousel (VIDEO with showOnTours). A video is never duplicated per
+/// tour: multi-tour assignment lives in `journey_gallery_tours` rows.
+/// Legacy content (hardcoded homepage photos, per-tour `journeyVideos`
+/// JSON) is merged at read time and never rewritten here.
+model JourneyGalleryItem {
+  id             String                  @id @default(cuid())
+  mediaType      JourneyGalleryMediaType
+  /// Uploaded same-origin path or normalized https social URL.
+  mediaUrl       String                  @db.VarChar(2000)
+  /// SHA-256 of the normalized URL: dedup + idempotent legacy import.
+  /// (Unique on the hash, not the URL: MySQL key-length limits forbid a
+  /// unique index on a 2000-char column.)
+  mediaHash      String                  @unique @db.VarChar(64)
+  /// youtube|instagram|facebook|tiktok|vimeo|direct. NULL on IMAGE rows.
+  platform       String?                 @db.VarChar(32)
+  title          String                  @db.VarChar(200)
+  titleAr        String?                 @db.VarChar(200)
+  caption        String?                 @db.VarChar(500)
+  /// Video poster / thumbnail. NULL when none was provided.
+  thumbnail      String?                 @db.VarChar(2000)
+  showOnHomepage Boolean                 @default(false)
+  /// Images must keep this false (enforced server-side + documented).
+  showOnTours    Boolean                 @default(false)
+  tourScope      JourneyGalleryTourScope @default(SELECTED_TOURS)
+  isPublished    Boolean                 @default(true)
+  sortOrder      Int                     @default(999)
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  tours          JourneyGalleryTour[]
+
+  @@index([mediaType, isPublished, sortOrder])
+  @@index([showOnHomepage, isPublished])
+  @@index([showOnTours, isPublished])
+  @@map("journey_gallery_items")
+}
+
+/// One row per (gallery item, tour) assignment. The item record and its
+/// media file are never duplicated across tours.
+model JourneyGalleryTour {
+  id        String             @id @default(cuid())
+  itemId    String
+  tourSlug  String             @db.VarChar(80)
+  createdAt DateTime           @default(now())
+  item      JourneyGalleryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  tour      Tour               @relation(fields: [tourSlug], references: [slug], onDelete: Cascade)
+
+  @@unique([itemId, tourSlug])
+  @@index([tourSlug])
+  @@map("journey_gallery_tours")
+}
+
+enum JourneyGalleryMediaType {
+  IMAGE
+  VIDEO
+}
+
+enum JourneyGalleryTourScope {
+  ALL_TOURS
+  SELECTED_TOURS
+}
+
+enum CarLocationKind {
+  AIRPORT
+  HOTEL
+  CITY
+  CUSTOM
+}
+
+enum CarRoundTripMode {
+  AUTOMATIC
+  MANUAL
+}

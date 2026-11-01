@@ -1,0 +1,76 @@
+import { parseVehicleCapacity } from '@/lib/car-request';
+import { catalogueTranslationResponse, saveWithCatalogueTranslations } from '@/lib/server/catalogue-translations';
+import { validateCatalogueTranslations } from '@/lib/catalogue-translations';
+import { NextResponse } from 'next/server';
+import { readJsonText, writeJsonText } from '@/lib/json-text';
+import { isSameOriginRequest } from '@/lib/server/csrf';
+import { db } from '@/lib/server/db';
+import { getCurrentUser, hasPermission } from '@/lib/server/auth';
+
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export async function GET() {
+  // Public: list the full fleet (read-only, no auth required)
+  const user = await getCurrentUser();
+  const staff = user && (hasPermission(user, 'cars.edit') || hasPermission(user, 'cars.view'));
+  const cars = await db.car.findMany({ where: staff ? {} : { isPublished: true }, orderBy: [{ title: 'asc' }] });
+  return NextResponse.json(await catalogueTranslationResponse('car', { cars: cars.map((car) => ({ ...car, credit: readJsonText(car.credit) })) }));
+}
+
+export async function POST(request: Request) {
+  // Staff-only create with same-origin mutation protection
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+  }
+  if (!hasPermission(user, 'cars.create')) {
+    return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });
+  }
+
+  const originOk = isSameOriginRequest(request);
+  if (!originOk) {
+    return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  }
+
+  const data = await request.json().catch(() => null);
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
+  if (data.seats !== undefined && (typeof data.seats !== 'string' || parseVehicleCapacity(data.seats) === null)) return NextResponse.json({ error: 'Enter an unambiguous seat capacity from 1 to 100.' }, { status: 400 });
+  if (data.isPublished !== undefined && typeof data.isPublished !== 'boolean') return NextResponse.json({ error: 'Publication status must be boolean.' }, { status: 400 });
+  if (data?.translations !== undefined) {
+    try { validateCatalogueTranslations('car', data.translations); }
+    catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : 'Invalid translations.' }, { status: 400 }); }
+  }
+
+  const slug = typeof data.slug === 'string' ? data.slug.trim().toLowerCase() : '';
+  if (!SLUG_PATTERN.test(slug) || slug.length > 80) {
+    return NextResponse.json({ error: 'Enter a valid slug: lowercase letters, numbers, and hyphens.' }, { status: 400 });
+  }
+  if (!data.title || typeof data.title !== 'string' || !data.title.trim()) {
+    return NextResponse.json({ error: 'Enter the vehicle title.' }, { status: 400 });
+  }
+
+  const existing = await db.car.findUnique({ where: { slug } });
+  if (existing) {
+    return NextResponse.json({ error: 'Slug must be unique.' }, { status: 409 });
+  }
+
+  const credit =
+    data.credit && typeof data.credit.label === 'string' && typeof data.credit.url === 'string'
+      ? writeJsonText({ label: data.credit.label.slice(0, 200), url: data.credit.url.slice(0, 2000) })
+      : null;
+
+  const car = await saveWithCatalogueTranslations('car', data.translations, undefined, (tx) => tx.car.create({
+    data: {
+      slug,
+      title: data.title.trim().slice(0, 200),
+      image: typeof data.image === 'string' ? data.image.trim().slice(0, 2000) : '',
+      seats: typeof data.seats === 'string' ? data.seats.trim().slice(0, 60) : '',
+      transmission: typeof data.transmission === 'string' ? data.transmission.trim().slice(0, 60) : '',
+      copy: typeof data.copy === 'string' ? data.copy.trim().slice(0, 2000) : '',
+      credit,
+      isPublished: data.isPublished !== false,
+    },
+  }));
+
+  return NextResponse.json(await catalogueTranslationResponse('car', { car: { ...car, credit: readJsonText(car.credit) } }), { status: 201 });
+}

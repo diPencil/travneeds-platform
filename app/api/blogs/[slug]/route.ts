@@ -1,0 +1,145 @@
+import { catalogueTranslationResponse, saveWithCatalogueTranslations, deleteWithCatalogueTranslations } from '@/lib/server/catalogue-translations';
+import { preserveRecordSeo, recordSeoObject } from '@/lib/record-seo';
+import { validateCatalogueTranslations } from '@/lib/catalogue-translations';
+import { NextResponse } from 'next/server';
+import { isSameOriginRequest } from '@/lib/server/csrf';
+import { db } from '@/lib/server/db';
+import { getCurrentUser, hasPermission } from '@/lib/server/auth';
+import { readJsonObject } from '@/lib/json-text';
+import { BlogEditorialInputError, validateBlogEditorial } from '@/lib/blog-editorial';
+
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+const cleanText = (v: unknown, max: number): string | null => {
+  if (typeof v !== 'string' || !v.trim()) return null;
+  return v.trim().slice(0, max);
+};
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  // Public: view a single story by slug
+  const { slug } = await params;
+  const blog = await db.blog.findUnique({ where: { slug } });
+
+  if (!blog) {
+    return NextResponse.json({ notFound: true }, { status: 404 });
+  }
+
+  const adminRead = new URL(request.url).searchParams.get('admin') === '1';
+  if (!blog.isPublished) {
+    if (!adminRead) return NextResponse.json({ notFound: true }, { status: 404 });
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+    if (!hasPermission(user, 'blogs.view')) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });
+  }
+
+  return NextResponse.json(await catalogueTranslationResponse('blog', { blog: { ...blog, content: readJsonObject(blog.content) } }));
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  // Staff-only edit with same-origin mutation protection
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+  }
+  if (!hasPermission(user, 'blogs.edit')) {
+    return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });
+  }
+
+  const originOk = isSameOriginRequest(request);
+  if (!originOk) {
+    return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  }
+
+  const data = await request.json();
+  if (data?.translations !== undefined) {
+    try { validateCatalogueTranslations('blog', data.translations); }
+    catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : 'Invalid translations.' }, { status: 400 }); }
+  }
+  const { slug: paramSlug } = await params;
+
+  const existing = await db.blog.findUnique({ where: { slug: paramSlug } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Story not found.' }, { status: 404 });
+  }
+
+  if (data.slug && data.slug !== existing.slug) {
+    const slug = String(data.slug).trim().toLowerCase();
+    if (!SLUG_PATTERN.test(slug) || slug.length > 80) {
+      return NextResponse.json({ error: 'Enter a valid slug.' }, { status: 400 });
+    }
+    const slugExists = await db.blog.findUnique({ where: { slug } });
+    if (slugExists) {
+      return NextResponse.json({ error: 'Slug must be unique.' }, { status: 409 });
+    }
+  }
+
+  // Preserve every unrelated content key while replacing only the validated
+  // editorial payload managed by the article builder.
+  const existingContent = recordSeoObject(existing.content);
+  const nextPublished = data.isPublished === undefined ? existing.isPublished : data.isPublished !== false;
+  const incomingContent = data.content && typeof data.content === 'object' && !Array.isArray(data.content)
+    ? data.content as Record<string, unknown>
+    : null;
+  const editorialInput = data.editorial !== undefined ? data.editorial : incomingContent?.editorial;
+  let nextContent = incomingContent ? { ...existingContent, ...incomingContent } : { ...existingContent };
+  try {
+    if (editorialInput !== undefined) nextContent.editorial = validateBlogEditorial(editorialInput, { publishable: nextPublished });
+    else if (nextPublished) nextContent.editorial = validateBlogEditorial(existingContent.editorial, { publishable: true });
+  } catch (error) {
+    if (error instanceof BlogEditorialInputError) return NextResponse.json({ error: error.message }, { status: 400 });
+    throw error;
+  }
+
+  const blog = await saveWithCatalogueTranslations('blog', data.translations, existing.slug, (tx) => tx.blog.update({
+    where: { slug: paramSlug, content: existing.content, updatedAt: existing.updatedAt },
+    data: {
+      slug: data.slug ? String(data.slug).trim().toLowerCase() || existing.slug : existing.slug,
+      title: typeof data.title === 'string' && data.title.trim() ? data.title.trim().slice(0, 200) : existing.title,
+      image: typeof data.image === 'string' ? data.image.trim().slice(0, 2000) : existing.image,
+      category: typeof data.category === 'string' && data.category.trim() ? data.category.trim().slice(0, 120) : existing.category,
+      date: typeof data.date === 'string' && data.date.trim() ? data.date.trim().slice(0, 120) : existing.date,
+      excerpt: typeof data.excerpt === 'string' && data.excerpt.trim() ? data.excerpt.trim().slice(0, 2000) : existing.excerpt,
+      isPublished: nextPublished,
+      displayOrder: data.displayOrder === undefined || data.displayOrder === '' ? existing.displayOrder : (Number.isFinite(Number(data.displayOrder)) ? Number(data.displayOrder) : existing.displayOrder),
+      content: preserveRecordSeo(existing.content, nextContent, false, { kind: 'blog', oldSlug: existing.slug, newSlug: data.slug ? String(data.slug).trim().toLowerCase() || existing.slug : existing.slug })!,
+    },
+  }));
+
+  return NextResponse.json(await catalogueTranslationResponse('blog', { blog: { ...blog, content: readJsonObject(blog.content) } }));
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  // Staff-only delete with same-origin mutation protection.
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+  }
+  if (!hasPermission(user, 'blogs.delete')) {
+    return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });
+  }
+
+  const originOk = isSameOriginRequest(request);
+  if (!originOk) {
+    return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  }
+
+  const { slug: paramSlug } = await params;
+
+  const existing = await db.blog.findUnique({ where: { slug: paramSlug } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Story not found.' }, { status: 404 });
+  }
+
+  await deleteWithCatalogueTranslations('blog', paramSlug, (tx) => tx.blog.delete({ where: { slug: paramSlug } }));
+
+  return NextResponse.json({ deleted: true });
+}

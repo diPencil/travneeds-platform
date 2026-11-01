@@ -1,0 +1,230 @@
+'use client'
+
+import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
+import { Anchor, ExternalLink, Eye, EyeOff, Layers3, MapPinned, Pencil, Plus, ShipWheel, Trash2 } from 'lucide-react'
+import { PageHead } from '@/components/admin/admin-shell'
+import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
+import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
+import { useAdminLocale } from '@/components/admin/admin-locale'
+import { useAdminCurrency } from '@/components/admin/admin-currency'
+import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
+import { invalidateToursCache } from '@/lib/tours-client'
+import { isTourPublished } from '@/lib/tour-publish'
+import { toast } from '@/components/admin/admin-toaster'
+
+type TripRow = {
+  slug: string
+  title: string
+  category: string
+  location: string
+  price: number | string
+  duration: string
+  deal?: unknown
+  aliases?: string[]
+  status?: string
+  bookingCount?: number
+}
+
+export default function TripsPage() {
+  const ar = useAdminLocale() === 'ar'
+  // Display-only conversion of catalogue USD prices, like the storefront.
+  const { formatUsd } = useAdminCurrency()
+  const [cat, setCat] = useState<'all' | 'one-day-tours' | 'multi-days-tours' | 'nile-cruises' | 'shore-excursions'>('all')
+  const [q, setQ] = useState('')
+  const [tours, setTours] = useState<TripRow[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [busySlug, setBusySlug] = useState<string | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<TripRow | null>(null)
+  const [deleteBusy, setDeleteBusy] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+
+  // DB-authoritative catalogue (no static fallback).
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      setLoading(true)
+      setError('')
+      try {
+        const res = await fetch('/api/tours?all=1&withBookingCounts=1', {
+          credentials: 'same-origin',
+          cache: 'no-store',
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Failed to load trips.')
+        if (!cancelled) setTours(Array.isArray(data.tours) ? data.tours : [])
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load trips.')
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    void load()
+    return () => { cancelled = true }
+  }, [])
+
+  const rows = useMemo(() => {
+    return tours
+      .filter((t) => (cat === 'all' ? true : t.category === cat))
+      .filter((t) => (q ? (t.title + t.location).toLowerCase().includes(q.toLowerCase()) : true))
+  }, [tours, cat, q])
+  const setPublished = async (slug: string, published: boolean) => {
+    if (busySlug || deleteBusy) return
+    setBusySlug(slug)
+    try {
+      const res = await fetch(`/api/tours/${encodeURIComponent(slug)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: published ? 'published' : 'draft' }),
+        credentials: 'same-origin',
+      })
+      const data = await res.json().catch(() => ({} as { error?: string; tour?: { status?: string } }))
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to update visibility.')
+      }
+      const status = typeof data.tour?.status === 'string' ? data.tour.status : (published ? 'published' : 'draft')
+      setTours((current) => current.map((t) => (t.slug === slug ? { ...t, status } : t)))
+      invalidateToursCache()
+      toast.success(
+        published
+          ? (ar ? `تم نشر "${slug}". ستظهر في الموقع العام.` : `"${slug}" published. It now appears on the public website.`)
+          : (ar ? `تم إخفاء "${slug}". لن تظهر في الموقع العام.` : `"${slug}" unpublished. It is now hidden from the public website.`),
+        { dedupeKey: `trip-publish-${slug}` },
+      )
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update visibility.', { dedupeKey: `trip-publish-${slug}` })
+    } finally {
+      setBusySlug(null)
+    }
+  }
+
+  const removeTour = async () => {
+    if (!deleteTarget || deleteBusy) return
+    setDeleteBusy(true)
+    setDeleteError('')
+    try {
+      const res = await fetch(`/api/tours/${encodeURIComponent(deleteTarget.slug)}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      })
+      const data = await res.json().catch(() => ({} as { error?: string }))
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to delete trip.')
+      }
+      setTours((current) => current.filter((t) => t.slug !== deleteTarget.slug))
+      invalidateToursCache()
+      toast.success(ar ? `تم حذف "${deleteTarget.title}".` : `"${deleteTarget.title}" deleted.`, { dedupeKey: `trip-delete-${deleteTarget.slug}` })
+      setDeleteTarget(null)
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete trip.')
+    } finally {
+      setDeleteBusy(false)
+    }
+  }
+
+  const tripSort = useAdminTableSort(rows, {
+    tour: (row) => row.title, category: (row) => row.category, location: (row) => row.location,
+    price: (row) => Number(row.price), bookings: (row) => row.bookingCount ?? 0,
+    status: (row) => row.status ?? 'published',
+  }, 'tour', 'asc')
+  const paging = usePagination(tripSort.sortedRows)
+
+  return (
+    <>
+      <PageHead
+        eyebrow="Catalogue"
+        title="Trips"
+        titleAr="الرحلات"
+        sub={`${tours.length} tours · prices, itinerary, media and reviews are edited in the Builder`}
+        subAr={`${tours.length} رحلة · الأسعار والبرنامج والوسائط والتقييمات تعدل من المنشئ`}
+        actions={<Link className="sp-btn primary" href="/admin/trips/builder"><Plus size={17} /> <AdminText en="Trip Builder" ar="منشئ الرحلات" /></Link>}
+      />
+      <AdminStats items={[
+        { label: <AdminText en="One-day tours" ar="رحلات اليوم الواحد" />, value: tours.filter((tour) => tour.category === 'one-day-tours').length, note: <AdminText en="Focused daily experiences" ar="تجارب يومية مركزة" />, icon: MapPinned, tone: 'orange' },
+        { label: <AdminText en="Multi-day packages" ar="باقات متعددة الأيام" />, value: tours.filter((tour) => tour.category === 'multi-days-tours').length, note: <AdminText en="Complete itineraries" ar="برامج متكاملة" />, icon: Layers3, tone: 'green' },
+        { label: <AdminText en="Nile cruises" ar="رحلات النيل" />, value: tours.filter((tour) => tour.category === 'nile-cruises').length, note: <AdminText en="River journeys" ar="رحلات نيلية" />, icon: ShipWheel, tone: 'blue' },
+        { label: <AdminText en="Shore excursions" ar="رحلات الشواطئ" />, value: tours.filter((tour) => tour.category === 'shore-excursions').length, note: <AdminText en="Port day trips" ar="رحلات الموانئ" />, icon: Anchor, tone: 'violet' },
+      ]} />
+      <Card title={<AdminText en="All trips" ar="كل الرحلات" />} sub={<AdminText en={`${rows.length} records match the current view`} ar={`${rows.length} سجل يطابق العرض الحالي`} />}>
+        <AdminTableTools query={q} onQueryChange={setQ} placeholder={ar ? 'ابحث بعنوان الرحلة أو الموقع...' : 'Search trip title or location...'}>
+          <div className="sp-tabs sp-compact-filter-tabs">
+          {['all', 'one-day-tours', 'multi-days-tours', 'nile-cruises', 'shore-excursions'].map((c) => (
+            <button key={c} type="button" className={cat === c ? 'active' : ''} onClick={() => setCat(c as typeof cat)}>
+              {ar ? ({'all': 'الكل', 'one-day-tours': 'رحلات اليوم الواحد', 'multi-days-tours': 'رحلات متعددة الأيام', 'nile-cruises': 'رحلات النيل', 'shore-excursions': 'رحلات الشواطئ'}[c] ?? c) : ({'all': 'All', 'one-day-tours': 'One day tours', 'multi-days-tours': 'Multi days tours', 'nile-cruises': 'Nile cruises', 'shore-excursions': 'Shore excursions'}[c] ?? c)}
+            </button>
+          ))}
+          </div>
+        </AdminTableTools>
+        {loading ? <AdminEmpty title={<AdminText en="Loading trips…" ar="جارٍ تحميل الرحلات…" />} copy={<AdminText en="Reading the authoritative catalogue." ar="تتم قراءة السجل المعتمد." />} />
+        : error ? <AdminEmpty title={<AdminText en="Could not load trips" ar="تعذر تحميل الرحلات" />} copy={<AdminText en={error} ar={error} />} />
+        : rows.length ? <AdminTableWrap><table className="sp-table">
+          <thead>
+            <tr><th className="sp-row-number">#</th><SortableTh label={<AdminText en="Tour" ar="الرحلة" />} column="tour" {...tripSort} onSort={tripSort.sortBy} /><SortableTh label={<AdminText en="Category" ar="التصنيف" />} column="category" {...tripSort} onSort={tripSort.sortBy} /><SortableTh label={<AdminText en="Location" ar="الموقع" />} column="location" {...tripSort} onSort={tripSort.sortBy} /><SortableTh label={<AdminText en="Price" ar="السعر" />} column="price" {...tripSort} onSort={tripSort.sortBy} /><SortableTh label={<AdminText en="Bookings" ar="الحجوزات" />} column="bookings" {...tripSort} onSort={tripSort.sortBy} /><SortableTh label={<AdminText en="Status" ar="الحالة" />} column="status" {...tripSort} onSort={tripSort.sortBy} /><th></th></tr>
+          </thead>
+          <tbody>
+            {paging.pageRows.map((t, index) => (
+              <tr key={t.slug}>
+                <td className="sp-row-number">{paging.from + index}</td>
+                <td><strong>{t.title}</strong><br /><small style={{ color: 'var(--sp-muted)' }}>{t.duration}</small></td>
+                <td>{ar ? ({'all': 'الكل', 'one-day-tours': 'رحلات اليوم الواحد', 'multi-days-tours': 'رحلات متعددة الأيام', 'nile-cruises': 'رحلات النيل', 'shore-excursions': 'رحلات الشواطئ'}[t.category] ?? t.category) : ({'all': 'All', 'one-day-tours': 'One day tours', 'multi-days-tours': 'Multi days tours', 'nile-cruises': 'Nile cruises', 'shore-excursions': 'Shore excursions'}[t.category] ?? t.category)}</td>
+                <td>{t.location}</td>
+                <td>{formatUsd(Number(t.price) || 0)}</td>
+                <td>{t.bookingCount ?? 0}</td>
+                <td><StatusPill status={isTourPublished(t) ? 'published' : 'hidden'} /></td>
+                <td><AdminTableActions>
+                  <AdminIconAction icon={Pencil} label={ar ? `تعديل ${t.title}` : `Edit ${t.title}`} href={`/admin/trips/builder?slug=${t.slug}`} />
+                  <AdminIconAction icon={ExternalLink} label={ar ? `عرض ${t.title} على الموقع` : `View ${t.title} on website`} href={`/egypt-tours/${t.slug}`} />
+                  <button
+                    type="button"
+                    className="sp-icon-btn"
+                    disabled={busySlug === t.slug}
+                    aria-busy={busySlug === t.slug}
+                    onClick={() => void setPublished(t.slug, !isTourPublished(t))}
+                    aria-label={isTourPublished(t) ? (ar ? `إخفاء ${t.title}` : `Unpublish ${t.title}`) : (ar ? `نشر ${t.title}` : `Publish ${t.title}`)}
+                    title={isTourPublished(t) ? (ar ? 'إخفاء' : 'Unpublish') : (ar ? 'نشر' : 'Publish')}
+                  >
+                    {isTourPublished(t) ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                  {!isTourPublished(t) ? (
+                    <button
+                      type="button"
+                      className="sp-icon-btn danger"
+                      disabled={busySlug === t.slug || deleteBusy}
+                      onClick={() => {
+                        setDeleteError('')
+                        setDeleteTarget(t)
+                      }}
+                      aria-label={ar ? `حذف ${t.title}` : `Delete ${t.title}`}
+                      title={ar ? 'حذف' : 'Delete'}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  ) : null}
+                </AdminTableActions></td>
+              </tr>
+            ))}
+          </tbody>
+        </table></AdminTableWrap> : <AdminEmpty title={<AdminText en="No trips found" ar="لا توجد رحلات" />} copy={<AdminText en="Try changing the search or filters." ar="جرب تغيير البحث أو الفلاتر." />} />}
+        {rows.length > 0 && <AdminPagination page={paging.page} pageCount={paging.pageCount} onPage={paging.setPage} pageSize={paging.pageSize} onPageSize={paging.setPageSize} from={paging.from} to={paging.to} total={paging.total} />}
+      </Card>
+      <AdminConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => { if (!deleteBusy) setDeleteTarget(null) }}
+        onConfirm={() => { void removeTour() }}
+        title={<AdminText en="Delete this trip?" ar="حذف هذه الرحلة؟" />}
+        description={<AdminText en="This permanently removes the trip from the admin catalogue. Trips linked to bookings, requests, reviews, favorites, offers, or gallery items cannot be deleted." ar="يزيل هذه الرحلة نهائيًا من كتالوج الإدارة. لا يمكن حذف الرحلات المرتبطة بحجوزات أو طلبات أو تقييمات أو مفضلات أو عروض أو عناصر معرض." />}
+        confirmLabel={<AdminText en={deleteBusy ? 'Deleting…' : 'Delete trip'} ar={deleteBusy ? 'جارٍ الحذف…' : 'حذف الرحلة'} />}
+        cancelLabel={<AdminText en="Keep" ar="إبقاء" />}
+        tone="danger"
+        canConfirm={!deleteBusy}
+      >
+        <div style={{ display: 'grid', gap: 8 }}>
+          <p style={{ margin: 0, fontWeight: 700 }}>{deleteTarget?.title}</p>
+          {deleteError ? <p role="alert" style={{ color: '#b91c1c', margin: 0 }}>{deleteError}</p> : null}
+        </div>
+      </AdminConfirmDialog>
+    </>
+  )
+}

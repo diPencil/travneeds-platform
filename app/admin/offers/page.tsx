@@ -1,0 +1,144 @@
+'use client'
+
+import { isOfferActive, offerHref } from '@/lib/special-offers'
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import { ExternalLink, Eye, EyeOff, Megaphone, Pencil, Plus, Tags, Ticket, Trash2 } from 'lucide-react'
+import { PageHead } from '@/components/admin/admin-shell'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card } from '@/components/admin/admin-ui'
+import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
+import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
+import { useAdminLocale } from '@/components/admin/admin-locale'
+import { useAdminCurrency } from '@/components/admin/admin-currency'
+import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
+import { SharedSelect } from '@/components/shared-select'
+import { invalidateOffersBlogsCache, useDbOffersStatus } from '@/lib/offers-blogs-client'
+import { isPromoBar } from '@/lib/marketing-campaigns'
+import { toast } from '@/components/admin/admin-toaster'
+
+export default function OffersPage() {
+  const ar = useAdminLocale() === 'ar'
+  // Display-only conversion of catalogue USD prices, like the storefront.
+  const { formatUsd } = useAdminCurrency()
+  const [query, setQuery] = useState('')
+  const [kind, setKind] = useState('all')
+  const [badge, setBadge] = useState('all')
+  const [visibility, setVisibility] = useState<'all' | 'published' | 'hidden'>('all')
+  const [deleteSlug, setDeleteSlug] = useState<string | null>(null)
+  // DB-authoritative catalogue with no static fallback: while the API is
+  // loading or failing, the screen shows loading/error  -  never bootstrap
+  // rows masquerading as database records.
+  const { data, loading, error, retry, refresh } = useDbOffersStatus()
+  const liveOffers = data ?? []
+
+  const setPublished = async (slug: string, published: boolean) => {
+    const dedupeKey = `offer-publish-${slug}`
+    try {
+      const res = await fetch(`/api/offers/${encodeURIComponent(slug)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPublished: published }),
+        credentials: 'same-origin',
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({} as { error?: string }))
+        throw new Error(data.error || 'Failed to update visibility.')
+      }
+      invalidateOffersBlogsCache()
+      toast.success(
+        published
+          ? (ar ? 'تم نشر العرض. ظهر على الموقع العام.' : 'Offer published. It now appears on the public website.')
+          : (ar ? 'تم إخفاء العرض عن الموقع العام.' : 'Offer hidden from the public website.'),
+        { dedupeKey },
+      )
+      // Refresh from the DB source of truth without a full page reload.
+      refresh()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update visibility.', { dedupeKey })
+    }
+  }
+
+  const removeOffer = async (slug: string) => {
+    try {
+      const res = await fetch(`/api/offers/${encodeURIComponent(slug)}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({} as { error?: string }))
+        throw new Error(data.error || 'Failed to delete offer.')
+      }
+      invalidateOffersBlogsCache()
+      toast.success(ar ? 'تم حذف العرض.' : 'Offer deleted.', { dedupeKey: `offer-delete-${slug}` })
+      // Refresh from the DB source of truth without a full page reload.
+      refresh()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete offer.', { dedupeKey: 'offer-delete-error' })
+    }
+  }
+
+  const badges = useMemo(() => [...new Set(liveOffers.map((offer) => offer.badge))], [liveOffers])
+  const rows = useMemo(() => liveOffers
+    .filter((offer) => kind === 'all' || (kind === 'tour' ? Boolean(offer.tourSlug) : kind === 'bars' ? isPromoBar(offer) : !offer.tourSlug))
+    .filter((offer) => badge === 'all' || offer.badge === badge)
+    .filter((offer) => visibility === 'all' || (visibility === 'hidden' ? offer.isPublished === false : offer.isPublished !== false))
+    .filter((offer) => `${offer.title} ${offer.copy} ${offer.badge}`.toLowerCase().includes(query.trim().toLowerCase())), [liveOffers, badge, query, visibility, kind])
+  const offerSort = useAdminTableSort(rows, {
+    offer: (row) => row.title,
+    badge: (row) => row.badge,
+    price: (row) => row.price ?? -1,
+    highlights: (row) => row.highlights?.length ?? 0,
+    status: (row) => row.isPublished === false ? 'hidden' : 'published',
+  }, 'offer', 'asc')
+  const paging = usePagination(offerSort.sortedRows)
+  const hiddenCount = liveOffers.filter((o) => o.isPublished === false).length
+  const publishedCount = liveOffers.length - hiddenCount
+
+  return <>
+    <PageHead eyebrow="Content" title="Special Offers" titleAr="العروض الخاصة" sub="Discounts, campaign labels and linked journeys" subAr="الخصومات وشارات الحملات والرحلات المرتبطة" actions={<Link className="sp-btn primary" href="/admin/offers/new"><Plus size={17} /> <AdminText en="New offer" ar="عرض جديد" /></Link>} />
+    <AdminStats items={[
+      { label: <AdminText en="Tour offers" ar="عروض الرحلات" />, value: liveOffers.filter((o) => Boolean(o.tourSlug)).length, note: <AdminText en="Linked journeys" ar="رحلات مرتبطة" />, icon: Ticket },
+      { label: <AdminText en="Marketing campaigns" ar="الحملات التسويقية" />, value: liveOffers.filter((o) => !o.tourSlug && !isPromoBar(o)).length, note: <AdminText en="Standalone travel campaigns" ar="حملات سفر مستقلة" />, icon: Tags, tone: 'orange' },
+      { label: <AdminText en="Promotional bars" ar="الأشرطة الترويجية" />, value: liveOffers.filter((o) => isPromoBar(o)).length, note: <AdminText en="Top and footer bars" ar="الشريطان العلوي والفوتر" />, icon: Megaphone, tone: 'violet' },
+      { label: <AdminText en="Visibility" ar="الظهور" />, value: <span className="sp-stat-split"><span>{publishedCount}</span><i aria-hidden="true" /><span>{hiddenCount}</span></span>, note: <AdminText en="Published / Hidden" ar="منشورة / مخفية" />, icon: Eye, tone: 'green' },
+    ]} />
+    <Card title={<AdminText en="All offers" ar="كل العروض" />} sub={<AdminText en={`${rows.length} of ${liveOffers.length} offers shown`} ar={`عرض ${rows.length} من ${liveOffers.length} عروض`} />}>
+      <AdminTableTools query={query} onQueryChange={setQuery} placeholder={ar ? 'ابحث بعنوان العرض أو الحملة...' : 'Search offer title or campaign...'}>
+        <SharedSelect value={kind} onChange={setKind} locale={ar ? 'ar' : 'en'} label="Offer type" options={[{ value: 'all', label: ar ? 'كل الأنواع' : 'All types' }, { value: 'tour', label: ar ? 'عرض رحلة' : 'Tour offer' }, { value: 'campaign', label: ar ? 'حملة تسويقية' : 'Marketing campaign' }, { value: 'bars', label: ar ? 'شريط ترويجي' : 'Promotional bar' }]}/>
+        <SharedSelect value={badge} onChange={setBadge} locale={ar ? 'ar' : 'en'} label={ar ? 'فلترة حسب الشارة' : 'Filter by campaign label'} popupWidth="trigger" options={[{ value: 'all', label: ar ? 'كل الشارات' : 'All labels' }, ...badges.map((item) => ({ value: item, label: item }))]} />
+        <SharedSelect value={visibility} onChange={(next) => setVisibility(next as typeof visibility)} locale={ar ? 'ar' : 'en'} label={ar ? 'فلترة حسب الظهور' : 'Filter by visibility'} options={[{ value: 'all', label: ar ? 'الكل' : 'All' }, { value: 'published', label: ar ? 'المنشورة' : 'Published' }, { value: 'hidden', label: ar ? 'المخفية' : 'Hidden' }]} />
+      </AdminTableTools>
+      {loading ? <AdminEmpty title={<AdminText en="Loading offers…" ar="جارٍ تحميل العروض…" />} copy={<AdminText en="Reading the authoritative catalogue." ar="تتم قراءة السجل المعتمد." />} />
+      : error ? <><AdminEmpty title={<AdminText en="Could not load offers" ar="تعذر تحميل العروض" />} copy={<AdminText en={error} ar={error} />} /><div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}><button type="button" className="sp-btn" onClick={retry}><AdminText en="Retry" ar="إعادة المحاولة" /></button></div></>
+      : rows.length ? <AdminTableWrap><table className="sp-table">
+        <thead><tr><th className="sp-row-number">#</th><SortableTh label={<AdminText en="Offer" ar="العرض" />} column="offer" {...offerSort} onSort={offerSort.sortBy} /><th><AdminText en="Type" ar="النوع"/></th><SortableTh label={<AdminText en="Badge" ar="الشارة" />} column="badge" {...offerSort} onSort={offerSort.sortBy} /><SortableTh label={<AdminText en="Price" ar="السعر" />} column="price" {...offerSort} onSort={offerSort.sortBy} /><SortableTh label={<AdminText en="Highlights" ar="البارزة" />} column="highlights" {...offerSort} onSort={offerSort.sortBy} /><SortableTh label={<AdminText en="Status" ar="الحالة" />} column="status" {...offerSort} onSort={offerSort.sortBy} /><th></th></tr></thead>
+        <tbody>{paging.pageRows.map((offer, index) => {
+          const isHidden = offer.isPublished === false
+          const scheduled = Boolean(offer.startsAt && Date.parse(offer.startsAt) > Date.now())
+          const statusLabel = isHidden ? (ar ? 'مخفية' : 'Hidden') : scheduled ? (ar ? 'مجدولة' : 'Scheduled') : !isOfferActive(offer) ? (ar ? 'منتهية' : 'Expired') : (ar ? 'نشطة' : 'Active')
+          return <tr key={offer.slug}>
+            <td className="sp-row-number">{paging.from + index}</td>
+            <td><strong>{offer.title}</strong><br /><small style={{ color: 'var(--sp-muted)' }}>{offer.copy.slice(0, 70)}...</small></td><td>{offer.tourSlug ? <AdminText en="Tour offer" ar="عرض رحلة"/> : isPromoBar(offer) ? <AdminText en="Promotional bar" ar="شريط ترويجي"/> : <AdminText en="Marketing campaign" ar="حملة تسويقية"/>}</td><td>{offer.badge}</td><td>{offer.price != null ? formatUsd(offer.price) : <AdminText en="Not set" ar="غير محدد" />}</td><td>{offer.highlights?.length ?? 0}</td><td><span className={`sp-status is-${isHidden ? 'cancelled' : 'confirmed'}`}>{statusLabel}</span></td>
+            <td><AdminTableActions>
+              <AdminIconAction icon={Pencil} label={ar ? `تعديل ${offer.title}` : `Edit ${offer.title}`} href={`/admin/offers/new?slug=${encodeURIComponent(offer.slug)}`} />
+              <AdminIconAction icon={ExternalLink} label={ar ? `عرض ${offer.title}` : `View ${offer.title}`} href={offerHref(offer)} />
+              <button type="button" className="sp-icon-btn" onClick={() => void setPublished(offer.slug, isHidden ? true : false)} aria-label={isHidden ? (ar ? `نشر ${offer.title}` : `Publish ${offer.title}`) : (ar ? `إخفاء ${offer.title}` : `Hide ${offer.title}`)} title={isHidden ? (ar ? 'نشر' : 'Publish') : (ar ? 'إخفاء' : 'Hide')}>{isHidden ? <Eye size={18} /> : <EyeOff size={18} />}</button>
+              <AdminIconAction icon={Trash2} label={ar ? `حذف ${offer.title}` : `Delete ${offer.title}`} tone="danger" onClick={() => setDeleteSlug(offer.slug)} />
+            </AdminTableActions></td>
+          </tr>
+        })}</tbody>
+      </table></AdminTableWrap> : <AdminEmpty title={<AdminText en="No offers found" ar="لا توجد عروض" />} copy={<AdminText en="Try changing the search or filters." ar="جرب تغيير البحث أو الفلاتر." />} />}
+        {rows.length > 0 && <AdminPagination page={paging.page} pageCount={paging.pageCount} onPage={paging.setPage} pageSize={paging.pageSize} onPageSize={paging.setPageSize} from={paging.from} to={paging.to} total={paging.total} />}
+    </Card>
+    <AdminConfirmDialog
+      open={deleteSlug !== null}
+      onClose={() => setDeleteSlug(null)}
+      onConfirm={() => { if (deleteSlug) { void removeOffer(deleteSlug) } setDeleteSlug(null) }}
+      title={<AdminText en="Delete this offer?" ar="حذف هذا العرض؟" />}
+      description={<AdminText en="Removes it from the admin list and public pages everywhere." ar="يحذفه من قائمة الإدارة والصفحات العامة في كل مكان." />}
+      confirmLabel={<AdminText en="Delete" ar="حذف" />}
+      cancelLabel={<AdminText en="Keep" ar="تراجع" />}
+      tone="danger"
+    />
+  </>
+}

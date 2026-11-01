@@ -1,0 +1,276 @@
+{
+  "version": 1,
+  "decisions": [
+    {
+      "area": "public-search",
+      "direction": "Live page suggestions",
+      "summary": "Keep the existing desktop/mobile search field; show named, typed page links beneath it while typing, with bounded thumbnails and readable text-led full results.",
+      "constraints": [
+        "Use published database content only, with the same source for suggestions and full search",
+        "Open canonical content pages rather than image files",
+        "Preserve EN/ES/IT, keyboard navigation, mobile bounds and honest loading/error states"
+      ]
+    },
+    {
+      "area": "trips-catalogue",
+      "direction": "Unified Egypt Trip Finder",
+      "summary": "A compact catalogue with a search-first header, scannable filters, and the existing STAR PYRAMIDS tour cards across all four trip categories.",
+      "constraints": [
+        "Use only listed tours from the canonical tour data source",
+        "Keep current tour imagery, cards, detail links, blue and orange brand accents",
+        "Do not invent hotel amenities, live availability, reviews, or date-based booking data",
+        "Make filtering, sorting, pagination, mobile layout, and Arabic controls usable"
+      ]
+    },
+    {
+      "area": "blog-detail",
+      "direction": "Travel Guide Editorial",
+      "summary": "Image-led destination guides use a cinematic but bounded hero, an at-a-glance facts band, readable editorial sections, practical advice, and a contextual tour CTA.",
+      "constraints": [
+        "Preserve STAR PYRAMIDS blue, orange, typography, header, and footer",
+        "Use truthful destination photography and practical travel content",
+        "Keep article text readable and responsive without oversized headings",
+        "Avoid nested cards and generic marketing-page composition"
+      ]
+    },
+    {
+      "area": "special-offers",
+      "direction": "Conversion-led Travel Merchandising",
+      "summary": "Offer listings use one recognizable promotional card system across the homepage and full catalogue, supported by a sales-led hero, scannable inclusions, trust signals, and clear enquiry paths.",
+      "constraints": [
+        "Never fabricate prices, countdowns, deadlines, availability, or inclusions",
+        "Use destination photography as the primary sales signal",
+        "Keep STAR PYRAMIDS blue and orange as purposeful conversion accents",
+        "Make the offer hierarchy, benefits, terms note, and next action clear on every viewport",
+        "Use the shared PromotionCard and render price or countdown UI only when verified data exists"
+      ]
+    },
+    {
+      "area": "day-tour-detail",
+      "direction": "Focused Private Day Visit",
+      "summary": "One-day tour pages share the multi-day package layout, image gallery, booking panel, facts, tabs, and section styling, with a shorter stop-by-stop visit plan instead of a day-by-day package itinerary.",
+      "constraints": [
+        "Keep the visual structure aligned with the multi-day package detail page",
+        "Never imply unverified stops, times, inclusions, or cancellation terms",
+        "Use existing STAR PYRAMIDS blue, orange, photography, and typography",
+        "Use one responsive template for every one-day tour"
+      ]
+    },
+    {
+      "area": "destination-detail",
+      "direction": "Destination Story + Trip Planning",
+      "summary": "Every destination uses one image-led editorial template with destination-specific facts, signature experiences, a suggested rhythm, practical guidance, related tours, and a planning CTA.",
+      "constraints": [
+        "Keep every destination data-driven through the shared Destination detail model",
+        "Use photography that clearly represents the destination or travel experience",
+        "Pull related tours from the existing catalogue instead of duplicating tour data",
+        "Keep advice practical, concise, responsive, and free of unverified prices or availability claims"
+      ]
+    },
+    {
+      "area": "contact-page",
+      "direction": "Local Travel Conversation",
+      "summary": "The contact route uses an image-led Egypt hero, clear local trust signals, a focused trip-enquiry form, transparent demo contact methods, and a simple three-step response story.",
+      "constraints": [
+        "Keep phone and WhatsApp interactions explicitly local demo experiences until real contact details are approved",
+        "Use the existing STAR PYRAMIDS blue, orange, typography, photography, header, and footer",
+        "Keep the enquiry form honest about its preview-only behavior and do not imply server submission",
+        "Support English, Arabic RTL, keyboard navigation, reduced motion, and mobile layouts"
+      ]
+    },
+    {
+      "area": "account-authentication",
+      "direction": "Egypt Journey Account",
+      "summary": "Login and registration share an image-led account shell with clear identity fields, complete country and calling-code selection, bilingual layouts, and honest previews for backend-dependent authentication.",
+      "constraints": [
+        "Keep OAuth and account submission visibly in preview mode until a real backend integration is configured",
+        "Treat full name and username as separate account fields",
+        "Synchronize the selected country with the displayed mobile calling code",
+        "Preserve keyboard access, password visibility controls, validation, Arabic RTL, and responsive layouts"
+      ]
+    },
+    {
+      "area": "tour-journey-videos",
+      "direction": "Newest-first Social Reels",
+      "summary": "Tour detail pages use an auto-advancing vertical social-reels slider for dashboard-managed video links, ordered newest first, followed by an auto-advancing slider of real related tour records.",
+      "constraints": [
+        "Keep the primary tour image gallery unchanged and use video only in the journey media section",
+        "Support YouTube, Instagram, TikTok, Facebook, Vimeo, secure direct video URLs, and a safe external-link fallback",
+        "Never inject dashboard HTML or pass arbitrary URLs into an iframe",
+        "Auto-advance the rail only; never autoplay embedded media or its audio",
+        "Keep the 9:16 rail usable with touch, keyboard focus, English, Arabic RTL, and mobile layouts"
+      ]
+    },
+    {
+      "area": "site-header-navigation",
+      "direction": "Stable Primary Header + Compact Sticky Navigation",
+      "summary": "The full desktop header keeps its established navigation, while the scroll header reduces the menu to Home, Egypt Tours, Rent Car, Events, and one About company dropdown.",
+      "constraints": [
+        "Do not change the desktop navigation shown before scrolling",
+        "Group About Us, Contact Us, and Blogs only inside the sticky About company dropdown",
+        "Keep the Egypt Tours dropdown available in both desktop header states",
+        "On mobile show only the menu button, logo, language control, and notification control in the top row",
+        "Hide the separate sticky header on mobile and retain an accessible mobile navigation drawer"
+      ]
+    },
+    {
+      "area": "events-listing",
+      "direction": "Image-led Seasonal Calendar",
+      "summary": "The events catalogue opens with a full-width photographic hero driven by the next real event, followed by its date, location, useful catalogue counts, and direct paths into the calendar.",
+      "constraints": [
+        "Use the canonical events collection for the hero image, featured event, dates, locations, and counts",
+        "Keep the hero photographic and aligned with STAR PYRAMIDS blue and orange accents",
+        "Do not use abstract gradients, decorative circles, or invented availability claims",
+        "Keep the event cards visible immediately after the hero on desktop and mobile"
+      ]
+    },
+    {
+      "area": "tour-category-listings",
+      "direction": "Photographic Catalogue Gateway",
+      "summary": "One-day tours, multi-day journeys, Nile cruises, and shore excursions share the selected Events hero proportions and image-led hierarchy while retaining their existing catalogue structures.",
+      "constraints": [
+        "Use real tour images, featured records, locations, durations, and counts from the canonical tour data",
+        "Keep the selected Events hero height, overlay, typography, action hierarchy, rail, and responsive behavior consistent across all four categories",
+        "Preserve each page's filters, region navigation, cruise-type cards, tour cards, routes, and pagination",
+        "Support English, Arabic RTL, keyboard navigation, and mobile without inventing availability or operational claims"
+      ]
+    },
+    {
+      "area": "primary-content-page-heroes",
+      "direction": "Unified Photographic Gateway",
+      "summary": "Rent Car, Contact, About, Blogs, and Special Offers use the selected Events hero proportions and hierarchy, with page-specific featured content, metadata, calls to action, and truthful catalogue counts.",
+      "constraints": [
+        "Share one PageShowcaseHero implementation instead of duplicating page-specific hero markup",
+        "Use existing project photography and canonical page data for featured records and statistics",
+        "Preserve every page's existing sections, forms, cards, interactions, and routes below the hero",
+        "Keep the hero responsive and bilingual with Arabic RTL support and no invented operational claims"
+      ]
+    },
+    {
+      "area": "blogs-listing",
+      "direction": "Egypt Travel Journal",
+      "summary": "The blogs index uses a magazine-style featured guide followed by an aligned three-column journal grid, giving every recent story equal visual weight instead of generic catalogue cards.",
+      "constraints": [
+        "Use canonical blog images, categories, dates, excerpts, and reading times",
+        "Keep blog cards visually distinct from tour, event, and offer cards",
+        "Preserve direct article links, keyboard focus, responsive layouts, and Arabic RTL behavior",
+        "Do not invent authors, popularity, comments, or editorial metadata"
+      ]
+    },
+    {
+      "area": "event-detail",
+      "direction": "Event-led Egypt Escape",
+      "summary": "Every event detail route uses its own visual identity, introduction, highlights, itinerary, inclusions, optional extras, location, and enquiry path inside one shared event-planning template.",
+      "constraints": [
+        "Drive the hero and all detail sections from the canonical event record",
+        "Do not present a city as a confirmed venue or invent ticket availability, prices, or operational details",
+        "Keep the booking interaction an honest no-payment enquiry until backend confirmation exists",
+        "Support keyboard access, responsive layouts, English, and Arabic RTL"
+      ]
+    },
+    {
+      "area": "customer-account-portal",
+      "direction": "Egypt Journey Control Center",
+      "summary": "A standalone customer dashboard connects bookings, the trip cart, saved tours, payments, a unified support conversation, profile details, and account settings through one bilingual backend-ready workspace with its own sidebar and topbar.",
+      "constraints": [
+        "Use the existing browser-side cart, checkout bookings, enquiries, and canonical tour data until backend APIs replace the repository functions",
+        "Keep payment, receipt, and social login states honest and clearly backend-dependent",
+        "Use STAR PYRAMIDS navy, blue, and orange in a quiet operational layout instead of a marketing dashboard",
+        "Never render the public website header, promotion strip, footer, or floating support widgets inside account routes",
+        "Provide dashboard-native access to website return, trip search, language, currency, cart, notifications, profile, and sign out",
+        "Support English, Arabic RTL, keyboard access, reduced motion, and a mobile sidebar drawer",
+        "Keep Profile focused on identity and contact details, with Settings as a separate route for preferences, notifications, security, and privacy",
+        "Use the same first name, last name, username, email, complete country list, calling code, and national phone fields across registration, customer profile, and admin customer forms",
+        "Keep stable routes for overview, bookings, saved trips, payments, messages, profile, and settings"
+      ]
+    },
+    {
+      "area": "admin-website-enquiries",
+      "direction": "Two-panel enquiry review",
+      "summary": "A searchable and status-filtered enquiry list beside spacious customer details and a single internal Save Changes workflow.",
+      "constraints": [
+        "Preserve Support Conversations and server RBAC",
+        "Use existing admin tokens and SharedSelect",
+        "Keep status, authorized staff assignment and notes in one database save",
+        "Never imply saving sends email",
+        "Preserve English, Spanish, Italian and dormant Arabic RTL"
+      ]
+    },
+    {
+      "area": "special-offers",
+      "direction": "Preserve catalogue hero; editable campaign detail and placements",
+      "summary": "Retain the existing Special Offers hero, trust, process and final CTA sections. Use the existing PromotionCard for actual Offer records and a navy/orange responsive campaign detail with real content. Campaign sidebar cards are controlled by stored placements and display order.",
+      "constraints": [
+        "Never advertise fixed seasonal tours as offers without Offer records",
+        "Preserve existing campaigns and manual tour deals",
+        "No automatic sidebar placement for legacy campaigns",
+        "Use configured copy, images, prices, terms and safe CTA links"
+      ]
+    },
+    {
+      "area": "marketing-campaign-detail",
+      "direction": "Immersive Campaign Story",
+      "summary": "Standalone offer pages use campaign photography as a full-width first-viewport sales signal, then reveal the stored narrative, value, dates, highlights, gallery, terms and action in a clear conversion sequence.",
+      "constraints": [
+        "Render only campaign data supplied through the existing offer editor",
+        "Never invent prices, dates, availability, inclusions or terms",
+        "Keep STAR PYRAMIDS navy and orange, the public shell, locale behavior and campaign actions",
+        "Hide empty optional sections and keep the layout complete with only the required campaign fields",
+        "Maintain readable LTR and dormant Arabic RTL layouts across desktop and mobile"
+      ]
+    },
+    {
+      "area": "trip-builder-navigation",
+      "direction": "Compact horizontal step timeline",
+      "summary": "Eleven numbered connected steps with compact labels, distinct current/completed states and horizontal overflow only on narrower viewports.",
+      "constraints": [
+        "Preserve existing step order and navigation handlers",
+        "Preserve STAR PYRAMIDS blue/orange tokens and keyboard focus",
+        "Do not change pricing, draft save, publishing, or preview behavior",
+        "Keep Arabic disabled; retain enabled content language controls"
+      ]
+    },
+    {
+      "area": "destinations-directory",
+      "direction": "Shared Events hero and image-led catalogue cards",
+      "summary": "Reuse PageShowcaseHero with existing editorial CMS data; use scoped 3/2/1 image-first cards and show all published destinations in the full directory.",
+      "constraints": [
+        "Preserve existing CMS identity, publication, EN/ES/IT and detail pages",
+        "Retain showInDestinations for curated/homepage selections without changing saved flags",
+        "No browser QA or production changes"
+      ]
+    },
+    {
+      "area": "admin-creation-timelines",
+      "direction": "Reuse the compact Trip Builder timeline for the five requested creation editors",
+      "summary": "Stable, mounted steps for Destination, Category, Event, Offer and Story with previous/next navigation and globally visible save/errors; no automatic writes or changed save contracts.",
+      "constraints": [
+        "Preserve every existing field, translation, media control, permission and handler",
+        "Keep English admin navigation and enabled EN/ES/IT content; Arabic remains disabled",
+        "No browser testing, database changes or deployment"
+      ]
+    },
+    {
+      "area": "website-navigation-manager",
+      "direction": "Existing admin two-panel menu editor",
+      "summary": "A compact menu structure tree beside the selected item settings, reusing existing cards, controls and confirmation dialogs. Published primary/sticky navigation and the mobile drawer retain existing classes and appearance.",
+      "constraints": [
+        "Single SiteSetting draft/published source with immutable dynamic record references",
+        "One dropdown level; accessible move controls alongside drag and drop",
+        "EN/ES/IT only; no browser testing or new UI dependencies"
+      ]
+    },
+    {
+      "area": "homepage-mobile-hero",
+      "direction": "Shorter landscape media with centered CMS heading, search below",
+      "summary": "At widths up to 760px, show homepage media in a separate preferred 8:5 frame (width 4, height 2.5) with centered heading and eyebrow. The owner refined the initial square to reduce vertical space. Keep the three search tabs and their existing engine underneath in normal document flow.",
+      "constraints": [
+        "Retain Hero Settings image/video, optional mobile media, poster, crop position, overlay and EN/ES/IT text",
+        "Keep the same HomepageHero in the CMS preview and public homepage",
+        "Preserve desktop/tablet flow and all search state, handlers and booking logic",
+        "Allow oversized text to grow rather than introducing text truncation",
+        "No browser automation, database changes, dependency installation or deployment"
+      ]
+    }
+  ]
+}
