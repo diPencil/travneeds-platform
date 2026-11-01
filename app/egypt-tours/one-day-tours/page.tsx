@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: 'One-Day Tours in Egypt',
-    description: 'Book half-day and full-day Cairo day tours, Luxor and Aswan excursions with STAR PYRAMIDS. Expert guides, instant confirmation, and unforgettable Egypt experiences.',
+    description: 'Book half-day and full-day Cairo day tours, Luxor and Aswan excursions with TravNeeds. Expert guides, instant confirmation, and unforgettable Egypt experiences.',
     alternates: { canonical: `${siteUrl}/egypt-tours/one-day-tours`, languages: hreflang },
     ...(await pageContentMetadata('one-day')),
   }

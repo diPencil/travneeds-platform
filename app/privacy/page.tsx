@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: 'Privacy Policy',
-    description: 'STAR PYRAMIDS privacy policy. Learn how we collect, use, and protect your personal information when you book Egypt tours and travel services.',
+    description: 'TravNeeds privacy policy. Learn how we collect, use, and protect your personal information when you book Egypt tours and travel services.',
     alternates: { canonical: `${siteUrl}/privacy`, languages: hreflang },
     ...(await pageContentMetadata('privacy')),
   }

@@ -57,7 +57,7 @@ export function BookingPrintDocument({ booking }: { booking: Booking }) {
       <header className="bpd-head">
         <span className="bpd-brand">
           <BrandMark alt="" />
-          <span><strong>STAR PYRAMIDS</strong><small>{tx(locale, { en: 'Booking document', es: 'Documento de reserva', it: 'Documento di prenotazione', ar: 'وثيقة حجز' })}</small></span>
+          <span><strong>TravNeeds</strong><small>{tx(locale, { en: 'Booking document', es: 'Documento de reserva', it: 'Documento di prenotazione', ar: 'وثيقة حجز' })}</small></span>
         </span>
         <span className="bpd-title">
           <strong>{title}</strong>

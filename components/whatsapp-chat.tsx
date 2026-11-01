@@ -15,26 +15,26 @@ type WaMsg = { id: number; from: 'agent' | 'user'; text: string; time: string }
 const baseCopy = {
   en: {
     openLabel: 'Chat on WhatsApp', closeLabel: 'Close WhatsApp chat', sendLabel: 'Send via WhatsApp',
-    name: 'STAR PYRAMIDS', online: 'Online', inputPh: 'Type your message...',
-    welcome: 'Hi there! This is STAR PYRAMIDS. Tell us what you need (tours, prices, or booking help) and press send.',
+    name: 'TravNeeds', online: 'Online', inputPh: 'Type your message...',
+    welcome: 'Hi there! This is TravNeeds. Tell us what you need (tours, prices, or booking help) and press send.',
     hint: 'Pressing send opens WhatsApp with your message ready.',
   },
   ar: {
     openLabel: 'كلمنا واتساب', closeLabel: 'إغلاق شات الواتساب', sendLabel: 'إرسال عبر واتساب',
-    name: 'STAR PYRAMIDS', online: 'متصل الآن', inputPh: 'اكتب رسالتك...',
-    welcome: 'أهلاً بك! هذه STAR PYRAMIDS. أخبرنا بما تحتاج (رحلات أو أسعار أو مساعدة في الحجز) ثم اضغط إرسال.',
+    name: 'TravNeeds', online: 'متصل الآن', inputPh: 'اكتب رسالتك...',
+    welcome: 'أهلاً بك! هذه TravNeeds. أخبرنا بما تحتاج (رحلات أو أسعار أو مساعدة في الحجز) ثم اضغط إرسال.',
     hint: 'سيؤدي الضغط على إرسال إلى فتح واتساب والرسالة جاهزة.',
   },
   es: {
     openLabel: 'Chatear por WhatsApp', closeLabel: 'Cerrar el chat de WhatsApp', sendLabel: 'Enviar por WhatsApp',
-    name: 'STAR PYRAMIDS', online: 'En línea', inputPh: 'Escribe tu mensaje...',
-    welcome: '¡Hola! Somos STAR PYRAMIDS. Cuéntanos qué necesitas (tours, precios o ayuda con tu reserva) y pulsa enviar.',
+    name: 'TravNeeds', online: 'En línea', inputPh: 'Escribe tu mensaje...',
+    welcome: '¡Hola! Somos TravNeeds. Cuéntanos qué necesitas (tours, precios o ayuda con tu reserva) y pulsa enviar.',
     hint: 'Al pulsar enviar se abrirá WhatsApp con tu mensaje listo.',
   },
   it: {
     openLabel: 'Chatta su WhatsApp', closeLabel: 'Chiudi la chat WhatsApp', sendLabel: 'Invia via WhatsApp',
-    name: 'STAR PYRAMIDS', online: 'Online', inputPh: 'Scrivi il tuo messaggio...',
-    welcome: 'Ciao! Siamo STAR PYRAMIDS. Dicci cosa ti serve (tour, prezzi o aiuto con la prenotazione) e premi invia.',
+    name: 'TravNeeds', online: 'Online', inputPh: 'Scrivi il tuo messaggio...',
+    welcome: 'Ciao! Siamo TravNeeds. Dicci cosa ti serve (tour, prezzi o aiuto con la prenotazione) e premi invia.',
     hint: 'Premendo invia si aprirà WhatsApp con il tuo messaggio pronto.',
   },
 } as const

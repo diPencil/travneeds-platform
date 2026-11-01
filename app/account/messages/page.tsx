@@ -3,7 +3,7 @@ import { CustomerAccountPage } from '@/components/account-portal'
 
 export const metadata: Metadata = {
   title: 'My Messages',
-  description: 'View your STAR PYRAMIDS support conversations.',
+  description: 'View your TravNeeds support conversations.',
   robots: { index: false, follow: false, nocache: true },
 }
 

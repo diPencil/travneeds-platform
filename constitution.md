@@ -1,4 +1,4 @@
-# Star Pyramids Engineering Constitution
+# TravNeeds Engineering Constitution
 
 ## 1. Authority and scope
 

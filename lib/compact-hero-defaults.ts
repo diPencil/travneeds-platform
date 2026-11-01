@@ -16,9 +16,9 @@ function cruiseDefaults(id: CruiseHeroId) {
 }
 export const compactHeroDefaults = {
   trips: { image: '', links: {}, text: {
-    en: { title: 'Find your Egypt trip', intro: 'From one memorable day to a journey across the country. Explore every trip in one place.', eyebrow: 'STAR PYRAMIDS, EGYPT', stat0: 'All trips' },
-    es: { title: 'Encuentra tu viaje por Egipto', intro: 'De un día memorable a un viaje por todo el país. Explora todos los viajes en un solo lugar.', eyebrow: 'STAR PYRAMIDS, EGYPT', stat0: 'Todos los viajes' },
-    it: { title: 'Trova il tuo viaggio in Egitto', intro: 'Da un giorno memorabile a un viaggio in tutto il paese. Esplora tutti i viaggi in un unico luogo.', eyebrow: 'STAR PYRAMIDS, EGYPT', stat0: 'Tutti i viaggi' },
+    en: { title: 'Find your Egypt trip', intro: 'From one memorable day to a journey across the country. Explore every trip in one place.', eyebrow: 'TravNeeds, EGYPT', stat0: 'All trips' },
+    es: { title: 'Encuentra tu viaje por Egipto', intro: 'De un día memorable a un viaje por todo el país. Explora todos los viajes en un solo lugar.', eyebrow: 'TravNeeds, EGYPT', stat0: 'Todos los viajes' },
+    it: { title: 'Trova il tuo viaggio in Egitto', intro: 'Da un giorno memorabile a un viaggio in tutto il paese. Esplora tutti i viaggi in un unico luogo.', eyebrow: 'TravNeeds, EGYPT', stat0: 'Tutti i viaggi' },
   } },
   'standard-nile-cruises': cruiseDefaults('standard-nile-cruises'),
   'deluxe-nile-cruise': cruiseDefaults('deluxe-nile-cruise'),

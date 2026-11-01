@@ -3,7 +3,7 @@ import { CustomerAccountPage } from '@/components/account-portal'
 
 export const metadata: Metadata = {
   title: 'Change Password',
-  description: 'Change your STAR PYRAMIDS account password.',
+  description: 'Change your TravNeeds account password.',
   robots: { index: false, follow: false, nocache: true },
 }
 

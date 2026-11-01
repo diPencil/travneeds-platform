@@ -51,7 +51,7 @@ interface NotificationPanelProps {
 }
 
 /**
- * Single shared STAR PYRAMIDS notification presentation, used by the
+ * Single shared TravNeeds notification presentation, used by the
  * customer account panel and the admin bell panel alike. All data,
  * auth, copy, icons, time formatting, and navigation stay in the
  * calling context  -  this component only renders the approved visual

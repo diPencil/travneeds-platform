@@ -470,19 +470,19 @@ function CurrencyTab({ snapshot, canWrite, onSaved }: TabShell) {
 function EmailTab({ snapshot, canWrite, onSaved }: TabShell) {
   const ar = useAdminLocale() === 'ar'
   const t = useTabState(snapshot, (snap) => ({
-    fromName: val(snap, 'mail.fromName', 'Star Pyramids Tours'),
-    fromEmail: val(snap, 'mail.fromEmail', 'sales@starpyramids.com'),
+    fromName: val(snap, 'mail.fromName', 'TravNeeds Tours'),
+    fromEmail: val(snap, 'mail.fromEmail', 'sales@travneeds.com'),
     smtpHost: val(snap, 'mail.smtpHost', 'smtp.hostinger.com'),
     smtpPort: val(snap, 'mail.smtpPort', '465'),
     smtpEncryption: val(snap, 'mail.smtpEncryption', 'SSL'),
-    smtpUsername: val(snap, 'mail.smtpUsername', 'sales@starpyramids.com'),
+    smtpUsername: val(snap, 'mail.smtpUsername', 'sales@travneeds.com'),
     smtpPassword: '',
     smtpTimeout: val(snap, 'mail.smtpTimeout', '30'),
     imapProtocol: val(snap, 'mail.imapProtocol', 'IMAP'),
     imapHost: val(snap, 'mail.imapHost', 'imap.hostinger.com'),
     imapPort: val(snap, 'mail.imapPort', '993'),
     imapEncryption: val(snap, 'mail.imapEncryption', 'SSL'),
-    imapUsername: val(snap, 'mail.imapUsername', 'sales@starpyramids.com'),
+    imapUsername: val(snap, 'mail.imapUsername', 'sales@travneeds.com'),
     imapPassword: '',
     mailbox: val(snap, 'mail.mailbox', 'INBOX'),
   }))
@@ -600,7 +600,7 @@ function WhatsAppTab({ snapshot, canWrite, onSaved }: TabShell) {
   const ar = useAdminLocale() === 'ar'
   const t = useTabState(snapshot, (snap) => ({
     enabled: val(snap, 'whatsapp.enabled', 'true') === 'true',
-    sessionName: val(snap, 'whatsapp.sessionName', 'Star Pyramids Support'),
+    sessionName: val(snap, 'whatsapp.sessionName', 'TravNeeds Support'),
     inbox: val(snap, 'whatsapp.inbox', 'main'),
     metaAppId: val(snap, 'whatsapp.metaAppId', ''),
     wabaId: val(snap, 'whatsapp.wabaId', ''),
@@ -615,7 +615,7 @@ function WhatsAppTab({ snapshot, canWrite, onSaved }: TabShell) {
     try {
       const next = await patchSettings({
         'whatsapp.enabled': t.form.enabled ? 'true' : 'false',
-        'whatsapp.sessionName': t.form.sessionName.trim() || 'Star Pyramids Support',
+        'whatsapp.sessionName': t.form.sessionName.trim() || 'TravNeeds Support',
         'whatsapp.inbox': t.form.inbox,
         'whatsapp.metaAppId': t.form.metaAppId.trim(),
         'whatsapp.wabaId': t.form.wabaId.trim(),
@@ -667,7 +667,7 @@ function WhatsAppTab({ snapshot, canWrite, onSaved }: TabShell) {
             </div>
             <label><AdminText en="Phone Number ID" ar="معرف رقم الهاتف" /><input value={t.form.phoneNumberId} onChange={(e) => t.setForm((f) => ({ ...f, phoneNumberId: e.target.value }))} placeholder={ar ? 'أدخل معرف رقم الهاتف' : 'Enter Phone Number ID'} dir="ltr" disabled={!canWrite || t.saving} /></label>
             <SecretField labelEn="Access token" labelAr="رمز الوصول" value={t.form.accessToken} onChange={(accessToken) => t.setForm((f) => ({ ...f, accessToken }))} configured={secretConfigured(snapshot, 'whatsapp.accessToken')} disabled={!canWrite || t.saving} />
-            <label><AdminText en="Webhook callback" ar="رابط Webhook" /><input value="https://starpyramids.com/api/integrations/whatsapp/webhook" readOnly dir="ltr" /></label>
+            <label><AdminText en="Webhook callback" ar="رابط Webhook" /><input value="https://travneeds.com/api/integrations/whatsapp/webhook" readOnly dir="ltr" /></label>
             <SecretField labelEn="Verify token" labelAr="رمز التحقق" value={t.form.verifyToken} onChange={(verifyToken) => t.setForm((f) => ({ ...f, verifyToken }))} configured={secretConfigured(snapshot, 'whatsapp.verifyToken')} disabled={!canWrite || t.saving} />
           </div>
           <p className="sp-integration-note"><ShieldCheck size={15} /> <AdminText en="Tokens stay on the server and are never shown again. Saving stores configuration only - the provider connection is not verified." ar="تبقى الرموز في الخادم ولا تظهر مجددا. الحفظ يخزن الإعدادات فقط - لم يتم التحقق من اتصال المزود." /></p>
@@ -811,8 +811,8 @@ function OAuthTab({ provider, snapshot, canWrite, onSaved }: TabShell & { provid
             <>
               <label><AdminText en="Google OAuth Client ID" ar="معرف عميل Google OAuth" /><input value={t.form.clientId} onChange={(e) => t.setForm((f) => ({ ...f, clientId: e.target.value }))} placeholder={ar ? 'أدخل معرف عميل Google OAuth' : 'Enter Google OAuth Client ID'} dir="ltr" disabled={!canWrite || t.saving} /></label>
               <SecretField labelEn="Google OAuth Client Secret" labelAr="سر عميل Google OAuth" value={t.form.clientSecret} onChange={(clientSecret) => t.setForm((f) => ({ ...f, clientSecret }))} configured={secretConfigured(snapshot, secretKey)} disabled={!canWrite || t.saving} />
-              <label><AdminText en="Authorized JavaScript origin" ar="مصدر JavaScript المعتمد" /><input value="https://starpyramids.com" readOnly dir="ltr" /></label>
-              <label><AdminText en="Authorized redirect URI" ar="رابط إعادة التوجيه المعتمد" /><input value="https://starpyramids.com/api/auth/callback/google" readOnly dir="ltr" /></label>
+              <label><AdminText en="Authorized JavaScript origin" ar="مصدر JavaScript المعتمد" /><input value="https://travneeds.com" readOnly dir="ltr" /></label>
+              <label><AdminText en="Authorized redirect URI" ar="رابط إعادة التوجيه المعتمد" /><input value="https://travneeds.com/api/auth/callback/google" readOnly dir="ltr" /></label>
               <label><AdminText en="Requested scopes" ar="النطاقات المطلوبة" /><input value="openid email profile" readOnly dir="ltr" /></label>
             </>
           ) : (
@@ -821,8 +821,8 @@ function OAuthTab({ provider, snapshot, canWrite, onSaved }: TabShell & { provid
                 <label><AdminText en="Facebook App ID" ar="معرف تطبيق فيسبوك" /><input value={t.form.clientId} onChange={(e) => t.setForm((f) => ({ ...f, clientId: e.target.value }))} placeholder={ar ? 'أدخل معرف تطبيق فيسبوك' : 'Enter Facebook App ID'} dir="ltr" disabled={!canWrite || t.saving} /></label>
                 <SecretField labelEn="Facebook App Secret" labelAr="سر تطبيق فيسبوك" value={t.form.clientSecret} onChange={(clientSecret) => t.setForm((f) => ({ ...f, clientSecret }))} configured={secretConfigured(snapshot, secretKey)} disabled={!canWrite || t.saving} />
               </div>
-              <label><AdminText en="Valid OAuth redirect URI" ar="رابط إعادة توجيه OAuth الصالح" /><input value="https://starpyramids.com/api/auth/callback/facebook" readOnly dir="ltr" /></label>
-              <label><AdminText en="Data deletion callback" ar="رابط حذف البيانات" /><input value="https://starpyramids.com/api/auth/facebook/data-deletion" readOnly dir="ltr" /></label>
+              <label><AdminText en="Valid OAuth redirect URI" ar="رابط إعادة توجيه OAuth الصالح" /><input value="https://travneeds.com/api/auth/callback/facebook" readOnly dir="ltr" /></label>
+              <label><AdminText en="Data deletion callback" ar="رابط حذف البيانات" /><input value="https://travneeds.com/api/auth/facebook/data-deletion" readOnly dir="ltr" /></label>
               <label><AdminText en="Requested permissions" ar="الأذونات المطلوبة" /><input value="public_profile,email" readOnly dir="ltr" /></label>
             </>
           )}

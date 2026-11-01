@@ -165,7 +165,7 @@ const PROFILE_KEY = 'sp-admin-profile-v1'
 export const defaultAdminProfile: AdminProfile = {
   name: 'Super Admin',
   username: 'admin',
-  email: 'admin@starpyramids.com',
+  email: 'admin@travneeds.com',
   country: 'Egypt',
   dialCode: '+20',
   phone: '+20 1288222962',
@@ -304,7 +304,7 @@ export function useSocialLinks(): SocialLink[] {
   return links
 }
 
-export const FALLBACK_SEO_TITLE = 'STAR PYRAMIDS | Discover Egypt'
+export const FALLBACK_SEO_TITLE = 'TravNeeds | Discover Egypt'
 export const FALLBACK_PROMO_TEXT = 'Add two nights to any multi-day package and save 15%, with a special upgrade included.'
 
 export function readSeoTitle(): string {

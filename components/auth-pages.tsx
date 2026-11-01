@@ -121,7 +121,7 @@ function LoginForm() {
       <div className="auth-v2-shade" />
       <div className="auth-v2-visual-content">
         <Logo />
-        <div><span>{tx(locale, { en: 'Your STAR PYRAMIDS account', es: 'Tu cuenta de STAR PYRAMIDS', it: 'Il tuo account STAR PYRAMIDS', ar: 'حساب STAR PYRAMIDS' })}</span><h2>{text.imageTitle}</h2><p>{text.imageCopy}</p><ul>{text.benefits.map((benefit) => <li key={benefit}><Check size={16} />{benefit}</li>)}</ul></div>
+        <div><span>{tx(locale, { en: 'Your TravNeeds account', es: 'Tu cuenta de TravNeeds', it: 'Il tuo account TravNeeds', ar: 'حساب TravNeeds' })}</span><h2>{text.imageTitle}</h2><p>{text.imageCopy}</p><ul>{text.benefits.map((benefit) => <li key={benefit}><Check size={16} />{benefit}</li>)}</ul></div>
       </div>
     </section>
 
@@ -143,7 +143,7 @@ function LoginForm() {
           </p>
           <button className="auth-v2-primary" type="submit" disabled={loading}>{loading ? tx(locale, { en: 'Signing in...', es: 'Iniciando sesión...', it: 'Accesso in corso...', ar: 'جارٍ تسجيل الدخول...' }) : tx(locale, { en: 'Sign in', es: 'Iniciar sesión', it: 'Accedi', ar: 'تسجيل الدخول' })} <ArrowRight size={18} /></button>
         </form>
-        <p className="auth-v2-switch">{tx(locale, { en: 'New to Star Pyramids? ', es: '¿Nuevo en Star Pyramids? ', it: 'Nuovo su Star Pyramids? ', ar: 'جديد على STAR PYRAMIDS؟ ' })}<Link href="/register">{tx(locale, { en: 'Create an account', es: 'Crea una cuenta', it: 'Crea un account', ar: 'أنشئ حسابك' })}</Link></p>
+        <p className="auth-v2-switch">{tx(locale, { en: 'New to TravNeeds? ', es: '¿Nuevo en TravNeeds? ', it: 'Nuovo su TravNeeds? ', ar: 'جديد على TravNeeds؟ ' })}<Link href="/register">{tx(locale, { en: 'Create an account', es: 'Crea una cuenta', it: 'Crea un account', ar: 'أنشئ حسابك' })}</Link></p>
       </div>
     </section>
   </main>
@@ -210,7 +210,7 @@ function RegisterForm() {
       <div className="auth-v2-shade" />
       <div className="auth-v2-visual-content">
         <Logo />
-        <div><span>{tx(locale, { en: 'Your STAR PYRAMIDS account', es: 'Tu cuenta de STAR PYRAMIDS', it: 'Il tuo account STAR PYRAMIDS', ar: 'حساب STAR PYRAMIDS' })}</span><h2>{text.imageTitle}</h2><p>{text.imageCopy}</p><ul>{text.benefits.map((benefit) => <li key={benefit}><Check size={16} />{benefit}</li>)}</ul></div>
+        <div><span>{tx(locale, { en: 'Your TravNeeds account', es: 'Tu cuenta de TravNeeds', it: 'Il tuo account TravNeeds', ar: 'حساب TravNeeds' })}</span><h2>{text.imageTitle}</h2><p>{text.imageCopy}</p><ul>{text.benefits.map((benefit) => <li key={benefit}><Check size={16} />{benefit}</li>)}</ul></div>
       </div>
     </section>
 
@@ -218,7 +218,7 @@ function RegisterForm() {
       <header className="auth-v2-top"><Link href="/" aria-label={tx(locale, { en: 'Back to home', es: 'Volver al inicio', it: 'Torna alla home', ar: 'العودة للرئيسية' })}><ArrowRight size={18} />{tx(locale, { en: 'Home', es: 'Inicio', it: 'Home', ar: 'الرئيسية' })}</Link><LanguageSelector /></header>
       <div className="auth-v2-card">
         <>
-          <div className="auth-v2-heading"><span>{tx(locale, { en: 'Join STAR PYRAMIDS', es: 'Únete a STAR PYRAMIDS', it: 'Unisciti a STAR PYRAMIDS', ar: 'انضم لينا' })}</span><h1>{text.registerTitle}</h1><p>{text.registerCopy}</p></div>
+          <div className="auth-v2-heading"><span>{tx(locale, { en: 'Join TravNeeds', es: 'Únete a TravNeeds', it: 'Unisciti a TravNeeds', ar: 'انضم لينا' })}</span><h1>{text.registerTitle}</h1><p>{text.registerCopy}</p></div>
           <SocialButtons onSelect={socialPreview} />
           {notice && <p className="auth-v2-notice" role="alert"><ShieldCheck size={17} />{typeof notice === 'string' ? notice : customerErrorText(locale, notice.apiError, createFailed)}</p>}
           <div className="auth-v2-divider"><span>{tx(locale, { en: 'or use your details', es: 'o usa tus datos', it: 'oppure usa i tuoi dati', ar: 'أو استخدم بياناتك' })}</span></div>

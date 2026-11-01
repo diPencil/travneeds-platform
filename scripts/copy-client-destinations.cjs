@@ -8,7 +8,7 @@ async function main() {
   const target = new PrismaClient({ datasources: { db: { url: urls.target } } });
   const envHash = digest(fs.readFileSync('.env', 'utf8'));
   try {
-    for (const [client, expected] of [[source, 'star_pyramids'], [target, 'star_pyramids_production']]) {
+    for (const [client, expected] of [[source, 'travneeds'], [target, 'travneeds_production']]) {
       const [row] = await client.$queryRawUnsafe('SELECT DATABASE() AS name');
       if (row.name !== expected) throw new Error('Database identity mismatch');
     }
@@ -19,7 +19,7 @@ async function main() {
     if (/\/media\//.test(JSON.stringify(data))) throw new Error('Uploaded destination media requires a reviewed media-reference transfer first');
     const existing = await read(target);
     if (existing.destinations.length || existing.translations.length) throw new Error('Target destination data already exists; no overwrite permitted');
-    console.log(JSON.stringify({ source: 'star_pyramids', target: 'star_pyramids_production', destinations: data.destinations.length, translations: data.translations.length, apply: process.argv.includes('--apply') }));
+    console.log(JSON.stringify({ source: 'travneeds', target: 'travneeds_production', destinations: data.destinations.length, translations: data.translations.length, apply: process.argv.includes('--apply') }));
     if (!process.argv.includes('--apply')) return;
     await target.$transaction(async tx => {
       if (await tx.destination.count() || await tx.catalogueTranslation.count({ where: { entityType: 'destination' } })) throw new Error('Target changed; stopping');

@@ -299,7 +299,7 @@ export function AccountShell({ section, children, headLeading }: { section: Acco
       <button type="button" className="customer-drawer-close" onClick={() => setMobileOpen(false)} aria-label={tx(locale, { en: 'Close menu', es: 'Cerrar el menú', it: 'Chiudi il menu', ar: 'إغلاق القائمة' })}><X size={20}/></button>
       <Link href="/account" className="customer-dashboard-brand" onClick={() => setMobileOpen(false)}>
         <BrandMark alt="" />
-        <span><strong>STAR PYRAMIDS</strong><small>{tx(locale, { en: 'TRAVELER ACCOUNT', es: 'CUENTA DEL VIAJERO', it: 'ACCOUNT VIAGGIATORE', ar: 'حساب المسافر' })}</small></span>
+        <span><strong>TravNeeds</strong><small>{tx(locale, { en: 'TRAVELER ACCOUNT', es: 'CUENTA DEL VIAJERO', it: 'ACCOUNT VIAGGIATORE', ar: 'حساب المسافر' })}</small></span>
       </Link>
         <div className="customer-profile-mini">
           <CustomerAvatar avatar={profile.avatar} initials={initials} className="customer-avatar" name={profile.fullName} />
@@ -323,7 +323,7 @@ export function AccountShell({ section, children, headLeading }: { section: Acco
     <div className="customer-dashboard-main" inert={mobileDrawer && mobileOpen ? true : undefined}>
       <header className="customer-dashboard-topbar">
         <button ref={menuTriggerRef} type="button" className="customer-mobile-menu" onClick={() => setMobileOpen(true)} aria-expanded={mobileOpen} aria-controls="customer-mobile-menu" aria-label={tx(locale, { en: 'Open menu', es: 'Abrir el menú', it: 'Apri il menu', ar: 'فتح القائمة' })}><Menu size={20} /></button>
-        <Link href="/account" className="customer-mobile-brand"><BrandMark alt="" /><strong>STAR PYRAMIDS</strong></Link>
+        <Link href="/account" className="customer-mobile-brand"><BrandMark alt="" /><strong>TravNeeds</strong></Link>
         <div className="customer-dashboard-search">
           <Search size={17} />
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={tx(locale, { en: 'Search trips and destinations...', es: 'Busca viajes y destinos…', it: 'Cerca viaggi e destinazioni…', ar: 'ابحث عن رحلة أو وجهة...' })} />
@@ -357,7 +357,7 @@ export function AccountShell({ section, children, headLeading }: { section: Acco
         </div>}
         <section className="customer-account-main">
         <header className="customer-account-head">
-          <div><span>{tx(locale, { en: 'STAR PYRAMIDS account', es: 'Cuenta de STAR PYRAMIDS', it: 'Account STAR PYRAMIDS', ar: 'حساب STAR PYRAMIDS' })}</span><h1>{tx(locale, heading)}</h1><p>{tx(locale, { en: heading.subEn, es: heading.subEs, it: heading.subIt, ar: heading.subAr })}</p></div>
+          <div><span>{tx(locale, { en: 'TravNeeds account', es: 'Cuenta de TravNeeds', it: 'Account TravNeeds', ar: 'حساب TravNeeds' })}</span><h1>{tx(locale, heading)}</h1><p>{tx(locale, { en: heading.subEn, es: heading.subEs, it: heading.subIt, ar: heading.subAr })}</p></div>
           <div className="customer-account-head-actions">{headLeading}<Link href="/trips" className="account-icon-action"><Search size={17} />{tx(locale, { en: 'Explore trips', es: 'Explorar viajes', it: 'Esplora i viaggi', ar: 'استكشف الرحلات' })}</Link><Link href="/contact" className="account-icon-action primary"><HelpCircle size={17} />{tx(locale, { en: 'Get help', es: 'Obtener ayuda', it: 'Richiedi assistenza', ar: 'اطلب مساعدة' })}</Link></div>
         </header>
         {children}
@@ -1653,7 +1653,7 @@ function MessagesSection() {
     <section className="customer-chat-panel">
       <header className="customer-chat-head">
         <span className="customer-chat-team-avatar"><BrandMark alt="" /></span>
-        <div><strong>{tx(locale, { en: 'STAR PYRAMIDS travel team', es: 'Equipo de viajes de STAR PYRAMIDS', it: 'Team viaggi STAR PYRAMIDS', ar: 'فريق رحلات STAR PYRAMIDS' })}</strong><small><i />{tx(locale, { en: 'Account and booking support', es: 'Asistencia con tu cuenta y reservas', it: 'Assistenza account e prenotazioni', ar: 'دعم حسابك وحجوزاتك' })}</small></div>
+        <div><strong>{tx(locale, { en: 'TravNeeds travel team', es: 'Equipo de viajes de TravNeeds', it: 'Team viaggi TravNeeds', ar: 'فريق رحلات TravNeeds' })}</strong><small><i />{tx(locale, { en: 'Account and booking support', es: 'Asistencia con tu cuenta y reservas', it: 'Assistenza account e prenotazioni', ar: 'دعم حسابك وحجوزاتك' })}</small></div>
         <span className="customer-chat-channel"><MessageCircle size={14} />{tx(locale, { en: 'Account chat', es: 'Chat de la cuenta', it: 'Chat account', ar: 'محادثة الحساب' })}</span>
       </header>
 
@@ -1942,7 +1942,7 @@ function ChangePasswordSection() {
       {submitted && <div className="customer-password-ready"><CheckCircle2 size={17} /><div><strong>{tx(locale, { en: 'Password changed successfully', es: 'Contraseña cambiada correctamente', it: 'Password modificata con successo', ar: 'تم تغيير كلمة المرور بنجاح' })}</strong><small>{tx(locale, { en: 'Your password has been updated. Other sessions have been signed out for security.', es: 'Tu contraseña se ha actualizado. Otras sesiones se han cerrado por seguridad.', it: 'La tua password è stata aggiornata. Altre sessioni sono state disconnesse per sicurezza.', ar: 'تم تحديث كلمة المرور. تم تسجيل الخروج من الجلسات الأخرى لأسباب أمنية.' })}</small></div></div>}
       <div className="customer-password-actions"><Link href="/account/settings">{tx(locale, { en: 'Back to settings', es: 'Volver a los ajustes', it: 'Torna alle impostazioni', ar: 'العودة للإعدادات' })}</Link><button type="submit" disabled={submitting || !canSubmit}>{submitting ? tx(locale, { en: 'Updating…', es: 'Actualizando…', it: 'Aggiornando…', ar: 'جارٍ التحديث…' }) : tx(locale, { en: 'Update password', es: 'Actualizar la contraseña', it: 'Aggiorna password', ar: 'تحديث كلمة المرور' })}</button></div>
     </form>
-    <aside className="customer-account-block customer-password-help"><span><ShieldCheck size={20} /></span><h2>{tx(locale, { en: 'Keep your account secure', es: 'Mantén segura tu cuenta', it: 'Mantieni sicuro il tuo account', ar: 'حافظ على أمان حسابك' })}</h2><p>{tx(locale, { en: 'Use a password you do not use elsewhere and never share it with anyone.', es: 'Usa una contraseña que no utilices en ningún otro sitio y no la compartas con nadie.', it: 'Usa una password che non usi altrove e non condividerla mai.', ar: 'استخدم كلمة مرور لا تستخدمها في أي حساب آخر، ولا تشاركها مع أي شخص.' })}</p><small>{tx(locale, { en: 'STAR PYRAMIDS staff will never ask for your password.', es: 'El equipo de STAR PYRAMIDS nunca te pedirá tu contraseña.', it: 'Lo staff di STAR PYRAMIDS non ti chiederà mai la password.', ar: 'لن يطلب فريق STAR PYRAMIDS كلمة مرورك.' })}</small></aside>
+    <aside className="customer-account-block customer-password-help"><span><ShieldCheck size={20} /></span><h2>{tx(locale, { en: 'Keep your account secure', es: 'Mantén segura tu cuenta', it: 'Mantieni sicuro il tuo account', ar: 'حافظ على أمان حسابك' })}</h2><p>{tx(locale, { en: 'Use a password you do not use elsewhere and never share it with anyone.', es: 'Usa una contraseña que no utilices en ningún otro sitio y no la compartas con nadie.', it: 'Usa una password che non usi altrove e non condividerla mai.', ar: 'استخدم كلمة مرور لا تستخدمها في أي حساب آخر، ولا تشاركها مع أي شخص.' })}</p><small>{tx(locale, { en: 'TravNeeds staff will never ask for your password.', es: 'El equipo de TravNeeds nunca te pedirá tu contraseña.', it: 'Lo staff di TravNeeds non ti chiederà mai la password.', ar: 'لن يطلب فريق TravNeeds كلمة مرورك.' })}</small></aside>
   </div>
 }
 

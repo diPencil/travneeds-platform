@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ type: str
   if (!ct || !isCruiseHeroId(type)) return { robots: { index: false, follow: false } }
   const path = '/egypt-tours/nile-cruises/' + ct.slug
   return {
-    title: { absolute: `${ct.titleEn} | STAR PYRAMIDS` },
+    title: { absolute: `${ct.titleEn} | TravNeeds` },
     description: ct.descEn,
     alternates: { canonical: await getCanonicalUrl(path), languages: await getHreflangEntries(path) },
     ...(await pageContentMetadata(type)),

@@ -63,7 +63,7 @@ export async function dynamicCategorySeo(record: { slug: string; name: string; c
   const [source] = await attachCatalogueTranslations('category', [record])
   const locale = source.translations?.[requestedLocale]?.name?.trim() ? requestedLocale : 'en'
   const localized = localizeCatalogue(source, 'category', locale)
-  const title = `${localized.name.trim()} | STAR PYRAMIDS`
+  const title = `${localized.name.trim()} | TravNeeds`
   const description = (locale === 'en' ? source.copy : source.translations?.[locale]?.copy)?.trim().slice(0, 160)
     || localized.name.trim().slice(0, 160)
   const path = `${route}/${record.slug}`
@@ -88,7 +88,7 @@ export async function dynamicSeo(record: DynamicRecord, kind: DynamicKind, route
     ? requestedLocale : 'en'
   const localized = kind === 'tour' ? source : localizeCatalogue(source, kind, locale)
   const field = kind === 'tour' ? 'summary' : kind === 'blog' ? 'excerpt' : 'copy'
-  const title = `${localized.title.trim()} | STAR PYRAMIDS`
+  const title = `${localized.title.trim()} | TravNeeds`
   // A translated title alone is preferable to appending English prose or invented claims.
   const description = (locale === 'en' ? source[field] : source.translations?.[locale]?.[field])?.trim().slice(0, 160)
     || localized.title.trim().slice(0, 160)

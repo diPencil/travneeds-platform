@@ -6,7 +6,7 @@ const crypto = require('node:crypto');
 const { createRequire } = require('node:module');
 const root = path.resolve(__dirname, '../..');
 const folder = path.join(root, 'DESTINATIONS_REAL_TOURS_VERIFICATION');
-const target = 'star_pyramids_production';
+const target = 'travneeds_production';
 const allowed = ['fayoum', 'ismailia', 'ain-sokhna'];
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -14,7 +14,7 @@ const normalizedName = value => String(value).normalize('NFD').replace(/[\u0300-
 function targetUrl(source) {
   const url = new URL(source);
   assert.equal(url.protocol, 'mysql:'); assert.equal(url.hostname, '127.0.0.1');
-  assert.equal(url.port || '3306', '3306'); assert.equal(url.pathname, '/star_pyramids');
+  assert.equal(url.port || '3306', '3306'); assert.equal(url.pathname, '/travneeds');
   url.pathname = '/' + target;
   return url.toString(); // Isolated client only: NEVER writes .env or switches the application.
 }
@@ -50,8 +50,8 @@ function baselineComparable(row) {
 }
 async function main() {
   const apply = process.argv.includes('--apply');
-  assert.ok(process.argv.includes('--target=star_pyramids_production'), 'Exact owner-approved local target is required.');
-  assert.ok(process.argv.slice(2).every(arg => ['--apply','--plan','--target=star_pyramids_production'].includes(arg)), 'Unknown operation argument.');
+  assert.ok(process.argv.includes('--target=travneeds_production'), 'Exact owner-approved local target is required.');
+  assert.ok(process.argv.slice(2).every(arg => ['--apply','--plan','--target=travneeds_production'].includes(arg)), 'Unknown operation argument.');
   assert.ok(!(apply && process.argv.includes('--plan')), 'Choose plan or apply, not both.');
   const envFile = path.join(root,'web-source/.env');
   const envBefore = fs.readFileSync(envFile);

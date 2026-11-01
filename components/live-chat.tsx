@@ -31,9 +31,9 @@ const OPENED_KEY = 'sp-livechat-opened'
 const baseCopy = {
   en: {
     openLabel: 'Open live chat', closeLabel: 'Close live chat', sendLabel: 'Send message',
-    name: 'STAR PYRAMIDS', online: 'Online, replies instantly', inputPh: 'Write a message...',
+    name: 'TravNeeds', online: 'Online, replies instantly', inputPh: 'Write a message...',
     teaser: 'Need help planning your Egypt trip? Chat with us!',
-    greeting: "Hi there! I'm Nour from STAR PYRAMIDS. Ask me about Nile cruises, prices, or booking. Or pick a topic:",
+    greeting: "Hi there! I'm Nour from TravNeeds. Ask me about Nile cruises, prices, or booking. Or pick a topic:",
     price: 'Our Nile cruises start from {price} per person, depending on the season and group size. Every cruise page has a season price table (solo, pair and group). Open any cruise and check "Cruise Prices".',
     cruise: 'We have 4 cruise levels: Standard, Deluxe, Superior, and Luxury, from 3 to 7 nights between Luxor and Aswan, with full board and guided temple visits.',
     booking: 'Booking is easy: open any trip and press "Book now", or tell us your dates on the Make Your Trip page and we will arrange everything.',
@@ -44,9 +44,9 @@ const baseCopy = {
   },
   ar: {
     openLabel: 'فتح المحادثة', closeLabel: 'إغلاق المحادثة', sendLabel: 'إرسال الرسالة',
-    name: 'STAR PYRAMIDS', online: 'متصل الآن، يرد فورًا', inputPh: 'اكتب رسالة...',
+    name: 'TravNeeds', online: 'متصل الآن، يرد فورًا', inputPh: 'اكتب رسالة...',
     teaser: 'هل تحتاج إلى مساعدة في رحلتك إلى مصر؟ تحدث معنا!',
-    greeting: 'أهلاً بك! أنا نور من STAR PYRAMIDS. اسألني عن الكروز النيلية أو الأسعار أو الحجز. أو اختر موضوعًا:',
+    greeting: 'أهلاً بك! أنا نور من TravNeeds. اسألني عن الكروز النيلية أو الأسعار أو الحجز. أو اختر موضوعًا:',
     price: 'تبدأ أسعار الكروز النيلية من {price} للفرد حسب الموسم وعدد المسافرين. تتضمن كل رحلة جدول أسعار المواسم (الفردي والزوجي والمجموعات). افتح أي رحلة واطلع على قسم Cruise Prices.',
     cruise: 'لدينا ٤ فئات: عادية وديلوكس وسوبريور وفاخرة، من ٣ إلى ٧ ليالٍ بين الأقصر وأسوان بإقامة شاملة وزيارات معابد مع مرشد.',
     booking: 'الحجز سهل: افتح أي رحلة وانقر Book now، أو أرسل لنا مواعيدك في صفحة Make Your Trip وسنجهز لك كل شيء.',
@@ -61,9 +61,9 @@ const copy = {
   ...baseCopy,
   es: {
     openLabel: 'Abrir chat', closeLabel: 'Cerrar chat', sendLabel: 'Enviar mensaje',
-    name: 'STAR PYRAMIDS', online: 'En línea, respuestas al instante', inputPh: 'Escribe un mensaje...',
+    name: 'TravNeeds', online: 'En línea, respuestas al instante', inputPh: 'Escribe un mensaje...',
     teaser: '¿Necesitas ayuda para planificar tu viaje a Egipto? ¡Chatea con nosotros!',
-    greeting: '¡Hola! Soy Nour de STAR PYRAMIDS. Pregúntame sobre cruceros por el Nilo, precios o reservas. También puedes elegir un tema:',
+    greeting: '¡Hola! Soy Nour de TravNeeds. Pregúntame sobre cruceros por el Nilo, precios o reservas. También puedes elegir un tema:',
     price: 'Nuestros cruceros por el Nilo cuestan desde {price} por persona, según la temporada y el tamaño del grupo. Cada página de crucero tiene una tabla de precios por temporada (individual, pareja y grupo). Abre un crucero y consulta «Precios del crucero».',
     cruise: 'Tenemos 4 categorías de cruceros: Standard, Deluxe, Superior y Luxury, de 3 a 7 noches entre Lúxor y Asuán, con pensión completa y visitas guiadas a los templos.',
     booking: 'Reservar es fácil: abre un viaje y pulsa «Reserva ahora», o indícanos tus fechas en la página «Crea tu viaje» y organizaremos los detalles.',
@@ -74,9 +74,9 @@ const copy = {
   },
   it: {
     openLabel: 'Apri la chat', closeLabel: 'Chiudi la chat', sendLabel: 'Invia messaggio',
-    name: 'STAR PYRAMIDS', online: 'Online, risposte immediate', inputPh: 'Scrivi un messaggio...',
+    name: 'TravNeeds', online: 'Online, risposte immediate', inputPh: 'Scrivi un messaggio...',
     teaser: 'Hai bisogno di aiuto per organizzare il tuo viaggio in Egitto? Chatta con noi!',
-    greeting: 'Ciao! Sono Nour di STAR PYRAMIDS. Chiedimi informazioni su crociere sul Nilo, prezzi o prenotazioni. Oppure scegli un argomento:',
+    greeting: 'Ciao! Sono Nour di TravNeeds. Chiedimi informazioni su crociere sul Nilo, prezzi o prenotazioni. Oppure scegli un argomento:',
     price: 'Le nostre crociere sul Nilo partono da {price} a persona, in base alla stagione e alle dimensioni del gruppo. Ogni pagina della crociera ha una tabella dei prezzi stagionali (singolo, coppia e gruppo). Apri una crociera e consulta «Prezzi della crociera».',
     cruise: 'Abbiamo 4 categorie di crociere: Standard, Deluxe, Superior e Luxury, da 3 a 7 notti tra Luxor e Assuan, con pensione completa e visite guidate ai templi.',
     booking: 'Prenotare è semplice: apri un viaggio e premi «Prenota ora», oppure indica le tue date nella pagina «Crea il tuo viaggio» e organizzeremo i dettagli.',

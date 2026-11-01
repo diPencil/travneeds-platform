@@ -1366,7 +1366,7 @@ limited. These selectors are intentionally scoped to Select, not DateInput. */
 .myt-field .cselect-trigger{min-height:58px;border:1.5px solid #e6e6e6;border-radius:14px;padding:0 18px;font-size:15px;color:#1d1f1f}
 .myt-field .cselect-trigger:focus-visible{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(247,149,29,.13)}
 .myt-field .cselect-trigger.is-invalid{border-color:#b42318}
-/* Shared STAR PYRAMIDS date field + calendar popover (Base UI Popover).
+/* Shared TravNeeds date field + calendar popover (Base UI Popover).
    The closed field stays a read-only text input so every existing context
    `input` selector keeps matching; the popup shares the dropdown layer
    (z-index 80) and design tokens with SharedSelect/CountrySelect. */

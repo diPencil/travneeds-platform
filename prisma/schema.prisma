@@ -1401,7 +1401,7 @@ enum BookingDocumentType {
   BOOKING_VOUCHER
 }
 
-/// Phase 2I: internal STAR PYRAMIDS support conversations (customer ↔
+/// Phase 2I: internal TravNeeds support conversations (customer ↔
 /// staff). One conversation thread per customer support need; the
 /// customer UX centers on their latest thread while staff work from a
 /// cross-customer inbox. `customerId` is the owning customer (server

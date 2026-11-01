@@ -6,8 +6,8 @@ function parseInternalPath(value: string | null | undefined): URL | null {
   if (!value || !value.startsWith('/') || value.startsWith('//')) return null;
   if (/[\\\u0000-\u001f\u007f]/.test(value)) return null;
   try {
-    const url = new URL(value, 'https://starpyramids.invalid');
-    return url.origin === 'https://starpyramids.invalid' ? url : null;
+    const url = new URL(value, 'https://travneeds.invalid');
+    return url.origin === 'https://travneeds.invalid' ? url : null;
   } catch {
     return null;
   }

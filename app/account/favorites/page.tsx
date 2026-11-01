@@ -3,7 +3,7 @@ import { CustomerAccountPage } from '@/components/account-portal'
 
 export const metadata: Metadata = {
   title: 'My Favorites',
-  description: 'View your saved STAR PYRAMIDS trips.',
+  description: 'View your saved TravNeeds trips.',
   robots: { index: false, follow: false, nocache: true },
 }
 

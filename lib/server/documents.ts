@@ -885,7 +885,7 @@ export async function getDocumentIssuer(): Promise<DocumentIssuerInfo> {
   return {
     // Mirrors the client-side default in defaultBrandSettings
     // (lib/admin-store.ts); used only when no site.name row exists.
-    companyName: siteName?.trim() || 'Star Pyramids Tours',
+    companyName: siteName?.trim() || 'TravNeeds Tours',
     logo: logo?.trim() || '',
     email: email?.trim() || COMPANY_EMAIL,
     phone: phone?.trim() || COMPANY_PHONE_DISPLAY,

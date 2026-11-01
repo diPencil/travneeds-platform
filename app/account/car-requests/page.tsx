@@ -3,7 +3,7 @@ import { CustomerAccountPage } from '@/components/account-portal'
 
 export const metadata: Metadata = {
   title: 'My Car Requests',
-  description: 'View your STAR PYRAMIDS car rental requests.',
+  description: 'View your TravNeeds car rental requests.',
   robots: { index: false, follow: false, nocache: true },
 }
 

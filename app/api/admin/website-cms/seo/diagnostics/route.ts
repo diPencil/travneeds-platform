@@ -11,7 +11,7 @@ export async function GET() {
     const allRecords = await listRecordSeo()
     const records = allRecords.filter(entry => canReadRecordSeo(access.user!, entry.record.kind))
     const staticPages: DiagnosticPage[] = await Promise.all(Object.keys(SEO_PAGES).filter(isSeoPage).map(async id => ({ id, route: SEO_PAGES[id]!.route, published: true, seo: currentSeo(await readSeoState(id), id) })))
-    const dynamicPages: DiagnosticPage[] = records.flatMap(({ record, state }) => record.canonicalPaths.map(route => ({ id: record.kind + ':' + record.slug, route, published: record.published, seo: state.published, title: record.name + ' | STAR PYRAMIDS', description: record.description || record.name, image: record.image, baselineVerified: true })))
+    const dynamicPages: DiagnosticPage[] = records.flatMap(({ record, state }) => record.canonicalPaths.map(route => ({ id: record.kind + ':' + record.slug, route, published: record.published, seo: state.published, title: record.name + ' | TravNeeds', description: record.description || record.name, image: record.image, baselineVerified: true })))
     const pages = [...staticPages, ...dynamicPages]
     const known = new Set([...staticPages.map(page => page.route), ...allRecords.filter(entry => entry.record.published).flatMap(entry => entry.record.canonicalPaths)])
     const eligible = pages.filter(page => page.published && page.seo?.index !== false && (!page.seo?.canonical || page.seo.canonical === page.route))

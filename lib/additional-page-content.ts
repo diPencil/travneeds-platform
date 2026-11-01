@@ -50,7 +50,7 @@ export function originalAdditionalPage(id: Exclude<PageDocumentId, 'homepage'>):
     // Preserve the existing source verbatim; translations can be supplied by the editor.
     sections[2].items = faqs.map(([question, answer], index) => ({ id: 'question-' + index, visible: true, text: translations({ question, answer }) }))
   } else {
-    sections[0].text = translations({ heading: PAGE_DOCUMENTS[id].name, description: id === 'privacy' ? 'STAR PYRAMIDS privacy policy. Learn how we collect, use, and protect your personal information when you book Egypt tours and travel services.' : 'STAR PYRAMIDS terms of use. Conditions for booking Egypt tours, Nile cruises, and travel services with STAR PYRAMIDS.' })
+    sections[0].text = translations({ heading: PAGE_DOCUMENTS[id].name, description: id === 'privacy' ? 'TravNeeds privacy policy. Learn how we collect, use, and protect your personal information when you book Egypt tours and travel services.' : 'TravNeeds terms of use. Conditions for booking Egypt tours, Nile cruises, and travel services with TravNeeds.' })
     sections[1].items = []
   }
   return { sections, seo: { text: translations({ title: '', description: '' }) as PageContent['seo']['text'], image: '' } }

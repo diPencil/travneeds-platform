@@ -15,8 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const [pageContent, locale] = await Promise.all([readPublishedPage(), getServerLocale()])
   const seo = pageContent.content?.seo
   const seoText = seo?.text[locale]
-  const title = seoText?.title || 'STAR PYRAMIDS | Discover Egypt'
-  const description = seoText?.description || 'Discover ancient wonders, warm hospitality, and unforgettable journeys across Egypt. Book Nile cruises, Cairo day tours, multi-day trips, and shore excursions with STAR PYRAMIDS.'
+  const title = seoText?.title || 'TravNeeds | Discover Egypt'
+  const description = seoText?.description || 'Discover ancient wonders, warm hospitality, and unforgettable journeys across Egypt. Book Nile cruises, Cairo day tours, multi-day trips, and shore excursions with TravNeeds.'
 
   return {
     title: { absolute: title },

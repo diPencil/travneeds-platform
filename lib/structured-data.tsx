@@ -19,7 +19,7 @@ export function generateRecordPageJsonLd({ name, path, collection = false }: { n
   }
 }
 
-const SITE_NAME = 'STAR PYRAMIDS'
+const SITE_NAME = 'TravNeeds'
 const SITE_DESCRIPTION = 'Discover ancient wonders, warm hospitality, and unforgettable journeys across Egypt.'
 
 export interface BreadcrumbItem {
@@ -47,7 +47,7 @@ export function generateOrganizationJsonLd(): object {
     '@context': 'https://schema.org',
     '@type': 'TravelAgency',
     name: SITE_NAME,
-    alternateName: 'Star Pyramids Tours',
+    alternateName: 'TravNeeds Tours',
     url: SITE_URL,
     logo: `${SITE_URL}/logo.png`,
     description: SITE_DESCRIPTION,

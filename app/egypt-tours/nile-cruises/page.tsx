@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: 'Nile Cruises',
-    description: 'Book Nile cruise experiences with STAR PYRAMIDS. Multi-day voyages from Luxor to Aswan, including 3-day, 4-day, 7-day, and 8-day cruise itineraries with guided shore excursions.',
+    description: 'Book Nile cruise experiences with TravNeeds. Multi-day voyages from Luxor to Aswan, including 3-day, 4-day, 7-day, and 8-day cruise itineraries with guided shore excursions.',
     alternates: { canonical: `${siteUrl}/egypt-tours/nile-cruises`, languages: hreflang },
     ...(await pageContentMetadata('nile')),
   }

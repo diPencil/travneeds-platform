@@ -31,7 +31,7 @@ import {
 } from '@/lib/date-calendar'
 
 /**
- * Shared STAR PYRAMIDS date field.
+ * Shared TravNeeds date field.
  *
  * Custom calendar popover  -  no native `type="date"` UI, no `showPicker()`.
  * The visible control stays a read-only text input (so every existing `input`

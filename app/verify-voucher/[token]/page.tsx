@@ -6,7 +6,7 @@ import { verifyVoucherToken, type VoucherVerification } from '@/lib/server/docum
 // Verification payloads must never be indexed, cached, or prerendered:
 // the token in the URL is a bearer for the validity view.
 export const metadata: Metadata = {
-  title: 'Verify voucher | Star Pyramids',
+  title: 'Verify voucher | TravNeeds',
   robots: { index: false, follow: false, nocache: true },
 };
 export const dynamic = 'force-dynamic';
@@ -39,7 +39,7 @@ const COPY: Record<VerifyLocale, {
   footer: string;
 }> = {
   en: {
-    eyebrow: 'Star Pyramids · Voucher verification',
+    eyebrow: 'TravNeeds · Voucher verification',
     validTitle: 'This voucher is valid',
     invalidTitle: 'This voucher is not valid',
     unrecognized: 'We do not recognize this verification code. Check the QR code on your voucher.',
@@ -56,7 +56,7 @@ const COPY: Record<VerifyLocale, {
     footer: 'This page confirms only voucher authenticity and booking standing. It never shows personal or payment data.',
   },
   es: {
-    eyebrow: 'Star Pyramids · Verificación de bono',
+    eyebrow: 'TravNeeds · Verificación de bono',
     validTitle: 'Este bono es válido',
     invalidTitle: 'Este bono no es válido',
     unrecognized: 'No reconocemos este código de verificación. Comprueba el código QR de tu bono.',
@@ -73,7 +73,7 @@ const COPY: Record<VerifyLocale, {
     footer: 'Esta página solo confirma la autenticidad del bono y el estado de la reserva. Nunca muestra datos personales ni de pago.',
   },
   it: {
-    eyebrow: 'Star Pyramids · Verifica voucher',
+    eyebrow: 'TravNeeds · Verifica voucher',
     validTitle: 'Questo voucher è valido',
     invalidTitle: 'Questo voucher non è valido',
     unrecognized: 'Non riconosciamo questo codice di verifica. Controlla il codice QR del tuo voucher.',
@@ -90,7 +90,7 @@ const COPY: Record<VerifyLocale, {
     footer: 'Questa pagina conferma solo autenticità del voucher e stato della prenotazione. Non mostra mai dati personali o di pagamento.',
   },
   ar: {
-    eyebrow: 'ستار بيراميدز · التحقق من القسيمة',
+    eyebrow: 'تراف نيدز · التحقق من القسيمة',
     validTitle: 'هذه القسيمة صالحة',
     invalidTitle: 'هذه القسيمة غير صالحة',
     unrecognized: 'لا نتعرف على رمز التحقق هذا. تحقق من رمز QR على قسيمتك.',

@@ -15,7 +15,7 @@ export function resolveSiteUrl(): string {
   } catch {
     // Fall through
   }
-  return 'https://starpyramids.com';
+  return 'https://travneeds.com';
 }
 
 export async function getSiteUrl(): Promise<string> {

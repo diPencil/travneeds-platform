@@ -128,7 +128,7 @@ function TripsContent() {
     {!hero?.hidden && !hero?.unavailable && <div className="trips-intro">
       <div className="container trips-intro-inner">
         <div>
-          <span className="trips-eyebrow">{heroText?.eyebrow ?? 'STAR PYRAMIDS, EGYPT'}</span>
+          <span className="trips-eyebrow">{heroText?.eyebrow ?? 'TravNeeds, EGYPT'}</span>
           <h1>{heroText?.title ?? t.title}</h1>
           <p>{heroText?.intro ?? t.subtitle}</p>
         </div>

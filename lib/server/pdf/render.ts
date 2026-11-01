@@ -133,7 +133,7 @@ function drawHeader(doc: Doc, model: PdfDocumentModel): number {
     .font(MONTSERRAT_BOLD)
     .fontSize(14)
     .fillColor(TEXT)
-    .text('STAR PYRAMIDS', MARGIN, textY, { lineBreak: false });
+    .text('TravNeeds', MARGIN, textY, { lineBreak: false });
   doc
     .font(MONTSERRAT_REGULAR)
     .fontSize(7.5)
@@ -552,8 +552,8 @@ export function renderBookingDocumentPdf(model: PdfDocumentModel): Promise<Buffe
       info: {
         Title: `${model.document.typeLabel} ${model.document.number}`,
         Author: cleanText(model.issuer.companyName),
-        Producer: 'Star Pyramids Documents',
-        Creator: 'Star Pyramids Documents',
+        Producer: 'TravNeeds Documents',
+        Creator: 'TravNeeds Documents',
         CreationDate: new Date(),
       },
     });

@@ -5,7 +5,7 @@ import { GuestBookingPage } from '@/components/account-portal';
 // Personal booking data lives in this URL, so it must never be indexed,
 // cached, or prerendered.
 export const metadata: Metadata = {
-  title: 'Your booking | Star Pyramids',
+  title: 'Your booking | TravNeeds',
   robots: { index: false, follow: false, nocache: true },
 };
 export const dynamic = 'force-dynamic';

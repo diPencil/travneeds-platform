@@ -16,7 +16,7 @@ export type BrandSettings = {
 }
 
 export const defaultBrandSettings: BrandSettings = {
-  companyName: 'Star Pyramids Tours',
+  companyName: 'TravNeeds Tours',
   logo: '/logo.png',
   favicon: '/favicon.png',
   aboutEn: 'We would be happy to help you discover Egypt.',
@@ -26,6 +26,6 @@ export const defaultBrandSettings: BrandSettings = {
   email: COMPANY_EMAIL,
   address: COMPANY_ADDRESS,
   mapUrl: COMPANY_MAP_URL,
-  copyrightEn: 'All rights reserved to STAR PYRAMIDS company, Egypt ©2026',
-  copyrightAr: 'جميع الحقوق محفوظة لشركة ستار بيراميدز، مصر ©2026',
+  copyrightEn: 'All rights reserved to TravNeeds company, Egypt ©2026',
+  copyrightAr: 'جميع الحقوق محفوظة لشركة تراف نيدز، مصر ©2026',
 }

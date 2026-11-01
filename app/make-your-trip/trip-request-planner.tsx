@@ -45,7 +45,7 @@ const ar: Record<string, string> = {
   'Select your preferred start date': 'حدد تاريخ البدء المفضل', 'Select your preferred end date': 'حدد تاريخ الانتهاء المفضل',
   'Next up': 'التالي', Edit: 'تعديل', 'Full Name': 'الاسم الكامل', Email: 'البريد الإلكتروني',
   'your full name here': 'اكتب اسمك الكامل', 'Type your email..': 'اكتب بريدك الإلكتروني', 'Include flight options in my request': 'تضمين خيارات الطيران في طلبي',
-  'Ask STAR PYRAMIDS to include suitable flight options when preparing your trip proposal.': 'اطلب من STAR PYRAMIDS تضمين خيارات طيران مناسبة عند إعداد مقترح الرحلة.',
+  'Ask TravNeeds to include suitable flight options when preparing your trip proposal.': 'اطلب من TravNeeds تضمين خيارات طيران مناسبة عند إعداد مقترح الرحلة.',
   Nationality: 'الجنسية', 'Choose your nationality': 'اختر جنسيتك', Phone: 'الهاتف', 'Country code': 'مفتاح الدولة', 'Type your phone': 'اكتب رقم الهاتف',
   Adults: 'البالغون', Children: 'الأطفال', Infants: 'الرضع',
   Min: 'الحد الأدنى', Max: 'الحد الأقصى',
@@ -70,7 +70,7 @@ const es: Record<string, string> = {
   'Select your preferred start date': 'Selecciona tu fecha de inicio preferida', 'Select your preferred end date': 'Selecciona tu fecha de fin preferida',
   'Next up': 'Siguiente', Edit: 'Editar', 'Full Name': 'Nombre completo', Email: 'Correo electrónico',
   'your full name here': 'Escribe tu nombre completo', 'Type your email..': 'Escribe tu correo electrónico', 'Include flight options in my request': 'Incluir opciones de vuelo en mi solicitud',
-  'Ask STAR PYRAMIDS to include suitable flight options when preparing your trip proposal.': 'Pide a STAR PYRAMIDS incluir opciones de vuelo adecuadas al preparar tu propuesta de viaje.',
+  'Ask TravNeeds to include suitable flight options when preparing your trip proposal.': 'Pide a TravNeeds incluir opciones de vuelo adecuadas al preparar tu propuesta de viaje.',
   Nationality: 'Nacionalidad', 'Choose your nationality': 'Elige tu nacionalidad', Phone: 'Teléfono', 'Country code': 'Código de país', 'Type your phone': 'Escribe tu teléfono',
   Adults: 'Adultos', Children: 'Niños', Infants: 'Bebés',
   Min: 'Mínimo', Max: 'Máximo',
@@ -95,7 +95,7 @@ const it: Record<string, string> = {
   'Select your preferred start date': 'Seleziona la tua data di inizio preferita', 'Select your preferred end date': 'Seleziona la tua data di fine preferita',
   'Next up': 'Avanti', Edit: 'Modifica', 'Full Name': 'Nome completo', Email: 'Email',
   'your full name here': 'Scrivi il tuo nome completo', 'Type your email..': 'Scrivi la tua email', 'Include flight options in my request': 'Includi opzioni di volo nella mia richiesta',
-  'Ask STAR PYRAMIDS to include suitable flight options when preparing your trip proposal.': 'Chiedi a STAR PYRAMIDS di includere opzioni di volo adatte nella proposta di viaggio.',
+  'Ask TravNeeds to include suitable flight options when preparing your trip proposal.': 'Chiedi a TravNeeds di includere opzioni di volo adatte nella proposta di viaggio.',
   Nationality: 'Nazionalità', 'Choose your nationality': 'Scegli la tua nazionalità', Phone: 'Telefono', 'Country code': 'Prefisso', 'Type your phone': 'Scrivi il tuo telefono',
   Adults: 'Adulti', Children: 'Bambini', Infants: 'Neonati',
   Min: 'Minimo', Max: 'Massimo',
@@ -585,7 +585,7 @@ function PlannerInner() {
           <p className="myt-tour-note" style={{ margin: '10px 0 0' }}>{t('Editing these details applies to this request only.')}</p>
           <label className="myt-check" htmlFor="myt-save-profile" style={{ marginTop: 10 }}><input id="myt-save-profile" type="checkbox" checked={saveProfile} onChange={(e) => setSaveProfile(e.target.checked)} /><span className="box" aria-hidden="true">{saveProfile && <Check size={16} />}</span> {t('Save these details to my profile')}</label>
           <label className="myt-check" htmlFor="myt-flight"><input id="myt-flight" type="checkbox" checked={flightOffer} onChange={(e) => setFlightOffer(e.target.checked)} aria-describedby="myt-flight-hint" /><span className="box" aria-hidden="true">{flightOffer && <Check size={16} />}</span> {t('Include flight options in my request')}</label>
-          <p className="myt-tour-note" id="myt-flight-hint" style={{ marginTop: -14 }}>{t('Ask STAR PYRAMIDS to include suitable flight options when preparing your trip proposal.')}</p>
+          <p className="myt-tour-note" id="myt-flight-hint" style={{ marginTop: -14 }}>{t('Ask TravNeeds to include suitable flight options when preparing your trip proposal.')}</p>
           <div className="myt-grid">
             <label className="myt-field"><span className="myt-label" id="myt-nationality-label">{t('Nationality')} <em className="req" aria-hidden="true">*</em></span><CountrySelect id="myt-nationality" labelledBy="myt-nationality-label" value={nationality} onChange={setNationality} locale={locale} placeholder={t('Choose your nationality')} invalid={Boolean(errors.nationality)} describedBy={errors.nationality ? 'myt-nationality-error' : undefined} />{errors.nationality && <span className="field-error" id="myt-nationality-error" role="alert">{errText('nationality')}</span>}</label>
             <div className="myt-field"><span className="myt-label" id="myt-phone-label">{t('Phone')} <em className="req" aria-hidden="true">*</em></span><InternationalPhoneInput id="myt-phone" required value={phone} onChange={setPhone} locale={locale} countryCode={phoneCountry} onCountryChange={setPhoneCountry} placeholder={t('Type your phone')} invalid={Boolean(errors.phone)} describedBy={errors.phone ? 'myt-phone-error' : undefined} />{errors.phone && <span className="field-error" id="myt-phone-error" role="alert">{errText('phone')}</span>}</div>

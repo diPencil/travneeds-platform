@@ -34,9 +34,9 @@ export const TEMPLATE_CONTENT = {
     "it": "L’Egitto è più di una lista di luoghi."
   },
   "description2": {
-    "en": "At STAR PYRAMIDS, a good journey makes room for the landmarks you have dreamed of and the smaller moments that bring a place closer. That is why we offer different ways to explore Egypt, from a single day to a journey across its cities.",
-    "es": "En STAR PYRAMIDS, un buen viaje deja espacio para los monumentos con los que soñaste y para los pequeños momentos que te acercan al lugar. Por eso ofrecemos distintas formas de explorar Egipto, desde un solo día hasta un viaje entre sus ciudades.",
-    "it": "In STAR PYRAMIDS, un buon viaggio lascia spazio ai monumenti che hai sognato e ai piccoli momenti che ti avvicinano al luogo. Per questo offriamo diversi modi per esplorare l’Egitto, da un solo giorno a un viaggio tra le sue città."
+    "en": "At TravNeeds, a good journey makes room for the landmarks you have dreamed of and the smaller moments that bring a place closer. That is why we offer different ways to explore Egypt, from a single day to a journey across its cities.",
+    "es": "En TravNeeds, un buen viaje deja espacio para los monumentos con los que soñaste y para los pequeños momentos que te acercan al lugar. Por eso ofrecemos distintas formas de explorar Egipto, desde un solo día hasta un viaje entre sus ciudades.",
+    "it": "In TravNeeds, un buon viaggio lascia spazio ai monumenti che hai sognato e ai piccoli momenti che ti avvicinano al luogo. Per questo offriamo diversi modi per esplorare l’Egitto, da un solo giorno a un viaggio tra le sue città."
   },
   "description3": {
     "en": "Browse the journeys and destinations, or tell us what you have in mind to start a conversation about a route that fits your time and interests.",

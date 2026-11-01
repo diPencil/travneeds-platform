@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: 'Egypt Events',
-    description: 'Discover upcoming events in Egypt  -  festivals, cultural celebrations, and special occasions with STAR PYRAMIDS.',
+    description: 'Discover upcoming events in Egypt  -  festivals, cultural celebrations, and special occasions with TravNeeds.',
     alternates: { canonical: `${siteUrl}/events`, languages: hreflang },
     ...(await pageContentMetadata('events')),
   }

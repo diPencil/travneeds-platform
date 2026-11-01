@@ -25,6 +25,6 @@ export async function seoInventory(): Promise<SeoInventoryRow[]> {
   // A failed collection rejects the dashboard: it must not present a false zero.
   return [...pages, ...records.filter(entry => entry.record.published && entry.record.publicUrl).map(({ record, state }): SeoInventoryRow => {
     const seo = state.published
-    return { id: record.kind + ':' + record.slug, name: record.name, route: record.publicUrl!, kind: 'business', editor: '/admin/website-cms/seo/dynamic/' + record.kind + '/' + record.slug, title: seo?.text.en.title || record.name + ' | STAR PYRAMIDS', description: seo?.text.en.description || record.description || record.name, image: seo?.image || record.image || '', index: seo?.index !== false, canonicalIssue: !!seo?.canonical && seo.canonical !== record.publicUrl, translationIssue: false, updatedAt: state.updatedAt ?? record.updatedAt ?? null }
+    return { id: record.kind + ':' + record.slug, name: record.name, route: record.publicUrl!, kind: 'business', editor: '/admin/website-cms/seo/dynamic/' + record.kind + '/' + record.slug, title: seo?.text.en.title || record.name + ' | TravNeeds', description: seo?.text.en.description || record.description || record.name, image: seo?.image || record.image || '', index: seo?.index !== false, canonicalIssue: !!seo?.canonical && seo.canonical !== record.publicUrl, translationIssue: false, updatedAt: state.updatedAt ?? record.updatedAt ?? null }
   })]
 }

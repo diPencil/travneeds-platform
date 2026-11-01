@@ -333,7 +333,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <span className="sp-brand-mark"><BrandMark alt="" /></span>
             {!collapsed && (
               <span className="sp-brand-copy">
-                <strong>STAR PYRAMIDS</strong>
+                <strong>TravNeeds</strong>
                 <small>{ar ? 'لوحة الإدارة' : 'INTERNAL DASHBOARD'}</small>
               </span>
             )}

@@ -8,7 +8,7 @@ export const COMPANY_WHATSAPP_NUMBER = '201288222962'
 export const COMPANY_WHATSAPP_HREF = `https://wa.me/${COMPANY_WHATSAPP_NUMBER}`
 
 export const COMPANY_ADDRESS = '7st Farouk Ahmed Khattab, El-Haram, Giza.'
-export const COMPANY_EMAIL = 'info@starpyramids.com'
+export const COMPANY_EMAIL = 'info@travneeds.com'
 export const COMPANY_MAP_URL = 'https://maps.google.com/?q=7st+Farouk+Ahmed+Khattab,+El-Haram,+Giza'
 
 /**

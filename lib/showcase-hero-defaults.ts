@@ -5,7 +5,7 @@ export const showcaseDefaults = {
     "text": {
       "en": {
         "eyebrow": "Discover Egypt with us",
-        "title": "STAR PYRAMIDS",
+        "title": "TravNeeds",
         "intro": "Journeys shaped around your curiosity, with room to experience Egypt at your own pace.",
         "primaryLabel": "Discover our story",
         "secondaryLabel": "See ways to travel",
@@ -19,7 +19,7 @@ export const showcaseDefaults = {
       },
       "es": {
         "eyebrow": "Descubre Egipto con nosotros",
-        "title": "STAR PYRAMIDS",
+        "title": "TravNeeds",
         "intro": "Viajes a medida de tu curiosidad, con espacio para vivir Egipto a tu manera.",
         "primaryLabel": "Descubre nuestra historia",
         "secondaryLabel": "Ver formas de viajar",
@@ -33,7 +33,7 @@ export const showcaseDefaults = {
       },
       "it": {
         "eyebrow": "Scopri l’Egitto con noi",
-        "title": "STAR PYRAMIDS",
+        "title": "TravNeeds",
         "intro": "Viaggi plasmati sulla tua curiosità, con spazio per vivere l’Egitto al tuo ritmo.",
         "primaryLabel": "Scopri la nostra storia",
         "secondaryLabel": "Vedi i modi di viaggiare",

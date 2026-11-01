@@ -1,7 +1,7 @@
-# STAR PYRAMIDS Homepage Design System
+# TravNeeds Homepage Design System
 
 ## 1. Design philosophy
-The homepage follows the provided STAR PYRAMIDS references: bright white surfaces, a restrained Egypt-blue navigation and footer, warm orange actions, compact travel cards, generous section whitespace, and image-led storytelling. The interface is flat and editorial rather than SaaS-like: borders are subtle, shadows are rare, and controls are large enough for travel planning.
+The homepage follows the provided TravNeeds references: bright white surfaces, a restrained Egypt-blue navigation and footer, warm orange actions, compact travel cards, generous section whitespace, and image-led storytelling. The interface is flat and editorial rather than SaaS-like: borders are subtle, shadows are rare, and controls are large enough for travel planning.
 
 ## 2. Reference hierarchy
 The exact section order is header, promotional bar, hero/search, statistics, Christmas tours, popular destinations, Make Your Trip banner, special offers, How it works, Highlights, blogs, sustainability, journey gallery, reviews, FAQ, help form, and footer.

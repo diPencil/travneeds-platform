@@ -4,12 +4,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
-const TARGET = 'star_pyramids_production';
-const SOURCE = 'star_pyramids';
-const ADMIN = 'admin@starpyramids.com';
+const TARGET = 'travneeds_production';
+const SOURCE = 'travneeds';
+const ADMIN = 'admin@travneeds.com';
 function connections(raw) {
   const source = new URL(raw);
-  if (source.protocol !== 'mysql:' || !['127.0.0.1', 'localhost', '[::1]'].includes(source.hostname) || decodeURIComponent(source.pathname.slice(1)) !== SOURCE) throw new Error('Only local star_pyramids may be the source.');
+  if (source.protocol !== 'mysql:' || !['127.0.0.1', 'localhost', '[::1]'].includes(source.hostname) || decodeURIComponent(source.pathname.slice(1)) !== SOURCE) throw new Error('Only local travneeds may be the source.');
   const target = new URL(source); target.pathname = '/' + TARGET;
   return { source: source.href, target: target.href };
 }

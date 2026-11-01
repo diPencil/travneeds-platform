@@ -1,4 +1,4 @@
-// STAR PYRAMIDS email service (Phase 2J). Server-only email architecture
+// TravNeeds email service (Phase 2J). Server-only email architecture
 // with a provider adapter interface, typed templates, HTML + plain-text
 // output, and a real SMTP transport.
 //
@@ -87,8 +87,8 @@ function getSenderConfig(): SenderConfig {
   // Centralized sender configuration  -  never from client input.
   // Defaults match the existing admin settings defaults.
   return {
-    fromName: 'Star Pyramids Tours',
-    fromEmail: 'sales@starpyramids.com',
+    fromName: 'TravNeeds Tours',
+    fromEmail: 'sales@travneeds.com',
     replyTo: null,
   };
 }
@@ -219,9 +219,9 @@ interface EmailTemplateDefinition {
 
 const TEMPLATES: Record<EmailEventType, EmailTemplateDefinition> = {
   welcome: {
-    subject: 'Welcome to Star Pyramids Tours',
-    bodyHtml: '<h2>Welcome, {{name}}!</h2><p>Thank you for creating an account with Star Pyramids Tours. We are excited to help you explore Egypt.</p><p><a href="{{dashboardUrl}}" class="btn">Go to your account</a></p>',
-    bodyText: 'Welcome, {{name}}!\n\nThank you for creating an account with Star Pyramids Tours. We are excited to help you explore Egypt.\n\nGo to your account: {{dashboardUrl}}',
+    subject: 'Welcome to TravNeeds Tours',
+    bodyHtml: '<h2>Welcome, {{name}}!</h2><p>Thank you for creating an account with TravNeeds Tours. We are excited to help you explore Egypt.</p><p><a href="{{dashboardUrl}}" class="btn">Go to your account</a></p>',
+    bodyText: 'Welcome, {{name}}!\n\nThank you for creating an account with TravNeeds Tours. We are excited to help you explore Egypt.\n\nGo to your account: {{dashboardUrl}}',
   },
   booking_created: {
     subject: 'Booking received - {{reference}}',
@@ -349,9 +349,9 @@ const TEMPLATES: Record<EmailEventType, EmailTemplateDefinition> = {
     bodyText: 'New support message\n\nCustomer {{name}} sent a new message in conversation {{reference}}.\n\nView conversation: {{detailUrl}}',
   },
   password_reset: {
-    subject: 'Reset your Star Pyramids Tours password',
-    bodyHtml: '<h2>Reset your password</h2><p>Hi {{name}},</p><p>You requested a password reset for your Star Pyramids Tours account. Click the button below to set a new password:</p><p><a href="{{resetUrl}}" class="btn">Reset password</a></p><p>This link expires in 1 hour. If you did not request this, you can safely ignore this email.</p>',
-    bodyText: 'Reset your password\n\nHi {{name}},\n\nYou requested a password reset for your Star Pyramids Tours account. Visit the link below to set a new password:\n\n{{resetUrl}}\n\nThis link expires in 1 hour. If you did not request this, you can safely ignore this email.',
+    subject: 'Reset your TravNeeds Tours password',
+    bodyHtml: '<h2>Reset your password</h2><p>Hi {{name}},</p><p>You requested a password reset for your TravNeeds Tours account. Click the button below to set a new password:</p><p><a href="{{resetUrl}}" class="btn">Reset password</a></p><p>This link expires in 1 hour. If you did not request this, you can safely ignore this email.</p>',
+    bodyText: 'Reset your password\n\nHi {{name}},\n\nYou requested a password reset for your TravNeeds Tours account. Visit the link below to set a new password:\n\n{{resetUrl}}\n\nThis link expires in 1 hour. If you did not request this, you can safely ignore this email.',
   },
 };
 
@@ -629,7 +629,7 @@ export async function getOperationalEmailRecipients(): Promise<string[]> {
   } catch {
     /* fall through to default */
   }
-  return ['sales@starpyramids.com'];
+  return ['sales@travneeds.com'];
 }
 
 /**

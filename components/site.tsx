@@ -52,7 +52,7 @@ export { extra } from '@/lib/site-copy'
 
 
 
-export function Logo(){const brand=useBrandSettings(); return <Link href="/" className="brand-logo" aria-label="STAR PYRAMIDS Tours Egypt"><img className="brand-img" src={brand.logo || '/logo.png'} alt="STAR PYRAMIDS Tours Egypt"/></Link>}
+export function Logo(){const brand=useBrandSettings(); return <Link href="/" className="brand-logo" aria-label="TravNeeds Tours Egypt"><img className="brand-img" src={brand.logo || '/logo.png'} alt="TravNeeds Tours Egypt"/></Link>}
 
 export function NotificationDropdown({ locale, onClose, state }: { locale: Locale; onClose: () => void; state: ReturnType<typeof useMarketingNotifications> }) {
   const { unreadCount, loading, error, busy, refresh, markRead, markAllRead } = state
@@ -531,8 +531,8 @@ function DynamicFooter() {
       <div>
         <h3>{ex.contactInfo}</h3>
         <div className="foot-contact">
-          <a href={phoneHref(brand.phone)} aria-label={tx(locale, { en: 'Call STAR PYRAMIDS', es: 'Llama a STAR PYRAMIDS', it: 'Chiama STAR PYRAMIDS', ar: 'اتصل بستار بيراميدز' })}><Phone size={15} /><span>{brand.phone}</span></a>
-          <a href={whatsappHref(brand.whatsapp)} target="_blank" rel="noreferrer" aria-label={tx(locale, { en: 'Chat with STAR PYRAMIDS on WhatsApp', es: 'Habla con STAR PYRAMIDS por WhatsApp', it: 'Chatta con STAR PYRAMIDS su WhatsApp', ar: 'راسل ستار بيراميدز على واتساب' })}><WhatsAppGlyph size={16} /><span>{brand.whatsapp}</span></a>
+          <a href={phoneHref(brand.phone)} aria-label={tx(locale, { en: 'Call TravNeeds', es: 'Llama a TravNeeds', it: 'Chiama TravNeeds', ar: 'اتصل بتراف نيدز' })}><Phone size={15} /><span>{brand.phone}</span></a>
+          <a href={whatsappHref(brand.whatsapp)} target="_blank" rel="noreferrer" aria-label={tx(locale, { en: 'Chat with TravNeeds on WhatsApp', es: 'Habla con TravNeeds por WhatsApp', it: 'Chatta con TravNeeds su WhatsApp', ar: 'راسل تراف نيدز على واتساب' })}><WhatsAppGlyph size={16} /><span>{brand.whatsapp}</span></a>
           <a href={`mailto:${brand.email}`}><Mail size={15} /><span>{brand.email}</span></a>
           <span className="foot-addr"><MapPin size={15} /><span>{brand.address}</span></span>
         </div>

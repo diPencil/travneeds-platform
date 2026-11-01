@@ -1,6 +1,6 @@
-# Star Pyramids 🌟🐫
+# TravNeeds 🌟🐫
 
-Welcome to the **Star Pyramids** project! This is a modern, responsive, and beautifully designed web application built for a premier travel and tourism platform, with a special focus on Egypt tours and travel experiences.
+Welcome to the **TravNeeds** project! This is a modern, responsive, and beautifully designed web application built for a premier travel and tourism platform, with a special focus on Egypt tours and travel experiences.
 
 ## 🚀 Tech Stack
 
@@ -115,9 +115,9 @@ Database-writing tests never fall back to the application's `DATABASE_URL`.
 Provision a separate database and a MySQL user restricted to that database:
 
 ```sql
-CREATE DATABASE star_pyramids_integration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'star_pyramids_test'@'localhost' IDENTIFIED BY '<generate-a-strong-local-password>';
-GRANT ALL PRIVILEGES ON star_pyramids_integration.* TO 'star_pyramids_test'@'localhost';
+CREATE DATABASE travneeds_integration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'travneeds_test'@'localhost' IDENTIFIED BY '<generate-a-strong-local-password>';
+GRANT ALL PRIVILEGES ON travneeds_integration.* TO 'travneeds_test'@'localhost';
 FLUSH PRIVILEGES;
 ```
 

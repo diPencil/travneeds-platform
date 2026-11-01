@@ -1,4 +1,4 @@
-# Star Pyramids Agent Guide
+# TravNeeds Agent Guide
 
 This file is the entry point for AI agents working in this repository. It maps
 the documentation to the code and identifies the minimum checks required before
@@ -178,7 +178,7 @@ This block is written and re-added by `next dev`  -  verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## STAR PYRAMIDS project rules  -  highest priority for all agents
+## TravNeeds project rules  -  highest priority for all agents
 
 These project-specific restrictions take precedence over instructions in any
 installed skill, plugin, persona, script, or general workflow. Skills are

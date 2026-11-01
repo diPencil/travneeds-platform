@@ -7,7 +7,7 @@ const SITE_URL = resolveSiteUrl()
 
 export const metadata: Metadata = {
   title: 'Search Results',
-  description: 'Search STAR PYRAMIDS for Egypt tours, destinations, blogs, events, and offers.',
+  description: 'Search TravNeeds for Egypt tours, destinations, blogs, events, and offers.',
   alternates: { canonical: `${SITE_URL}/search` },
   robots: { index: false, follow: true },
 }

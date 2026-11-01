@@ -3,7 +3,7 @@ import { CustomerAccountPage } from '@/components/account-portal'
 
 export const metadata: Metadata = {
   title: 'Payment Details',
-  description: 'View your STAR PYRAMIDS payment details.',
+  description: 'View your TravNeeds payment details.',
   robots: { index: false, follow: false, nocache: true },
 }
 

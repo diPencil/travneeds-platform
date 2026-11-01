@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const hreflang = await getHreflangEntries('/trips')
 
   return {
-    title: { absolute: 'Egypt Trips | STAR PYRAMIDS' },
+    title: { absolute: 'Egypt Trips | TravNeeds' },
     description: 'Explore one-day tours, multi-day journeys, Nile cruises, and shore excursions across Egypt.',
     alternates: { canonical: `${siteUrl}/trips`, languages: hreflang },
     ...(await pageContentMetadata('trips')),

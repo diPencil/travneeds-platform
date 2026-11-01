@@ -34,7 +34,7 @@ export function diagnoseSeo(pages: DiagnosticPage[], knownPaths: ReadonlySet<str
 }
 export function recordSeoPreview(input: { name: string; route: string; description?: string; image?: string }, seo: SeoContent & { structuredData?: boolean }, locale: EnabledLocale, origin: string) {
   const override = seoMetadata(seo, locale, origin)
-  const title = seo.text[locale].title || (locale === 'en' ? input.name + ' | STAR PYRAMIDS' : '')
+  const title = seo.text[locale].title || (locale === 'en' ? input.name + ' | TravNeeds' : '')
   const description = seo.text[locale].description || (locale === 'en' ? input.description ?? '' : '')
   const canonical = origin + (seo.canonical || input.route)
   const metadata = { title: { absolute: title }, description, alternates: { canonical, languages: { en: canonical, 'x-default': canonical } }, ...override }

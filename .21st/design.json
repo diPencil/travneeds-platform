@@ -14,7 +14,7 @@
     {
       "area": "trips-catalogue",
       "direction": "Unified Egypt Trip Finder",
-      "summary": "A compact catalogue with a search-first header, scannable filters, and the existing STAR PYRAMIDS tour cards across all four trip categories.",
+      "summary": "A compact catalogue with a search-first header, scannable filters, and the existing TravNeeds tour cards across all four trip categories.",
       "constraints": [
         "Use only listed tours from the canonical tour data source",
         "Keep current tour imagery, cards, detail links, blue and orange brand accents",
@@ -27,7 +27,7 @@
       "direction": "Travel Guide Editorial",
       "summary": "Image-led destination guides use a cinematic but bounded hero, an at-a-glance facts band, readable editorial sections, practical advice, and a contextual tour CTA.",
       "constraints": [
-        "Preserve STAR PYRAMIDS blue, orange, typography, header, and footer",
+        "Preserve TravNeeds blue, orange, typography, header, and footer",
         "Use truthful destination photography and practical travel content",
         "Keep article text readable and responsive without oversized headings",
         "Avoid nested cards and generic marketing-page composition"
@@ -40,7 +40,7 @@
       "constraints": [
         "Never fabricate prices, countdowns, deadlines, availability, or inclusions",
         "Use destination photography as the primary sales signal",
-        "Keep STAR PYRAMIDS blue and orange as purposeful conversion accents",
+        "Keep TravNeeds blue and orange as purposeful conversion accents",
         "Make the offer hierarchy, benefits, terms note, and next action clear on every viewport",
         "Use the shared PromotionCard and render price or countdown UI only when verified data exists"
       ]
@@ -52,7 +52,7 @@
       "constraints": [
         "Keep the visual structure aligned with the multi-day package detail page",
         "Never imply unverified stops, times, inclusions, or cancellation terms",
-        "Use existing STAR PYRAMIDS blue, orange, photography, and typography",
+        "Use existing TravNeeds blue, orange, photography, and typography",
         "Use one responsive template for every one-day tour"
       ]
     },
@@ -73,7 +73,7 @@
       "summary": "The contact route uses an image-led Egypt hero, clear local trust signals, a focused trip-enquiry form, transparent demo contact methods, and a simple three-step response story.",
       "constraints": [
         "Keep phone and WhatsApp interactions explicitly local demo experiences until real contact details are approved",
-        "Use the existing STAR PYRAMIDS blue, orange, typography, photography, header, and footer",
+        "Use the existing TravNeeds blue, orange, typography, photography, header, and footer",
         "Keep the enquiry form honest about its preview-only behavior and do not imply server submission",
         "Support English, Arabic RTL, keyboard navigation, reduced motion, and mobile layouts"
       ]
@@ -119,7 +119,7 @@
       "summary": "The events catalogue opens with a full-width photographic hero driven by the next real event, followed by its date, location, useful catalogue counts, and direct paths into the calendar.",
       "constraints": [
         "Use the canonical events collection for the hero image, featured event, dates, locations, and counts",
-        "Keep the hero photographic and aligned with STAR PYRAMIDS blue and orange accents",
+        "Keep the hero photographic and aligned with TravNeeds blue and orange accents",
         "Do not use abstract gradients, decorative circles, or invented availability claims",
         "Keep the event cards visible immediately after the hero on desktop and mobile"
       ]
@@ -175,7 +175,7 @@
       "constraints": [
         "Use the existing browser-side cart, checkout bookings, enquiries, and canonical tour data until backend APIs replace the repository functions",
         "Keep payment, receipt, and social login states honest and clearly backend-dependent",
-        "Use STAR PYRAMIDS navy, blue, and orange in a quiet operational layout instead of a marketing dashboard",
+        "Use TravNeeds navy, blue, and orange in a quiet operational layout instead of a marketing dashboard",
         "Never render the public website header, promotion strip, footer, or floating support widgets inside account routes",
         "Provide dashboard-native access to website return, trip search, language, currency, cart, notifications, profile, and sign out",
         "Support English, Arabic RTL, keyboard access, reduced motion, and a mobile sidebar drawer",
@@ -214,7 +214,7 @@
       "constraints": [
         "Render only campaign data supplied through the existing offer editor",
         "Never invent prices, dates, availability, inclusions or terms",
-        "Keep STAR PYRAMIDS navy and orange, the public shell, locale behavior and campaign actions",
+        "Keep TravNeeds navy and orange, the public shell, locale behavior and campaign actions",
         "Hide empty optional sections and keep the layout complete with only the required campaign fields",
         "Maintain readable LTR and dormant Arabic RTL layouts across desktop and mobile"
       ]
@@ -225,7 +225,7 @@
       "summary": "Eleven numbered connected steps with compact labels, distinct current/completed states and horizontal overflow only on narrower viewports.",
       "constraints": [
         "Preserve existing step order and navigation handlers",
-        "Preserve STAR PYRAMIDS blue/orange tokens and keyboard focus",
+        "Preserve TravNeeds blue/orange tokens and keyboard focus",
         "Do not change pricing, draft save, publishing, or preview behavior",
         "Keep Arabic disabled; retain enabled content language controls"
       ]

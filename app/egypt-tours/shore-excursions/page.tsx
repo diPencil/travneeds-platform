@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: 'Shore Excursions in Egypt',
-    description: 'Book shore excursions with STAR PYRAMIDS. Port visits from Alexandria, Port Said, and Sokhna. Half-day and full-day tours to Cairo, Luxor, and Aswan for cruise ship passengers.',
+    description: 'Book shore excursions with TravNeeds. Port visits from Alexandria, Port Said, and Sokhna. Half-day and full-day tours to Cairo, Luxor, and Aswan for cruise ship passengers.',
     alternates: { canonical: `${siteUrl}/egypt-tours/shore-excursions`, languages: hreflang },
     ...(await pageContentMetadata('shore')),
   }

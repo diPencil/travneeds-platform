@@ -1,4 +1,4 @@
-// STAR PYRAMIDS SMTP email provider.
+// TravNeeds SMTP email provider.
 //
 // Delivery reads Admin Settings (SiteSetting `mail.*` keys) FIRST and falls
 // back to environment variables, so values saved in the admin Email tab
@@ -64,7 +64,7 @@ interface ResolvedSmtpConfig {
 
 const DEFAULT_PORT = 587;
 const DEFAULT_TIMEOUT_MS = 15_000;
-const BRAND_NAME = 'Star Pyramids Tours';
+const BRAND_NAME = 'TravNeeds Tours';
 
 function readEnv(name: string): string {
   const value = process.env[name];

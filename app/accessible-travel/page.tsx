@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: 'Accessible Travel Egypt',
-    description: 'STAR PYRAMIDS accessible Egypt tours. Wheelchair-friendly day trips, Nile cruises, and shore excursions for travelers with mobility needs.',
+    description: 'TravNeeds accessible Egypt tours. Wheelchair-friendly day trips, Nile cruises, and shore excursions for travelers with mobility needs.',
     alternates: { canonical: `${siteUrl}/accessible-travel`, languages: hreflang },
     ...(await pageContentMetadata('accessible')),
   }

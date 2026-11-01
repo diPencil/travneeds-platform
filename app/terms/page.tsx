@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: 'Terms of Use',
-    description: 'STAR PYRAMIDS terms of use. Conditions for booking Egypt tours, Nile cruises, and travel services with STAR PYRAMIDS.',
+    description: 'TravNeeds terms of use. Conditions for booking Egypt tours, Nile cruises, and travel services with TravNeeds.',
     alternates: { canonical: `${siteUrl}/terms`, languages: hreflang },
     ...(await pageContentMetadata('terms')),
   }

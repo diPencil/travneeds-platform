@@ -3,7 +3,7 @@ import { CustomerAccountPage } from '@/components/account-portal'
 
 export const metadata: Metadata = {
   title: 'My Trip Requests',
-  description: 'View your STAR PYRAMIDS trip requests.',
+  description: 'View your TravNeeds trip requests.',
   robots: { index: false, follow: false, nocache: true },
 }
 

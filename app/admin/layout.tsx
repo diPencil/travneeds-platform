@@ -5,7 +5,7 @@ import './admin.css';
 import './mobile.css';
 
 export const metadata: Metadata = {
-  title: 'Star Pyramids | Internal Dashboard',
+  title: 'TravNeeds | Internal Dashboard',
   description: 'Internal operations dashboard for bookings, trips, inbox and settings.',
   robots: { index: false, follow: false, nocache: true },
 };

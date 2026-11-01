@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: 'Egypt Travel Blog',
-    description: 'Read the STAR PYRAMIDS blog for Egypt travel tips, destination guides, tour insights, and inspiration for your next journey.',
+    description: 'Read the TravNeeds blog for Egypt travel tips, destination guides, tour insights, and inspiration for your next journey.',
     alternates: { canonical: `${siteUrl}/blogs`, languages: hreflang },
     ...(await pageContentMetadata('blogs')),
   }

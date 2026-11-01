@@ -3,7 +3,7 @@ import { CustomerAccountPage } from '@/components/account-portal'
 
 export const metadata: Metadata = {
   title: 'My Profile',
-  description: 'Manage your STAR PYRAMIDS profile and contact details.',
+  description: 'Manage your TravNeeds profile and contact details.',
   robots: { index: false, follow: false, nocache: true },
 }
 
