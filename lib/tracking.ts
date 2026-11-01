@@ -1,4 +1,4 @@
-export const DEFAULT_GTM_CONTAINER_ID = 'GTM-KQ8GR36H'
+export const DEFAULT_GTM_CONTAINER_ID = ''
 export const TRACKING_CONSENT_STORAGE_KEY = 'sp-consent'
 
 const GTM_CONTAINER_ID_PATTERN = /^GTM-[A-Z0-9]{4,12}$/
