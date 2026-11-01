@@ -61,8 +61,8 @@ export function remapRecordSeoCanonical(value: unknown, rename: RecordSeoRename)
   if (rename.oldSlug === rename.newSlug) return state
   validateRecordSeoState(value)
   const prefixes: Record<RecordSeoKind, string[]> = {
-    tour: ['/egypt-tours/'], blog: ['/blogs/'], destination: ['/destinations/', '/egypt-tours/one-day-tours/'],
-    event: ['/events/'], offer: ['/special-offers/'], category: ['/egypt-tours/multi-days-tours/'],
+    tour: ['/all-tours/'], blog: ['/blogs/'], destination: ['/destinations/', '/all-tours/one-day-tours/'],
+    event: ['/events/'], offer: ['/special-offers/'], category: ['/all-tours/multi-days-tours/'],
   }
   const paths = new Map(prefixes[rename.kind].map(prefix => [prefix + rename.oldSlug, prefix + rename.newSlug]))
   const remap = (content: RecordSeoContent | null) => {

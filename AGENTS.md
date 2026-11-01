@@ -97,9 +97,9 @@ genuinely route-specific behavior.
 | `/events`, `/events/[slug]` | `components/extended-pages.tsx`; content in `data/content.ts` |
 | `/destinations`, `/destinations/[slug]` | `components/extended-pages.tsx`; content in `data/content.ts` |
 | `/special-offers`, `/special-offers/[slug]` | `components/extended-pages.tsx`; content in `data/content.ts` |
-| `/egypt-tours/one-day-tours` | `components/site.tsx` (`OneDayToursRegions`) |
-| `/egypt-tours/multi-days-tours`, `/egypt-tours/nile-cruises`, `/egypt-tours/shore-excursions` | `components/site.tsx` (`TourListing`) |
-| `/egypt-tours/[slug]` | Entities in `data/tours.ts`; route validation in `app/egypt-tours/[slug]/page.tsx`; presentation in `components/tour-detail.tsx` or `components/day-tour-detail.tsx` by category |
+| `/all-tours/one-day-tours` | `components/site.tsx` (`OneDayToursRegions`) |
+| `/all-tours/multi-days-tours`, `/all-tours/nile-cruises`, `/all-tours/shore-excursions` | `components/site.tsx` (`TourListing`) |
+| `/all-tours/[slug]` | Entities in `data/tours.ts`; route validation in `app/all-tours/[slug]/page.tsx`; presentation in `components/tour-detail.tsx` or `components/day-tour-detail.tsx` by category |
 | `/make-your-trip` | Route-local interactive planner in `app/make-your-trip/page.tsx` |
 | `/rent-car`, `/rent-car/request` | `components/extended-pages.tsx`; car data in `data/content.ts` |
 | `/search` | `components/extended-pages.tsx`; index in `data/content.ts` |

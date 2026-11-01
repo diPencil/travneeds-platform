@@ -86,7 +86,7 @@ export function AskQuestionButton({
       email: trimmedContact,
       subject: buildQuestionSubject(tourTitle, subjectType),
       message: buildQuestionMessage(trimmedName, tourTitle, trimmedMessage, subjectType),
-      sourcePage: subjectType === 'offer' ? `/special-offers/${tourSlug}` : `/egypt-tours/${tourSlug}`,
+      sourcePage: subjectType === 'offer' ? `/special-offers/${tourSlug}` : `/all-tours/${tourSlug}`,
     }
     const payload = JSON.stringify(enquiry)
     if (pendingRequest.current?.payload !== payload) {

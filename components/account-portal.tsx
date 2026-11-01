@@ -328,7 +328,7 @@ export function AccountShell({ section, children, headLeading }: { section: Acco
           <Search size={17} />
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={tx(locale, { en: 'Search trips and destinations...', es: 'Busca viajes y destinos…', it: 'Cerca viaggi e destinazioni…', ar: 'ابحث عن رحلة أو وجهة...' })} />
           {query && <button type="button" onClick={() => setQuery('')} aria-label={tx(locale, { en: 'Clear search', es: 'Borrar la búsqueda', it: 'Cancella la ricerca', ar: 'مسح البحث' })}><X size={15} /></button>}
-          {query && <div className="customer-search-results">{searchResults.length ? searchResults.map((tour) => <Link key={tour.slug} href={`/egypt-tours/${tour.slug}`} onClick={() => setQuery('')}><img src={tour.image} alt="" /><span><strong>{tour.title}</strong><small>{locale === 'ar' ? localizeTourLocation(tour.location) : tour.location}</small></span><ArrowRight size={14} /></Link>) : <span>{tx(locale, { en: 'No matching trips', es: 'Sin viajes coincidentes', it: 'Nessun viaggio corrispondente', ar: 'لا توجد رحلات مطابقة' })}</span>}</div>}
+          {query && <div className="customer-search-results">{searchResults.length ? searchResults.map((tour) => <Link key={tour.slug} href={`/all-tours/${tour.slug}`} onClick={() => setQuery('')}><img src={tour.image} alt="" /><span><strong>{tour.title}</strong><small>{locale === 'ar' ? localizeTourLocation(tour.location) : tour.location}</small></span><ArrowRight size={14} /></Link>) : <span>{tx(locale, { en: 'No matching trips', es: 'Sin viajes coincidentes', it: 'Nessun viaggio corrispondente', ar: 'لا توجد رحلات مطابقة' })}</span>}</div>}
         </div>
         <div className="customer-dashboard-actions">
           <button type="button" className="customer-top-language" onClick={() => { setLanguageOpen(true); setNotificationsOpen(false); setUserOpen(false) }} aria-label={tx(locale, { en: 'Choose language and currency', es: 'Elige idioma y moneda', it: 'Scegli lingua e valuta', ar: 'اختيار اللغة والعملة' })}><Globe2 size={18} /><span>{LOCALE_SHORT_LABELS[locale]}</span></button>
@@ -572,7 +572,7 @@ function MiniTour({ tour }: { tour: (typeof catalogTours)[number] }) {
   const favorites = useCustomerFavorites()
 
   const title = (locale === 'ar' ? tour.titleAr || undefined : undefined) ?? tour.title
-  return <article className="customer-mini-tour"><Link href={`/egypt-tours/${tour.slug}`}><img src={tour.image} alt={title} /></Link><div><span>{locale === 'ar' ? localizeTourLocation(tour.location) : tour.location}</span><h3><Link href={`/egypt-tours/${tour.slug}`}>{title}</Link></h3><small>{locale === 'ar' ? localizeTourDuration(tour.duration) : tour.duration} · {formatPrice(tour.price, currency, locale)}</small></div><button type="button" onClick={() => favorites.toggle(tour.slug)} aria-label={tx(locale, { en: 'Remove from saved', es: 'Quitar de guardados', it: 'Rimuovi dai salvati', ar: 'إزالة من المحفوظات' })}><Heart size={17} fill={favorites.has(tour.slug) ? 'currentColor' : 'none'} /></button></article>
+  return <article className="customer-mini-tour"><Link href={`/all-tours/${tour.slug}`}><img src={tour.image} alt={title} /></Link><div><span>{locale === 'ar' ? localizeTourLocation(tour.location) : tour.location}</span><h3><Link href={`/all-tours/${tour.slug}`}>{title}</Link></h3><small>{locale === 'ar' ? localizeTourDuration(tour.duration) : tour.duration} · {formatPrice(tour.price, currency, locale)}</small></div><button type="button" onClick={() => favorites.toggle(tour.slug)} aria-label={tx(locale, { en: 'Remove from saved', es: 'Quitar de guardados', it: 'Rimuovi dai salvati', ar: 'إزالة من المحفوظات' })}><Heart size={17} fill={favorites.has(tour.slug) ? 'currentColor' : 'none'} /></button></article>
 }
 
 /**
@@ -737,10 +737,10 @@ function BookingDetailSection({ reference, autoPrint = false }: { reference: str
       <header><div><span>{booking.lines.length} {tx(locale, { en: 'items', es: 'elementos', it: 'voci', ar: 'بنود' })}</span><h2>{tx(locale, { en: 'Trip details', es: 'Detalles del viaje', it: 'Dettagli del viaggio', ar: 'تفاصيل الرحلات' })}</h2></div></header>
       {booking.lines.map((line) => (
         <article key={line.key} className="customer-booking-row">
-          <Link href={line.tourSlug ? `/egypt-tours/${line.tourSlug}` : '/trips'}><img src={line.image || '/egypt-hero.png'} alt="" /></Link>
+          <Link href={line.tourSlug ? `/all-tours/${line.tourSlug}` : '/trips'}><img src={line.image || '/egypt-hero.png'} alt="" /></Link>
           <div className="customer-booking-copy">
             <div className="customer-booking-top"><span>{line.date || (tx(locale, { en: 'Flexible date', es: 'Fecha flexible', it: 'Data flessibile', ar: 'موعد مرن' }))}</span></div>
-            <h3>{line.tourSlug ? <Link href={`/egypt-tours/${line.tourSlug}`}>{line.title}</Link> : line.title}</h3>
+            <h3>{line.tourSlug ? <Link href={`/all-tours/${line.tourSlug}`}>{line.title}</Link> : line.title}</h3>
             <div className="customer-booking-meta">
               <span><Users size={14} />{line.adults} {tx(locale, { en: 'adults', es: 'adultos', it: 'adulti', ar: 'بالغين' })}</span>
               {line.children > 0 && <span>{line.children} {tx(locale, { en: 'children', es: 'niños', it: 'bambini', ar: 'أطفال' })}</span>}
@@ -924,10 +924,10 @@ function GuestBookingSection({ token, autoPrint = false }: { token: string; auto
       <header><div><span>{booking.lines.length} {tx(locale, { en: 'items', es: 'elementos', it: 'voci', ar: 'بنود' })}</span><h2>{tx(locale, { en: 'Trip details', es: 'Detalles del viaje', it: 'Dettagli del viaggio', ar: 'تفاصيل الرحلات' })}</h2></div></header>
       {booking.lines.map((line) => (
         <article key={line.key} className="customer-booking-row">
-          <Link href={line.tourSlug ? `/egypt-tours/${line.tourSlug}` : '/trips'}><img src={line.image || '/egypt-hero.png'} alt="" /></Link>
+          <Link href={line.tourSlug ? `/all-tours/${line.tourSlug}` : '/trips'}><img src={line.image || '/egypt-hero.png'} alt="" /></Link>
           <div className="customer-booking-copy">
             <div className="customer-booking-top"><span>{line.date || (tx(locale, { en: 'Flexible date', es: 'Fecha flexible', it: 'Data flessibile', ar: 'موعد مرن' }))}</span></div>
-            <h3>{line.tourSlug ? <Link href={`/egypt-tours/${line.tourSlug}`}>{line.title}</Link> : line.title}</h3>
+            <h3>{line.tourSlug ? <Link href={`/all-tours/${line.tourSlug}`}>{line.title}</Link> : line.title}</h3>
             <div className="customer-booking-meta">
               <span><Users size={14} />{line.adults} {tx(locale, { en: 'adults', es: 'adultos', it: 'adulti', ar: 'بالغين' })}</span>
               {line.children > 0 && <span>{line.children} {tx(locale, { en: 'children', es: 'niños', it: 'bambini', ar: 'أطفال' })}</span>}

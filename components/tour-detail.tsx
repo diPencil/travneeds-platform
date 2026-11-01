@@ -25,7 +25,7 @@ import { DateInput } from "./date-input"
 import { isLocaleRTL, pickLocaleText, type Locale } from '@/lib/locale-config'
 
 const arabicUi: Record<string, string> = {
-  Home: 'الرئيسية', 'Egypt Tours': 'جولات مصر', 'Egypt travel experience': 'تجربة سياحية في مصر',
+  Home: 'الرئيسية', 'All Tours': 'كل الجولات', 'Egypt travel experience': 'تجربة سياحية في مصر',
   'Nile cruise journey': 'رحلة نيلية', 'Multi-day Egypt journey': 'رحلة مصرية متعددة الأيام',
   'Shore excursion': 'رحلة من الميناء', 'Shore excursion journey': 'رحلة ساحلية من الميناء',
   'Departure port': 'ميناء الانطلاق', 'Ship schedule': 'جدول السفينة',
@@ -66,7 +66,7 @@ const arabicUi: Record<string, string> = {
 const spanishUi: Record<string, string> = {
   'Review title': 'Título de la reseña', 'e.g. Amazing trip!': 'p. ej. ¡Un viaje increíble!',
   Tailored: 'A medida', 'Tailored experience': 'Experiencia a medida',
-  Home: 'Inicio', 'Egypt Tours': 'Circuitos por Egipto', 'Egypt travel experience': 'Experiencia de viaje por Egipto',
+  Home: 'Inicio', 'All Tours': 'Todos los circuitos', 'Egypt travel experience': 'Experiencia de viaje por Egipto',
   'Nile cruise journey': 'Crucero por el Nilo', 'Multi-day Egypt journey': 'Viaje de varios días por Egipto',
   'Shore excursion': 'Excursión en tierra', 'Shore excursion journey': 'Excursión en tierra desde el puerto',
   'Departure port': 'Puerto de salida', 'Ship schedule': 'Horario del barco',
@@ -108,7 +108,7 @@ const spanishUi: Record<string, string> = {
 const italianUi: Record<string, string> = {
   'Review title': 'Titolo della recensione', 'e.g. Amazing trip!': 'ad es. Un viaggio fantastico!',
   Tailored: 'Su misura', 'Tailored experience': 'Esperienza su misura',
-  Home: 'Home', 'Egypt Tours': 'Tour in Egitto', 'Egypt travel experience': 'Esperienza di viaggio in Egitto',
+  Home: 'Home', 'All Tours': 'Tutti i tour', 'Egypt travel experience': 'Esperienza di viaggio in Egitto',
   'Nile cruise journey': 'Crociera sul Nilo', 'Multi-day Egypt journey': 'Viaggio di più giorni in Egitto',
   'Shore excursion': 'Escursione a terra', 'Shore excursion journey': 'Escursione a terra dal porto',
   'Departure port': 'Porto di partenza', 'Ship schedule': 'Orario della nave',
@@ -300,7 +300,7 @@ export function TourDetailPage({ tour: sourceTour, related }: { tour: Tour; rela
   }
 
   return <>
-    <div className="tour-breadcrumb container"><Link href="/">{ui('Home')}</Link><span>›</span><Link href={`/egypt-tours/${tour.category}`}>{ui('Egypt Tours')}</Link><span>›</span><span>{title}</span></div>
+    <div className="tour-breadcrumb container"><Link href="/">{ui('Home')}</Link><span>›</span><Link href={`/all-tours/${tour.category}`}>{ui('All Tours')}</Link><span>›</span><span>{title}</span></div>
     <main className="tour-detail-page container">
       <header className="tour-detail-header"><div><span className="eyebrow">{ui(isShore ? 'Shore excursion journey' : tour.category === 'nile-cruises' ? 'Nile cruise journey' : tour.category === 'multi-days-tours' ? 'Multi-day Egypt journey' : 'Egypt travel experience')}</span><h1>{title}</h1></div><button className={`tour-favorite ${favorite ? "active" : ""}`} onClick={()=>favorites.toggle(tour.slug)} aria-label={ui('Favorites')}><Heart size={20} fill={favorite ? "currentColor" : "none"}/></button></header>
       <div className="tour-detail-layout">
@@ -320,7 +320,7 @@ export function TourDetailPage({ tour: sourceTour, related }: { tour: Tour; rela
           {pricePeriods.length>0&&<section id="prices" className="tour-price-breakdown"><h2><span className="price-breakdown-icon">✦</span> {ui(tour.category === 'nile-cruises' ? 'Cruise Prices' : 'Tour Prices')}</h2><div className="price-cards-grid">{pricePeriods.map((row,index)=><div key={`${row.category}-${index}`} className="price-season-card"><div className="price-season-header"><CalendarDays size={16}/><div><b>{tour.category === 'nile-cruises' ? priceLabel(row.category) : row.category}</b>{(row.startDate||row.endDate)&&<small>{formatTourDateRange(row.startDate,row.endDate,locale)}</small>}</div></div><div className="price-season-body">{row.tiers?.length ? row.tiers.map(tier=><div key={tier.label} className="price-tier"><span>{tour.category === 'nile-cruises' ? priceLabel(tier.label) : tier.label}</span><strong>{row.prefix}{formatPrice(tier.price,currency,locale)} {tier.suffix&&<small>{tier.suffix}</small>}</strong></div>) : <div className="price-tier"><span>{row.note || ui('per person')}</span><strong>{row.prefix}{formatPrice(row.price,currency,locale)}</strong></div>}</div></div>)}</div>{tour.category === 'nile-cruises' && <p className="cruise-price-note">{ui('Prices shown are indicative. Confirm the sailing year, availability, and final quote with our team.')}</p>}</section>}
           </>}
           <section id="reviews" className="tour-content-section tour-reviews-section"><h2>{ui('Reviews')}</h2><TourReviewsSection tourSlug={tour.slug} tourTitle={title} locale={locale} copy={{ heading: ui('Write a review'), forTour: ui('Reviewing'), title: ui('Reviews'), summaryReviews: ui('reviews'), beFirst: ui('Be the first to review this trip'), justNow: ui('Just now'), more: ui('Read more'), less: ui('Show less'), reviewTitle: ui('Review title'), reviewTitlePh: ui('e.g. Amazing trip!'), platform: ui('Platform'), rating: ui('Rating'), review: ui('Your review'), reviewPh: ui('Tell us about your trip...'), cancel: ui('Cancel'), submit: ui('Submit review') }} /></section><TourVideoGallery videos={tour.journeyVideos} locale={locale} tourTitle={title} tourSlug={tour.slug}/>
-          {relatedTours.length>0&&<section className="tour-content-section"><div className="section-title-row"><h2>{ui('Related Tours')}</h2><Link href={`/egypt-tours/${tour.category}`} className="text-link">{ui('View all')} <ArrowRight size={16}/></Link></div><HorizontalSlider className="related-tours" ariaLabel={ui('Related Tours')} previousLabel={tx(locale, { en: 'Previous tours', es: 'Viajes anteriores', it: 'Viaggi precedenti', ar: 'الرحلات السابقة' })} nextLabel={tx(locale, { en: 'Next tours', es: 'Viajes siguientes', it: 'Viaggi successivi', ar: 'الرحلات التالية' })} autoAdvanceMs={5000}>{relatedTours.map(item=><Link key={item.slug} href={`/egypt-tours/${item.slug}`}><Image src={item.image} alt={pickLocaleText(locale, { en: item.title, ar: item.titleAr })} width={260} height={150}/><b>{pickLocaleText(locale, { en: item.title, ar: item.titleAr })}</b><small>{ui(item.departurePort ? 'Departure port' : 'Destinations')}: {pickLocaleText(locale, { en: item.departurePort ?? item.location, ar: localizeTourLocation(item.departurePort ?? item.location) })}</small><span>{ui(isShore ? 'Indicative price' : 'From')} {formatPrice(getDealPrice(item), currency, locale)}</span></Link>)}</HorizontalSlider></section>}
+          {relatedTours.length>0&&<section className="tour-content-section"><div className="section-title-row"><h2>{ui('Related Tours')}</h2><Link href={`/all-tours/${tour.category}`} className="text-link">{ui('View all')} <ArrowRight size={16}/></Link></div><HorizontalSlider className="related-tours" ariaLabel={ui('Related Tours')} previousLabel={tx(locale, { en: 'Previous tours', es: 'Viajes anteriores', it: 'Viaggi precedenti', ar: 'الرحلات السابقة' })} nextLabel={tx(locale, { en: 'Next tours', es: 'Viajes siguientes', it: 'Viaggi successivi', ar: 'الرحلات التالية' })} autoAdvanceMs={5000}>{relatedTours.map(item=><Link key={item.slug} href={`/all-tours/${item.slug}`}><Image src={item.image} alt={pickLocaleText(locale, { en: item.title, ar: item.titleAr })} width={260} height={150}/><b>{pickLocaleText(locale, { en: item.title, ar: item.titleAr })}</b><small>{ui(item.departurePort ? 'Departure port' : 'Destinations')}: {pickLocaleText(locale, { en: item.departurePort ?? item.location, ar: localizeTourLocation(item.departurePort ?? item.location) })}</small><span>{ui(isShore ? 'Indicative price' : 'From')} {formatPrice(getDealPrice(item), currency, locale)}</span></Link>)}</HorizontalSlider></section>}
         </section>
         <aside className="tour-booking-card">
           <div className="booking-top"><div><small>{ui(isShore ? 'Indicative price' : 'From')}</small><strong>{dealOriginal !== undefined && dealOriginal > unitPrice && <><del>{formatPrice(originalUnitPrice, currency, locale)}</del>{' '}</>}{formatPrice(unitPrice, currency, locale)}</strong><span>{ui('per person')} · {heads} {tx(locale, { en: heads === 1 ? 'traveler' : 'travelers', es: heads === 1 ? 'viajero' : 'viajeros', it: heads === 1 ? 'viaggiatore' : 'viaggiatori', ar: 'مسافر' })}</span></div></div>

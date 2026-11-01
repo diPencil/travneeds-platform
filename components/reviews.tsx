@@ -232,7 +232,7 @@ export function ReviewWriteModal({
             />
           </label>
           {error && <p className="rev-error" role="alert">{error}</p>}
-          {needsSignIn && <a href={`/login?next=${encodeURIComponent(tourSlug && tourSlug !== WEBSITE_REVIEW_SCOPE ? `/egypt-tours/${encodeURIComponent(tourSlug)}#reviews` : '/#reviews')}`}>{tx(locale, { en: 'Sign in to your account', es: 'Inicia sesión en tu cuenta', it: 'Accedi al tuo account', ar: 'سجّل الدخول إلى حسابك' })}</a>}
+          {needsSignIn && <a href={`/login?next=${encodeURIComponent(tourSlug && tourSlug !== WEBSITE_REVIEW_SCOPE ? `/all-tours/${encodeURIComponent(tourSlug)}#reviews` : '/#reviews')}`}>{tx(locale, { en: 'Sign in to your account', es: 'Inicia sesión en tu cuenta', it: 'Accedi al tuo account', ar: 'سجّل الدخول إلى حسابك' })}</a>}
           <div className="rev-form-actions">
             <button type="button" className="outline-btn" onClick={onClose} disabled={submitting}>
               {copy.cancel}

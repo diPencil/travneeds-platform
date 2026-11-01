@@ -89,7 +89,7 @@ export function generateBreadcrumbJsonLd(items: BreadcrumbItem[]): object {
  */
 export function generateTouristTripJsonLd(tour: Tour, locale: 'en' | 'es' | 'it' | 'ar' = 'en'): object {
   const SITE_URL = resolveSiteUrl()
-  const tourUrl = `${SITE_URL}/egypt-tours/${tour.slug}`
+  const tourUrl = `${SITE_URL}/all-tours/${tour.slug}`
   const title = locale === 'ar' && tour.titleAr ? tour.titleAr : tour.title
   const description = tour.summary
 

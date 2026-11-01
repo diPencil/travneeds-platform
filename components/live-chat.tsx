@@ -23,7 +23,7 @@ const minNilePrice = Math.min(...getToursByCategory('nile-cruises').map((tour) =
 const nileBase = getToursByCategory('nile-cruises')
 const baseChipHrefs: Record<ChipId, string | undefined> = {
   prices: undefined, agent: undefined, booking: undefined,
-  browse: '/egypt-tours/nile-cruises', trips: '/trips', plan: '/make-your-trip', contact: '/contact', wa: undefined,
+  browse: '/all-tours/nile-cruises', trips: '/trips', plan: '/make-your-trip', contact: '/contact', wa: undefined,
 }
 const STORE_KEY = 'sp-livechat-msgs-v2'
 const OPENED_KEY = 'sp-livechat-opened'

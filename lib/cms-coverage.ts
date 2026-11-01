@@ -44,7 +44,7 @@ export const cmsPageRegistry: CmsPageDefinition[] = [
   ...accountRoutes.map((suffix): CmsPageDefinition => ({ key: 'account' + suffix.replaceAll('/', '-'), name: 'Customer account' + (suffix ? ': ' + suffix.slice(1).replaceAll('/', ' / ') : ''), route: '/account' + suffix, source: 'app/account' + suffix + '/page.tsx', group: 'Customer account', type: 'Authenticated workflow', inventory: 'verified', sections: [body('account', 'Account data, forms and permissions', 'functional')] })),
 ]
 export function findCmsPage(key: string) { return cmsPageRegistry.find((page) => page.key === key) }
-export function cmsRoutePattern(page: CmsPageDefinition) { return (CRUISE_HERO_IDS as readonly string[]).includes(page.key) ? '/egypt-tours/nile-cruises/[type]' : page.pattern ?? page.route }
+export function cmsRoutePattern(page: CmsPageDefinition) { return (CRUISE_HERO_IDS as readonly string[]).includes(page.key) ? '/all-tours/nile-cruises/[type]' : page.pattern ?? page.route }
 export const cmsSharedRegistry: CoverageSection[] = [
   body('brand', 'Header logo, favicon and brand settings', 'business', '/admin/settings'),
   body('navigation', 'Search, account and mobile bottom-bar controls', 'functional'),

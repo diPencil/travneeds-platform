@@ -41,7 +41,7 @@ function NileCruisesContent() {
       primaryHref="#cruise-types"
       featuredLabel={tx(locale, { en: 'Featured Nile cruise', es: 'Crucero destacado por el Nilo', it: 'Crociera sul Nilo in evidenza', ar: 'كروز مميز' })}
       featuredTitle={pickLocaleText(locale, { en: featured.title, ar: featured.titleAr })}
-      featuredHref={`/egypt-tours/${featured.slug}`}
+      featuredHref={`/all-tours/${featured.slug}`}
       featuredLocation={locale === 'ar' ? localizeTourLocation(featured.location) : featured.location}
       featuredDuration={locale === 'ar' ? localizeTourDuration(featured.duration) : featured.duration}
       statsLabel={tx(locale, { en: 'Nile cruises summary', es: 'Resumen de cruceros por el Nilo', it: 'Riepilogo delle crociere sul Nilo', ar: 'ملخص رحلات النيل' })}
@@ -50,13 +50,13 @@ function NileCruisesContent() {
         { value: cruiseTypes.length, label: tx(locale, { en: 'Cruise styles', es: 'Estilos de crucero', it: 'Stili di crociera', ar: 'أنواع كروز' }) },
       ]}
     />
-    <Breadcrumb items={['Egypt Tours', 'Nile Cruises']}/>
+    <Breadcrumb items={['All Tours', 'Nile Cruises']}/>
     <main id="cruise-types" className="listing-page container">
       <div className="cruise-categories-grid">
         {cruiseTypes.map((ct) => {
           const Icon = iconMap[ct.icon] ?? Ship
           const count = allCruises.filter((tour) => tour.cruiseType === ct.slug).length
-          return <Link key={ct.slug} href={`/egypt-tours/nile-cruises/${ct.slug}`} className="cruise-cat-card">
+          return <Link key={ct.slug} href={`/all-tours/nile-cruises/${ct.slug}`} className="cruise-cat-card">
             <div className="cruise-cat-img">
               <img src={ct.image} alt={locale === 'ar' ? ct.titleAr : ct.titleEn} loading="lazy"/>
               <div className="cruise-cat-overlay"/>

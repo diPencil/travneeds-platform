@@ -80,7 +80,7 @@ export const ORIGINAL_TEMPLATE_ITEMS: Record<string, Record<string, SectionItem[
           }
         },
         "icon": "Sun",
-        "href": "/egypt-tours/one-day-tours",
+        "href": "/all-tours/one-day-tours",
         "image": siteImages.cairo
       },
       {
@@ -101,7 +101,7 @@ export const ORIGINAL_TEMPLATE_ITEMS: Record<string, Record<string, SectionItem[
           }
         },
         "icon": "Route",
-        "href": "/egypt-tours/multi-days-tours",
+        "href": "/all-tours/multi-days-tours",
         "image": siteImages.pyramids
       },
       {
@@ -122,7 +122,7 @@ export const ORIGINAL_TEMPLATE_ITEMS: Record<string, Record<string, SectionItem[
           }
         },
         "icon": "Ship",
-        "href": "/egypt-tours/nile-cruises",
+        "href": "/all-tours/nile-cruises",
         "image": siteImages.nile
       },
       {
@@ -143,7 +143,7 @@ export const ORIGINAL_TEMPLATE_ITEMS: Record<string, Record<string, SectionItem[
           }
         },
         "icon": "Anchor",
-        "href": "/egypt-tours/shore-excursions",
+        "href": "/all-tours/shore-excursions",
         "image": siteImages.redSea
       }
     ],

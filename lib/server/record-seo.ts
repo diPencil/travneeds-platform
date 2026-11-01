@@ -19,11 +19,11 @@ function delegate(kind: RecordSeoKind, client: Prisma.TransactionClient = db): D
 }
 function field(kind: RecordSeoKind) { return kind === 'tour' || kind === 'destination' ? 'detail' : 'content' }
 function descriptor(kind: RecordSeoKind, row: Row): RecordSeoDescriptor {
-  const paths = { tour: '/egypt-tours/', blog: '/blogs/', destination: '/destinations/', event: '/events/', offer: '/special-offers/', category: '/egypt-tours/multi-days-tours/' }
+  const paths = { tour: '/all-tours/', blog: '/blogs/', destination: '/destinations/', event: '/events/', offer: '/special-offers/', category: '/all-tours/multi-days-tours/' }
   const publicUrl = kind === 'offer' ? offerHref(row) : paths[kind] + row.slug
   const published = kind === 'tour' ? isTourPublished(row) : kind === 'category' ? row.active === true : kind === 'offer' ? isOfferActive(row) : row.isPublished === true
   const module = { tour: 'trips', blog: 'blogs', destination: 'destinations', event: 'events', offer: 'offers', category: 'multi-day-categories' }[kind]
-  const canonicalPaths = [publicUrl, ...(kind === 'destination' && row.showInOneDayTours ? [`/egypt-tours/one-day-tours/${row.slug}`] : [])]
+  const canonicalPaths = [publicUrl, ...(kind === 'destination' && row.showInOneDayTours ? [`/all-tours/one-day-tours/${row.slug}`] : [])]
   return { kind, slug: row.slug, name: row.title ?? row.name ?? row.slug, publicUrl, published, canonicalPaths, sourceEditor: `/admin/${module}/${kind === 'tour' ? 'builder' : 'new'}?slug=${encodeURIComponent(row.slug)}`, description: row.summary ?? row.excerpt ?? row.copy ?? '', image: row.image ?? '', updatedAt: row.updatedAt.toISOString() }
 }
 async function load(kind: RecordSeoKind, slug: string, client: Prisma.TransactionClient = db) {

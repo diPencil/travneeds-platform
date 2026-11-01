@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ type: str
   const { type } = await params
   const ct = getCruiseTypeBySlug(type)
   if (!ct || !isCruiseHeroId(type)) return { robots: { index: false, follow: false } }
-  const path = '/egypt-tours/nile-cruises/' + ct.slug
+  const path = '/all-tours/nile-cruises/' + ct.slug
   return {
     title: { absolute: `${ct.titleEn} | TravNeeds` },
     description: ct.descEn,

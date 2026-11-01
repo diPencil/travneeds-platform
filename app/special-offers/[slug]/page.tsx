@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (!tour || !isTourPublished(tour)) {
       return { title: 'Tour not found', description: 'This tour is no longer available.', robots: { index: false, follow: false } }
     }
-    return dynamicSeo(tour, 'tour', '/egypt-tours')
+    return dynamicSeo(tour, 'tour', '/all-tours')
   }
   return dynamicSeo(offer, 'offer', '/special-offers')
 }
@@ -32,6 +32,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { slug } = await params
   const offer = await findOfferBySlug(slug)
   if (!offer || offer.isPublished === false) notFound()
-  if (offer.tourSlug) redirect(`/egypt-tours/${offer.tourSlug}`)
+  if (offer.tourSlug) redirect(`/all-tours/${offer.tourSlug}`)
   return <><RecordPageJsonLd kind="offer" slug={offer.slug} name={offer.title} path={`/special-offers/${offer.slug}`} /><OfferDetailPage slug={slug} /></>
 }

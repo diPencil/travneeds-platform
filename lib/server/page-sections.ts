@@ -41,7 +41,7 @@ async function withoutUnavailableLinks(content: PageContent): Promise<PageConten
   const links = content.sections.flatMap((section) => [section.href, ...Object.values(section.links ?? {}), ...(section.items ?? []).map((item) => item.href)]).filter((link): link is string => !!link)
   const references = [...new Set(links)].flatMap((href) => {
     if (CMS_STATIC_LINKS.includes(href as typeof CMS_STATIC_LINKS[number])) return []
-    const match = /^\/(egypt-tours|destinations|blogs|events|special-offers)\/([a-z0-9-]+)$/.exec(href)
+    const match = /^\/(all-tours|destinations|blogs|events|special-offers)\/([a-z0-9-]+)$/.exec(href)
     return match ? [{ href, type: match[1], slug: match[2] }] : []
   })
   if (!references.length) return content
@@ -49,7 +49,7 @@ async function withoutUnavailableLinks(content: PageContent): Promise<PageConten
   for (const type of new Set(references.map((reference) => reference.type))) {
     const group = references.filter((reference) => reference.type === type)
     const where = { slug: { in: group.map((reference) => reference.slug) } }
-    const rows = type === 'egypt-tours' ? await db.tour.findMany({ where: { ...where, status: 'published' }, select: { slug: true } }) : type === 'destinations' ? await db.destination.findMany({ where: { ...where, isPublished: true }, select: { slug: true } }) : type === 'blogs' ? await db.blog.findMany({ where: { ...where, isPublished: true }, select: { slug: true } }) : type === 'events' ? await db.event.findMany({ where: { ...where, isPublished: true }, select: { slug: true } }) : await activeOfferReferences(where.slug.in)
+    const rows = type === 'all-tours' ? await db.tour.findMany({ where: { ...where, status: 'published' }, select: { slug: true } }) : type === 'destinations' ? await db.destination.findMany({ where: { ...where, isPublished: true }, select: { slug: true } }) : type === 'blogs' ? await db.blog.findMany({ where: { ...where, isPublished: true }, select: { slug: true } }) : type === 'events' ? await db.event.findMany({ where: { ...where, isPublished: true }, select: { slug: true } }) : await activeOfferReferences(where.slug.in)
     for (const reference of group) if (!rows.some((row) => row.slug === reference.slug)) unavailable.add(reference.href)
   }
   const valid = (href?: string) => href && unavailable.has(href) ? '' : href
@@ -66,10 +66,10 @@ async function validateReferences(content: PageContent) {
   // Validate dynamic CTA references as well, without copying their business data.
   const links = content.sections.flatMap((section) => [section.href, ...Object.values(section.links ?? {}), ...(section.items ?? []).map((item) => item.href)]).filter((link): link is string => !!link)
   for (const link of new Set(links)) {
-    const match = /^\/(egypt-tours|destinations|blogs|events|special-offers)\/([a-z0-9-]+)$/.exec(link)
-    if (!match || ['/egypt-tours/one-day-tours', '/egypt-tours/multi-days-tours', '/egypt-tours/nile-cruises', '/egypt-tours/shore-excursions'].includes(link)) continue
+    const match = /^\/(all-tours|destinations|blogs|events|special-offers)\/([a-z0-9-]+)$/.exec(link)
+    if (!match || ['/all-tours/one-day-tours', '/all-tours/multi-days-tours', '/all-tours/nile-cruises', '/all-tours/shore-excursions'].includes(link)) continue
     const [, type, slug] = match
-    const exists = type === 'egypt-tours' ? await db.tour.findFirst({ where: { slug, status: 'published' }, select: { slug: true } }) : type === 'destinations' ? await db.destination.findFirst({ where: { slug, isPublished: true }, select: { slug: true } }) : type === 'blogs' ? await db.blog.findFirst({ where: { slug, isPublished: true }, select: { slug: true } }) : type === 'events' ? await db.event.findFirst({ where: { slug, isPublished: true }, select: { slug: true } }) : (await activeOfferReferences([slug]))[0]
+    const exists = type === 'all-tours' ? await db.tour.findFirst({ where: { slug, status: 'published' }, select: { slug: true } }) : type === 'destinations' ? await db.destination.findFirst({ where: { slug, isPublished: true }, select: { slug: true } }) : type === 'blogs' ? await db.blog.findFirst({ where: { slug, isPublished: true }, select: { slug: true } }) : type === 'events' ? await db.event.findFirst({ where: { slug, isPublished: true }, select: { slug: true } }) : (await activeOfferReferences([slug]))[0]
     if (!exists) throw new HeroValidationError('A link points to missing or unpublished content.')
   }
 }

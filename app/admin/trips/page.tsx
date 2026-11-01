@@ -175,7 +175,7 @@ export default function TripsPage() {
                 <td><StatusPill status={isTourPublished(t) ? 'published' : 'hidden'} /></td>
                 <td><AdminTableActions>
                   <AdminIconAction icon={Pencil} label={ar ? `تعديل ${t.title}` : `Edit ${t.title}`} href={`/admin/trips/builder?slug=${t.slug}`} />
-                  <AdminIconAction icon={ExternalLink} label={ar ? `عرض ${t.title} على الموقع` : `View ${t.title} on website`} href={`/egypt-tours/${t.slug}`} />
+                  <AdminIconAction icon={ExternalLink} label={ar ? `عرض ${t.title} على الموقع` : `View ${t.title} on website`} href={`/all-tours/${t.slug}`} />
                   <button
                     type="button"
                     className="sp-icon-btn"

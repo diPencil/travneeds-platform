@@ -19,8 +19,8 @@ export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = await getSiteUrl();
   const staticPaths = [
-    '', '/trips', '/egypt-tours/one-day-tours', '/egypt-tours/multi-days-tours',
-    '/egypt-tours/nile-cruises', '/egypt-tours/shore-excursions', '/destinations',
+    '', '/trips', '/all-tours/one-day-tours', '/all-tours/multi-days-tours',
+    '/all-tours/nile-cruises', '/all-tours/shore-excursions', '/destinations',
     '/special-offers', '/blogs', '/events', '/rent-car', '/about', '/contact',
     '/faq', '/accessible-travel', '/egypt-travel-guide', '/make-your-trip',
     '/privacy', '/terms',
@@ -51,13 +51,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const dynamicRecords: { kind: RecordSeoKind; slug: string; path: string }[] = [
-    ...tours.filter(isTourPublished).map(({ slug }) => ({ kind: 'tour' as const, slug, path: `/egypt-tours/${slug}` })),
+    ...tours.filter(isTourPublished).map(({ slug }) => ({ kind: 'tour' as const, slug, path: `/all-tours/${slug}` })),
     ...destinations.map(({ slug }) => ({ kind: 'destination' as const, slug, path: `/destinations/${slug}` })),
     ...blogs.map((slug) => ({ kind: 'blog' as const, slug, path: `/blogs/${slug}` })),
     ...events.map(({ slug }) => ({ kind: 'event' as const, slug, path: `/events/${slug}` })),
     ...offers.filter((offer) => !offer.tourSlug && offer.isPublished !== false).map(({ slug }) => ({ kind: 'offer' as const, slug, path: `/special-offers/${slug}` })),
-    ...regions.map(({ slug }) => ({ kind: 'destination' as const, slug, path: `/egypt-tours/one-day-tours/${slug}` })),
-    ...categories.map(({ slug }) => ({ kind: 'category' as const, slug, path: `/egypt-tours/multi-days-tours/${slug}` })),
+    ...regions.map(({ slug }) => ({ kind: 'destination' as const, slug, path: `/all-tours/one-day-tours/${slug}` })),
+    ...categories.map(({ slug }) => ({ kind: 'category' as const, slug, path: `/all-tours/multi-days-tours/${slug}` })),
   ];
   const publishedSeo = new Map<string, Promise<Awaited<ReturnType<typeof getPublishedRecordSeo>> | undefined>>();
   const included = await Promise.all(dynamicRecords.map(async ({ kind, slug, path }) => {
@@ -71,7 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const paths = [
     ...staticPaths,
     ...included.filter((path): path is string => path !== null),
-    ...cruiseTypes.map(({ slug }) => `/egypt-tours/nile-cruises/${slug}`),
+    ...cruiseTypes.map(({ slug }) => `/all-tours/nile-cruises/${slug}`),
   ];
 
   return [...new Set(paths)].filter((path) => !excludedStaticPaths.has(path || '/'))

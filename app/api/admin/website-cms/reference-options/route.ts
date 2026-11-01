@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ options: rows.filter((row) => isOfferActive(row) && (!row.tour || row.tour.status === 'published')).map((row) => ({ value: row.slug, label: row.title, href: offerHref(row) })), truncated: rows.length === 100 }, { headers })
     }
     const rows = source === 'tours' ? await db.tour.findMany({ ...base, where: { status: 'published', title } }) : source === 'destinations' ? await db.destination.findMany({ ...base, where: { isPublished: true, title } }) : await db.blog.findMany({ ...base, where: { isPublished: true, title } })
-    const prefix = source === 'tours' ? '/egypt-tours/' : source === 'offers' ? '/special-offers/' : '/' + source + '/'
+    const prefix = source === 'tours' ? '/all-tours/' : source === 'offers' ? '/special-offers/' : '/' + source + '/'
     return NextResponse.json({ options: rows.map((row) => ({ value: row.slug, label: row.title, href: prefix + row.slug })), truncated: rows.length === 100 }, { headers })
   } catch { return NextResponse.json({ error: 'Could not load published content.' }, { status: 503, headers }) }
 }

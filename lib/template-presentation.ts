@@ -756,7 +756,7 @@ export const TEMPLATE_CONTENT = {
         },
         "media": {},
         "links": {
-          "links0": "/egypt-tours/one-day-tours"
+          "links0": "/all-tours/one-day-tours"
         }
       },
       {

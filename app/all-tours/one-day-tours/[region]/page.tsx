@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ region: s
   if (!destination) {
     return { title: 'Destination not found', description: 'This destination is no longer available.', robots: { index: false, follow: false } }
   }
-  return dynamicSeo(destination, 'destination', '/egypt-tours/one-day-tours')
+  return dynamicSeo(destination, 'destination', '/all-tours/one-day-tours')
 }
 
 export async function generateStaticParams() {
@@ -28,5 +28,5 @@ export default async function Page({ params }: { params: Promise<{ region: strin
   const { region: regionSlug } = await params
   const destination = (await getPublishedOneDayDestinations()).find((item) => item.slug === regionSlug)
   if (!destination) notFound()
-  return <><RecordPageJsonLd kind="destination" slug={destination.slug} name={destination.title} path={`/egypt-tours/one-day-tours/${destination.slug}`} collection /><OneDayDestinationPage slug={regionSlug} /></>
+  return <><RecordPageJsonLd kind="destination" slug={destination.slug} name={destination.title} path={`/all-tours/one-day-tours/${destination.slug}`} collection /><OneDayDestinationPage slug={regionSlug} /></>
 }

@@ -93,7 +93,7 @@ export default function MultiDayCategoriesPage() {
           <td>{category.order}</td>
           <td><AdminTableActions>
             <AdminIconAction icon={Pencil} label={ar ? `تعديل ${category.name}` : `Edit ${category.name}`} href={`/admin/multi-day-categories/new?slug=${category.slug}`} />
-            <AdminIconAction icon={ExternalLink} label={ar ? `عرض ${category.name}` : `View ${category.name}`} href={`/egypt-tours/multi-days-tours/${category.slug}`} />
+            <AdminIconAction icon={ExternalLink} label={ar ? `عرض ${category.name}` : `View ${category.name}`} href={`/all-tours/multi-days-tours/${category.slug}`} />
             <AdminIconAction icon={Trash2} label={ar ? `حذف ${category.name}` : `Delete ${category.name}`} tone="danger" onClick={() => { setRemoveError(''); setRemoveTarget({ slug: category.slug, name: ar ? category.nameAr : category.name }) }} />
           </AdminTableActions></td>
         </tr>)}</tbody>

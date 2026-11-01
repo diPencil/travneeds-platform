@@ -39,7 +39,7 @@ const packageOffer: Record<Locale, { title: string; cta: string }> = {
 
 const savingsOffer: Record<Locale, { title: string; cta: string }> = {
   en: { title: 'Limited-time savings on top-rated Egypt tours. Grab your deal before it ends!', cta: 'View Offers' },
-  ar: { title: 'وفّر لفترة محدودة على أفضل جولات مصر. احجز قبل انتهاء العرض!', cta: 'شاهد العروض' },
+  ar: { title: 'وفّر لفترة محدودة على أفضل كل الجولات. احجز قبل انتهاء العرض!', cta: 'شاهد العروض' },
   es: { title: 'Ahorra por tiempo limitado en los mejores circuitos de Egipto. ¡Aprovecha antes de que termine!', cta: 'Ver ofertas' },
   it: { title: 'Risparmia per un periodo limitato sui migliori tour in Egitto. Approfittane prima che finisca!', cta: 'Vedi le offerte' },
 }

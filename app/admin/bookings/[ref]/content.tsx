@@ -422,7 +422,7 @@ export function BookingDetailContent({ reference }: { reference: string }) {
           <Card title={<AdminText en="Booked trips" ar="الرحلات المحجوزة" />}>
             {item.lines.map((line) => (
               <div key={line.key} className="evr-event">
-                <Link href={`/egypt-tours/${line.tourSlug}`} className="evr-event-title">{line.title}</Link>
+                <Link href={`/all-tours/${line.tourSlug}`} className="evr-event-title">{line.title}</Link>
                 <p><CalendarDays size={14} />{line.date || (ar ? 'التاريخ مفتوح' : 'Open date')}</p>
                 <p><MapPin size={14} />{line.adults} {ar ? 'بالغين' : 'adults'}{line.children > 0 && ` · ${line.children} ${ar ? 'أطفال' : 'children'}`}{line.infants > 0 && ` · ${line.infants} ${ar ? 'رضع' : 'infants'}`}</p>
                 <p><small dir="ltr">{formatNative(line.adultUnit)} per adult{line.children > 0 && ` · ${formatNative(line.childUnit)} per child`}{line.addons.length > 0 && ` · ${line.addons.join(', ')} (+${formatNative(line.addonTotal)})`}</small></p>

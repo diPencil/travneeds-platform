@@ -101,7 +101,7 @@ function staffDisplayName(staff: Staff): string {
 function staffSearchText(staff: Staff): string {
   return `${staffDisplayName(staff)} ${staff.email} ${staffPrimaryRole(staff) ?? ''}`.trim()
 }
-// Presentation only: turn a raw site path (e.g. "/egypt-tours/nile-cruises")
+// Presentation only: turn a raw site path (e.g. "/all-tours/nile-cruises")
 // into a readable label ("Egypt Tours - Nile Cruises"). Search and storage
 // keep using the raw path.
 function sourceLabel(raw: string | null, locale: Locale): string {

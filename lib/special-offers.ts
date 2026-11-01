@@ -12,5 +12,5 @@ export function isOfferActive(offer: OfferWindow, now = Date.now()): boolean {
   return offer.isPublished !== false && start <= now && end >= now
 }
 export function offerHref(offer: { slug: string; tourSlug?: string | null }): string {
-  return offer.tourSlug ? `/egypt-tours/${offer.tourSlug}` : `/special-offers/${offer.slug}`
+  return offer.tourSlug ? `/all-tours/${offer.tourSlug}` : `/special-offers/${offer.slug}`
 }

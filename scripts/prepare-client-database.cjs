@@ -22,7 +22,7 @@ function settingAllowed(key) {
 }
 function inspectRetainedLinks(value, location = 'content', found = []) {
   if (typeof value === 'string') {
-    if (/\/(egypt-tours|destinations|events|special-offers)\/[a-z0-9]/i.test(value) || /\/(make-your-trip|rent-car\/request)\?[^\s"<>]*(?:tour|vehicle|destination)=/i.test(value)) found.push(location);
+    if (/\/(all-tours|destinations|events|special-offers)\/[a-z0-9]/i.test(value) || /\/(make-your-trip|rent-car\/request)\?[^\s"<>]*(?:tour|vehicle|destination)=/i.test(value)) found.push(location);
   } else if (Array.isArray(value)) value.forEach((entry, index) => inspectRetainedLinks(entry, `${location}[${index}]`, found));
   else if (value && typeof value === 'object') for (const [key, entry] of Object.entries(value)) {
     if (/^(relatedTourSlugs|tourSlugs|destinationSlugs|eventSlugs|offerSlugs)$/i.test(key) && Array.isArray(entry) && entry.length) found.push(`${location}.${key}`);

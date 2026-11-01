@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tour || !isTourPublished(tour)) {
     return { title: 'Tour not found', description: 'This tour is no longer available.', robots: { index: false, follow: false } }
   }
-  return dynamicSeo(tour, 'tour', '/egypt-tours')
+  return dynamicSeo(tour, 'tour', '/all-tours')
 }
 
 export default async function TourPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -47,9 +47,9 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
     : undefined
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: 'Home', url: siteUrl },
-    { name: tour.category === 'one-day-tours' ? 'One Day Tours' : 'Egypt Tours', url: `${siteUrl}/egypt-tours/${tour.category}` },
-    ...(region ? [{ name: region.title, url: `${siteUrl}/egypt-tours/one-day-tours/${region.slug}` }] : []),
-    { name: tour.title, url: `${siteUrl}/egypt-tours/${tour.slug}` },
+    { name: tour.category === 'one-day-tours' ? 'One Day Tours' : 'All Tours', url: `${siteUrl}/all-tours/${tour.category}` },
+    ...(region ? [{ name: region.title, url: `${siteUrl}/all-tours/one-day-tours/${region.slug}` }] : []),
+    { name: tour.title, url: `${siteUrl}/all-tours/${tour.slug}` },
   ])
 
   return (

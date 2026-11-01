@@ -32,7 +32,7 @@ export function CartPage() {
           {estimate.validLines.map(({ item, adultUnit, childUnit, infantUnit, canonicalTotal, pricedAddons, onRequestAddons }) => <article key={item.key} className="cart-item">
             <img src={item.image} alt={item.title} loading="lazy" />
             <div>
-              <div className="cart-line-top"><Link href={`/egypt-tours/${item.tourSlug}`}><b>{item.title}</b></Link><button type="button" className="cart-remove" onClick={() => removeFromCart(item.key)} aria-label={removeLabel}><Trash2 size={16} /></button></div>
+              <div className="cart-line-top"><Link href={`/all-tours/${item.tourSlug}`}><b>{item.title}</b></Link><button type="button" className="cart-remove" onClick={() => removeFromCart(item.key)} aria-label={removeLabel}><Trash2 size={16} /></button></div>
               <div className="cart-meta">
                 <span><CalendarDays size={14} />{item.date || openDateLabel} {item.date ? tx(locale, { en: '(preferred)', es: '(preferida)', it: '(preferita)', ar: '(مفضل)' }) : ''}</span>
                 <span><Users size={14} />{item.adults} {tx(locale, { en: 'adult(s)', es: 'adultos', it: 'adulti', ar: 'بالغون' })}, {item.children} {tx(locale, { en: 'child(ren)', es: 'niños', it: 'bambini', ar: 'أطفال' })}, {item.infants} {tx(locale, { en: 'infant(s)', es: 'bebés', it: 'neonati', ar: 'رضّع' })}</span>

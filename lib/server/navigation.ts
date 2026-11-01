@@ -38,7 +38,7 @@ export async function recordNavigationOptions(kind: NavigationKind, ids?: string
     return rows.filter(row => isOfferActive(row) && (!row.tourSlug || row.tour?.status === 'published')).map(row => ({ key: `${kind}:${row.id}`, label: row.title, href: offerHref(row), target: { type: 'record', kind, id: row.id } }))
   }
   const rows = kind === 'tour' ? await db.tour.findMany({ ...base, where: { ...where, status: 'published' } }) : kind === 'destination' ? await db.destination.findMany({ ...base, where: { ...where, isPublished: true } }) : kind === 'blog' ? await db.blog.findMany({ ...base, where: { ...where, isPublished: true } }) : await db.event.findMany({ ...base, where: { ...where, isPublished: true } })
-  const prefix = { tour: '/egypt-tours/', destination: '/destinations/', blog: '/blogs/', event: '/events/' }[kind]
+  const prefix = { tour: '/all-tours/', destination: '/destinations/', blog: '/blogs/', event: '/events/' }[kind]
   return rows.map(row => ({ key: `${kind}:${row.id}`, label: row.title, href: prefix + encodeURIComponent(row.slug), target: { type: 'record', kind, id: row.id } }))
 }
 export async function resolveNavigation(content: NavigationContent, revision = 0): Promise<PublicNavigation> {

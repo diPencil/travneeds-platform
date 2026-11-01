@@ -9,16 +9,16 @@ export type ShowcaseHeroId = keyof typeof showcaseDefaults
 export const SHOWCASE_HERO_IDS = Object.keys(showcaseDefaults) as ShowcaseHeroId[]
 export const SHOWCASE_PAGES: Record<ShowcaseHeroId, { name: string; route: string }> = {
   trips: { name: 'All trips', route: '/trips' },
-  'standard-nile-cruises': { name: 'Standard Nile Cruises', route: '/egypt-tours/nile-cruises/standard-nile-cruises' },
-  'deluxe-nile-cruise': { name: 'Deluxe Nile Cruise', route: '/egypt-tours/nile-cruises/deluxe-nile-cruise' },
-  'superior-nile-cruise': { name: 'Superior Nile Cruise', route: '/egypt-tours/nile-cruises/superior-nile-cruise' },
-  'luxury-nile-cruise': { name: 'Luxury Nile Cruises', route: '/egypt-tours/nile-cruises/luxury-nile-cruise' },
+  'standard-nile-cruises': { name: 'Standard Nile Cruises', route: '/all-tours/nile-cruises/standard-nile-cruises' },
+  'deluxe-nile-cruise': { name: 'Deluxe Nile Cruise', route: '/all-tours/nile-cruises/deluxe-nile-cruise' },
+  'superior-nile-cruise': { name: 'Superior Nile Cruise', route: '/all-tours/nile-cruises/superior-nile-cruise' },
+  'luxury-nile-cruise': { name: 'Luxury Nile Cruises', route: '/all-tours/nile-cruises/luxury-nile-cruise' },
   about: { name: 'About company', route: '/about' }, contact: { name: 'Contact', route: '/contact' },
   blogs: { name: 'Blogs', route: '/blogs' }, events: { name: 'Events', route: '/events' },
   cars: { name: 'Rent cars', route: '/rent-car' }, offers: { name: 'Special offers', route: '/special-offers' },
-  'one-day': { name: 'One-day tours', route: '/egypt-tours/one-day-tours' },
-  'multi-day': { name: 'Multi-day tours', route: '/egypt-tours/multi-days-tours' },
-  nile: { name: 'Nile cruises', route: '/egypt-tours/nile-cruises' }, shore: { name: 'Shore excursions', route: '/egypt-tours/shore-excursions' },
+  'one-day': { name: 'One-day tours', route: '/all-tours/one-day-tours' },
+  'multi-day': { name: 'Multi-day tours', route: '/all-tours/multi-days-tours' },
+  nile: { name: 'Nile cruises', route: '/all-tours/nile-cruises' }, shore: { name: 'Shore excursions', route: '/all-tours/shore-excursions' },
 }
 export function isShowcaseHeroId(id: string): id is ShowcaseHeroId { return Object.hasOwn(showcaseDefaults, id) }
 export type ShowcaseHero = {

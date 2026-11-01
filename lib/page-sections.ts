@@ -16,7 +16,7 @@ export type SectionDefinition = { id: string; name: string; fields: readonly str
 export const HOME_SECTIONS: readonly SectionDefinition[] = [
   { id: 'hero', name: 'Hero & trip search', fields: [], mandatory: true, editor: '/admin/website-cms/hero-sections/homepage' },
   { id: 'stats', name: 'Statistics', fields: [], itemFields: ['label'], minItems: 1, maxItems: 4, icons: true, numbers: true },
-  { id: 'featured', name: 'Featured tours', fields: ['xmasT', 'xmasS', 'viewAll'], href: '/egypt-tours/multi-days-tours', source: 'tours', limit: 12 },
+  { id: 'featured', name: 'Featured tours', fields: ['xmasT', 'xmasS', 'viewAll'], href: '/all-tours/multi-days-tours', source: 'tours', limit: 12 },
   { id: 'popular', name: 'Popular journeys & category filter', fields: ['popT', 'popS', 'viewAll'], href: '/trips', source: 'tours', limit: 12 },
   { id: 'planner', name: 'Make Your Trip form', fields: ['tripT', 'tripS', 'startPlan'], mandatory: true },
   { id: 'offers', name: 'Special offers', fields: ['offE', 'offT', 'offS', 'viewAll'], href: '/special-offers', source: 'offers', limit: 8 },
@@ -29,10 +29,10 @@ export const HOME_SECTIONS: readonly SectionDefinition[] = [
   { id: 'faq', name: 'Frequently asked questions', fields: ['faqT', 'faqS', 'faqAll'], href: '/faq', itemFields: ['question', 'answer'], minItems: 0, maxItems: 12 },
   { id: 'help', name: 'Help enquiry form', fields: ['helpT', 'helpS', 'contactNow'], mandatory: true },
 ]
-export const CMS_STATIC_LINKS = ['/', '/about', '/contact', '/trips', '/destinations', '/blogs', '/events', '/rent-car', '/rent-car/request', '/special-offers', '/faq', '/egypt-travel-guide', '/accessible-travel', '/make-your-trip', '/privacy', '/terms', '/egypt-tours/one-day-tours', '/egypt-tours/multi-days-tours', '/egypt-tours/nile-cruises', '/egypt-tours/shore-excursions'] as const
+export const CMS_STATIC_LINKS = ['/', '/about', '/contact', '/trips', '/destinations', '/blogs', '/events', '/rent-car', '/rent-car/request', '/special-offers', '/faq', '/egypt-travel-guide', '/accessible-travel', '/make-your-trip', '/privacy', '/terms', '/all-tours/one-day-tours', '/all-tours/multi-days-tours', '/all-tours/nile-cruises', '/all-tours/shore-excursions'] as const
 export function validateCmsLink(value: unknown): string {
   if (typeof value !== 'string' || value.length > 2000) throw new HeroValidationError('Check the link destination.')
-  if (CMS_STATIC_LINKS.includes(value as typeof CMS_STATIC_LINKS[number]) || /^\/(?:egypt-tours|destinations|blogs|events|special-offers)\/[a-z0-9][a-z0-9-]{0,99}$/.test(value)) return value
+  if (CMS_STATIC_LINKS.includes(value as typeof CMS_STATIC_LINKS[number]) || /^\/(?:all-tours|destinations|blogs|events|special-offers)\/[a-z0-9][a-z0-9-]{0,99}$/.test(value)) return value
   if (value.startsWith('https://')) return validateHeroMedia(value, 'image')
   throw new HeroValidationError('Choose an existing public page or a public HTTPS URL.')
 }
@@ -43,7 +43,7 @@ export function originalPageContent(id: PageDocumentId = 'homepage'): PageConten
   const sections = HOME_SECTIONS.map((definition): PageSection => ({ id: definition.id, visible: true, text: translations((locale) => Object.fromEntries(definition.fields.map((key) => [key, key === 'heading' ? homeStrings[locale].revT : key === 'description' ? locale === 'es' ? 'Experiencias de nuestros viajeros.' : locale === 'it' ? 'Esperienze dei nostri viaggiatori.' : 'Experiences shared by our travelers.' : String(homeStrings[locale][key as keyof typeof homeStrings.en] ?? '')]))), ...(definition.href ? { href: definition.href } : {}), ...(definition.source ? { selection: [], selectionMode: 'automatic', limit: definition.id === 'offers' ? 4 : 0 } : {}) }))
   const item = (id: string, values: (locale: EnabledLocale) => Record<string, string>, extra: Partial<SectionItem> = {}): SectionItem => ({ id, visible: true, text: translations(values), ...extra })
   sections.find((s) => s.id === 'stats')!.items = ['Users', 'Award', 'MapPin', 'Star'].map((icon, index) => item('stat-' + index, (locale) => ({ label: homeStrings[locale].stats[index] }), { icon: icon as CmsIconId, value: [100, 50, 60, 5][index], prefix: index === 3 ? '' : '+', suffix: index === 0 ? 'K' : '', decimals: index === 3 ? 1 : 0 }))
-  sections.find((s) => s.id === 'how')!.items = ['MousePointerClick', 'CalendarDays', 'ThumbsUp'].map((icon, index) => item('step-' + index, (locale) => ({ step: homeStrings[locale].howP[index], heading: homeStrings[locale].howTi[index], description: homeStrings[locale].howD[index] }), { icon: icon as CmsIconId, href: ['/egypt-tours/one-day-tours', '/make-your-trip', '/special-offers'][index] }))
+  sections.find((s) => s.id === 'how')!.items = ['MousePointerClick', 'CalendarDays', 'ThumbsUp'].map((icon, index) => item('step-' + index, (locale) => ({ step: homeStrings[locale].howP[index], heading: homeStrings[locale].howTi[index], description: homeStrings[locale].howD[index] }), { icon: icon as CmsIconId, href: ['/all-tours/one-day-tours', '/make-your-trip', '/special-offers'][index] }))
   sections.find((s) => s.id === 'sustainability')!.items = ['Users', 'Landmark', 'Leaf'].map((icon, index) => item('value-' + index, (locale) => ({ line1: [homeStrings[locale].susA, homeStrings[locale].susB, homeStrings[locale].susC][index][0], line2: [homeStrings[locale].susA, homeStrings[locale].susB, homeStrings[locale].susC][index][1] }), { icon: icon as CmsIconId }))
   sections.find((s) => s.id === 'faq')!.items = homeStrings.en.faqQ.map((_, index) => item('faq-' + index, (locale) => ({ question: homeStrings[locale].faqQ[index], answer: homeStrings[locale].faqA })))
   return { sections, seo: { text: translations(() => ({ title: '', description: '' })) as PageContent['seo']['text'], image: '' } }

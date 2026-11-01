@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   if (!category?.active) {
     return { title: 'Category not found', description: 'This category is no longer available.', robots: { index: false, follow: false } }
   }
-  return dynamicCategorySeo(category, '/egypt-tours/multi-days-tours')
+  return dynamicCategorySeo(category, '/all-tours/multi-days-tours')
 }
 
 export async function generateStaticParams() {
@@ -28,5 +28,5 @@ export default async function Page({ params }: { params: Promise<{ category: str
   const { category: categorySlug } = await params
   const category = await findCategoryBySlug(categorySlug)
   if (!category?.active) notFound()
-  return <><RecordPageJsonLd kind="category" slug={category.slug} name={category.name} path={`/egypt-tours/multi-days-tours/${category.slug}`} collection /><MultiDayCategoryPage categorySlug={categorySlug} /></>
+  return <><RecordPageJsonLd kind="category" slug={category.slug} name={category.name} path={`/all-tours/multi-days-tours/${category.slug}`} collection /><MultiDayCategoryPage categorySlug={categorySlug} /></>
 }

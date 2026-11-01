@@ -31,7 +31,7 @@ export function useMarketingNotifications(userId: string | null | undefined) {
         if (owner && body.marketingUnavailable) throw Error('Could not load offers.')
         if (!Array.isArray(body.notifications)) throw Error('Could not load offers.')
         const read = owner ? new Set<string>() : guestReads()
-        const items = body.notifications.filter((item: MarketingNotification) => item && isMarketingNotification(item.id) && typeof item.title === 'string' && typeof item.message === 'string' && typeof item.href === 'string' && /^\/(special-offers|egypt-tours)\/[a-z0-9-]+$/.test(item.href) && currentNotification(item))
+        const items = body.notifications.filter((item: MarketingNotification) => item && isMarketingNotification(item.id) && typeof item.title === 'string' && typeof item.message === 'string' && typeof item.href === 'string' && /^\/(special-offers|all-tours)\/[a-z0-9-]+$/.test(item.href) && currentNotification(item))
           .map((item: MarketingNotification) => ({ ...item, readAt: owner ? item.readAt : read.has(item.id) ? item.createdAt : null }))
         if (active && request === sequence.current) setState({ owner, items, loading: false, error: '' })
       } catch { if (active && request === sequence.current) setState({ owner, items: [], loading: false, error: 'Could not load offers.' }) }

@@ -218,7 +218,7 @@ export default function CategoryEditorPage() {
       {error && <p role="alert" style={{ color: '#b91c1c' }}>{error}</p>}
       <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
         <button type="button" className="sp-btn primary" onClick={save} disabled={saving}><AdminText en="Save category" ar="حفظ الفئة" /></button>
-        {editSlug && <Link className="sp-btn" href={`/egypt-tours/multi-days-tours/${editSlug}`}><ExternalLink size={16} /> <AdminText en="View public category" ar="عرض الفئة العامة" /></Link>}
+        {editSlug && <Link className="sp-btn" href={`/all-tours/multi-days-tours/${editSlug}`}><ExternalLink size={16} /> <AdminText en="View public category" ar="عرض الفئة العامة" /></Link>}
       </div>
     </>}
   </>
