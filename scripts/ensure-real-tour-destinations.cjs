@@ -14,7 +14,7 @@ const normalizedName = value => String(value).normalize('NFD').replace(/[\u0300-
 function targetUrl(source) {
   const url = new URL(source);
   assert.equal(url.protocol, 'mysql:'); assert.equal(url.hostname, '127.0.0.1');
-  assert.equal(url.port || '3306', '3306'); assert.equal(url.pathname, '/travneeds');
+  assert.equal(url.port || '3306', '3306'); assert.equal(url.pathname, '/travneeds_platform');
   url.pathname = '/' + target;
   return url.toString(); // Isolated client only: NEVER writes .env or switches the application.
 }
