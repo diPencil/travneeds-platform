@@ -9,7 +9,7 @@ import { getToursByCategory } from '@/data/tours'
 import { useDbTours } from '@/lib/tours-client'
 import { whatsappHref } from '@/data/company'
 import { useBrandSettings } from '@/lib/admin-store'
-import { formatPrice, useLocale, type Locale } from './locale'
+import { formatPrice, useLocale, tx, type Locale } from './locale'
 
 type ChatMsg = { id: number; from: 'agent' | 'user'; text: string; time: string }
 type ChipId = 'prices' | 'agent' | 'booking' | 'browse' | 'trips' | 'plan' | 'contact' | 'wa'
@@ -124,13 +124,13 @@ function loadStored(): ChatMsg[] {
 }
 
 export function LiveChatWidget({ open, onOpen, onClose }: { open: boolean; onOpen: () => void; onClose: () => void }) {
-  const { locale } = useLocale()
+  const { locale, currency } = useLocale()
   const brand = useBrandSettings()
   const t = copy[locale]
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
   const liveTours = useDbTours(nileBase)
-  const priceStr = formatPrice(minNilePrice, locale)
+  const priceStr = formatPrice(minNilePrice, currency, locale)
   const [mobileTarget, setMobileTarget] = useState<HTMLElement | null>(null)
   useEffect(() => { setMobileTarget(document.getElementById('mobile-livechat-trigger')) }, [])
   const [messages, setMessages] = useState<ChatMsg[]>([])
