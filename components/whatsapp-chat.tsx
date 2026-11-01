@@ -3,7 +3,7 @@ import { BrandMark } from '@/components/brand-mark'
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { CheckCheck, Send, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCheck, Send, X } from 'lucide-react'
 import { useLocale, tx } from './locale'
 import { whatsappNumber } from '@/data/company'
 import { useBrandSettings } from '@/lib/admin-store'
@@ -49,6 +49,8 @@ export function WhatsAppWidget({ open, onOpen, onClose }: { open: boolean; onOpe
   const { locale } = useLocale()
   const brand = useBrandSettings()
   const t = copy[locale]
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
   const [mobileTarget, setMobileTarget] = useState<HTMLElement | null>(null)
   useEffect(() => { setMobileTarget(document.getElementById('mobile-whatsapp-trigger')) }, [])
   const [messages, setMessages] = useState<WaMsg[]>([])
@@ -56,6 +58,7 @@ export function WhatsAppWidget({ open, onOpen, onClose }: { open: boolean; onOpe
   const [typing, setTyping] = useState(false)
   const [unread, setUnread] = useState(() => (typeof window !== 'undefined' && localStorage.getItem(OPENED_KEY) ? 0 : 1))
   const idRef = useRef(1)
+  const panelRef = useRef<HTMLElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const timerRef = useRef<number | null>(null)
@@ -65,14 +68,52 @@ export function WhatsAppWidget({ open, onOpen, onClose }: { open: boolean; onOpe
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, typing, open])
+
   useEffect(() => {
-    if (open) {
-      inputRef.current?.focus()
-      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-      window.addEventListener('keydown', onKey)
-      return () => window.removeEventListener('keydown', onKey)
+    if (!open) return
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
+    if (isMobile) {
+      document.body.classList.add('mobile-chat-open')
+    }
+
+    const updateViewport = () => {
+      if (typeof window !== 'undefined' && window.innerWidth <= 768 && panelRef.current) {
+        if (window.visualViewport) {
+          panelRef.current.style.height = `${window.visualViewport.height}px`
+          panelRef.current.style.top = `${window.visualViewport.offsetTop}px`
+        } else {
+          panelRef.current.style.height = '100dvh'
+          panelRef.current.style.top = '0px'
+        }
+        bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: 'smooth' })
+      } else if (panelRef.current) {
+        panelRef.current.style.height = ''
+        panelRef.current.style.top = ''
+      }
+    }
+
+    const vv = typeof window !== 'undefined' ? window.visualViewport : null
+    if (vv) {
+      vv.addEventListener('resize', updateViewport)
+      vv.addEventListener('scroll', updateViewport)
+    }
+    window.addEventListener('resize', updateViewport)
+    updateViewport()
+
+    inputRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.classList.remove('mobile-chat-open')
+      if (vv) {
+        vv.removeEventListener('resize', updateViewport)
+        vv.removeEventListener('scroll', updateViewport)
+      }
+      window.removeEventListener('resize', updateViewport)
+      window.removeEventListener('keydown', onKey)
     }
   }, [open, onClose])
+
   useEffect(() => () => { if (timerRef.current) window.clearTimeout(timerRef.current) }, [])
 
   const openPanel = () => {
@@ -100,12 +141,22 @@ export function WhatsAppWidget({ open, onOpen, onClose }: { open: boolean; onOpe
     }, 700)
   }
 
-  return <div className="wa-wrap">
-    {mobileTarget && createPortal(<button type="button" className="mobile-support-trigger" onClick={() => (open ? onClose() : openPanel())} aria-expanded={open} aria-label={open ? t.closeLabel : t.openLabel}><span className="mobile-whatsapp-circle"><WhatsAppGlyph size={26}/></span><span>WhatsApp</span>{!open && unread > 0 && <b>{unread}</b>}</button>, mobileTarget)}
-    {open && <section className="wa-panel" role="dialog" aria-label={t.name} aria-modal="false">
+  const panel = (
+    <section ref={panelRef} className="wa-panel" role="dialog" aria-label={t.name} aria-modal={mounted ? 'true' : 'false'}>
       <header className="wa-head">
+        <button
+          type="button"
+          className="wa-back-btn"
+          onClick={onClose}
+          aria-label={tx(locale, { en: 'Back', es: 'Volver', it: 'Indietro', ar: 'رجوع' })}
+        >
+          {locale === 'ar' ? <ArrowRight size={22} /> : <ArrowLeft size={22} />}
+        </button>
         <span className="wa-avatar" aria-hidden="true"><BrandMark alt="" /></span>
-        <div><strong>{t.name}</strong><span className="wa-online"><i aria-hidden="true" />{t.online}</span></div>
+        <div className="wa-head-meta">
+          <strong>{t.name}</strong>
+          <span className="wa-online"><i aria-hidden="true" />{t.online}</span>
+        </div>
         <button type="button" className="wa-close" onClick={onClose} aria-label={t.closeLabel}><X size={17} /></button>
       </header>
       <div className="wa-body" ref={bodyRef} aria-live="polite">
@@ -121,7 +172,12 @@ export function WhatsAppWidget({ open, onOpen, onClose }: { open: boolean; onOpe
         <button type="submit" className="wa-send" aria-label={t.sendLabel}><Send size={17} /></button>
       </form>
       <small className="wa-hint"><WhatsAppGlyph size={12} />{t.hint}</small>
-    </section>}
+    </section>
+  )
+
+  return <div className="wa-wrap">
+    {mobileTarget && createPortal(<button type="button" className="mobile-support-trigger" onClick={() => (open ? onClose() : openPanel())} aria-expanded={open} aria-label={open ? t.closeLabel : t.openLabel}><span className="mobile-whatsapp-circle"><WhatsAppGlyph size={26}/></span><span>WhatsApp</span>{!open && unread > 0 && <b>{unread}</b>}</button>, mobileTarget)}
+    {open && (mounted ? createPortal(panel, document.body) : panel)}
     <button type="button" className="wa-fab" onClick={() => (open ? onClose() : openPanel())} aria-expanded={open} aria-label={open ? t.closeLabel : t.openLabel}>
       {open ? <X size={26} /> : <WhatsAppGlyph size={30} />}
       {!open && unread > 0 && <b>{unread}</b>}

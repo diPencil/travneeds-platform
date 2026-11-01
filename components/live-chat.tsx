@@ -4,7 +4,7 @@ import { BrandMark } from '@/components/brand-mark'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import { Headset, Send, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Headset, Send, X } from 'lucide-react'
 import { getToursByCategory } from '@/data/tours'
 import { useDbTours } from '@/lib/tours-client'
 import { whatsappHref } from '@/data/company'
@@ -124,69 +124,123 @@ function loadStored(): ChatMsg[] {
 }
 
 export function LiveChatWidget({ open, onOpen, onClose }: { open: boolean; onOpen: () => void; onClose: () => void }) {
-  const { currency, locale } = useLocale()
+  const { locale } = useLocale()
   const brand = useBrandSettings()
   const t = copy[locale]
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  const liveTours = useDbTours(nileBase)
+  const priceStr = formatPrice(minNilePrice, locale)
   const [mobileTarget, setMobileTarget] = useState<HTMLElement | null>(null)
   useEffect(() => { setMobileTarget(document.getElementById('mobile-livechat-trigger')) }, [])
-  const [messages, setMessages] = useState<ChatMsg[]>(() => loadStored())
-  const [chips, setChips] = useState<ChipId[]>(() => (loadStored().length ? [] : [...chipsHome]))
+  const [messages, setMessages] = useState<ChatMsg[]>([])
   const [draft, setDraft] = useState('')
+  const [chips, setChips] = useState<ChipId[]>([])
   const [typing, setTyping] = useState(false)
-  const [unread, setUnread] = useState(() => (typeof window !== 'undefined' && (localStorage.getItem(STORE_KEY) || localStorage.getItem(OPENED_KEY)) ? 0 : 1))
+  const [unread, setUnread] = useState(0)
   const [teaser, setTeaser] = useState(false)
   const idRef = useRef(1)
-  const openRef = useRef(false)
+  const panelRef = useRef<HTMLElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const timerRef = useRef<number | null>(null)
-  const greetingPendingRef = useRef(false)
-  const nileTours = useDbTours(nileBase)
-  const nilePrices = nileTours.map((tour) => tour.price)
-  const liveMinNilePrice = nilePrices.length ? Math.min(...nilePrices) : minNilePrice
-  const priceStr = formatPrice(liveMinNilePrice, currency, locale)
+  const openRef = useRef(open)
+  openRef.current = open
+
   const timeNow = () => new Date().toLocaleTimeString(locale === 'ar' ? 'ar-EG' : locale === 'es' ? 'es-ES' : locale === 'it' ? 'it-IT' : 'en-US', { hour: '2-digit', minute: '2-digit' })
 
-  useEffect(() => { openRef.current = open }, [open])
   useEffect(() => {
-    idRef.current = messages.reduce((max, m) => Math.max(max, m.id), 0) + 1
+    try {
+      const raw = localStorage.getItem(STORE_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw) as ChatMsg[]
+        if (Array.isArray(parsed) && parsed.length) {
+          setMessages(parsed)
+          idRef.current = Math.max(...parsed.map((m) => m.id), 0) + 1
+        }
+      }
+    } catch { /* private mode */ }
   }, [])
+
   useEffect(() => {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(messages.slice(-50))) } catch { /* private mode */ }
+    if (!messages.length) return
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(messages.slice(-30))) } catch { /* ignore */ }
   }, [messages])
-  useEffect(() => {
-    if (localStorage.getItem(OPENED_KEY)) return
-    const show = window.setTimeout(() => { if (!openRef.current) setTeaser(true) }, 5000)
-    return () => window.clearTimeout(show)
-  }, [])
+
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, typing, open])
+  }, [messages, typing, chips, open])
+
   useEffect(() => {
-    if (open) {
-      inputRef.current?.focus()
-      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-      window.addEventListener('keydown', onKey)
-      return () => window.removeEventListener('keydown', onKey)
+    if (!open) return
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
+    if (isMobile) {
+      document.body.classList.add('mobile-chat-open')
+    }
+
+    const updateViewport = () => {
+      if (typeof window !== 'undefined' && window.innerWidth <= 768 && panelRef.current) {
+        if (window.visualViewport) {
+          panelRef.current.style.height = `${window.visualViewport.height}px`
+          panelRef.current.style.top = `${window.visualViewport.offsetTop}px`
+        } else {
+          panelRef.current.style.height = '100dvh'
+          panelRef.current.style.top = '0px'
+        }
+        bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: 'smooth' })
+      } else if (panelRef.current) {
+        panelRef.current.style.height = ''
+        panelRef.current.style.top = ''
+      }
+    }
+
+    const vv = typeof window !== 'undefined' ? window.visualViewport : null
+    if (vv) {
+      vv.addEventListener('resize', updateViewport)
+      vv.addEventListener('scroll', updateViewport)
+    }
+    window.addEventListener('resize', updateViewport)
+    updateViewport()
+
+    inputRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.classList.remove('mobile-chat-open')
+      if (vv) {
+        vv.removeEventListener('resize', updateViewport)
+        vv.removeEventListener('scroll', updateViewport)
+      }
+      window.removeEventListener('resize', updateViewport)
+      window.removeEventListener('keydown', onKey)
     }
   }, [open, onClose])
+
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(OPENED_KEY)) {
+        const timer = setTimeout(() => {
+          if (!openRef.current) setTeaser(true)
+        }, 8000)
+        return () => clearTimeout(timer)
+      }
+    } catch { /* ignore */ }
+  }, [])
+
   useEffect(() => () => { if (timerRef.current) window.clearTimeout(timerRef.current) }, [])
 
   const openPanel = () => {
     onOpen()
-    setUnread(0)
     setTeaser(false)
-    try { localStorage.setItem(OPENED_KEY, '1') } catch { /* private mode */ }
-    if (!messages.length && !greetingPendingRef.current) {
-      greetingPendingRef.current = true
+    setUnread(0)
+    try { localStorage.setItem(OPENED_KEY, '1') } catch { /* ignore */ }
+    if (!messages.length) {
       setTyping(true)
-      setChips([])
       timerRef.current = window.setTimeout(() => {
-        greetingPendingRef.current = false
         setTyping(false)
-        setMessages((prev) => (prev.length ? prev : [{ id: idRef.current++, from: 'agent', text: copy[locale].greeting, time: timeNow() }]))
+        setMessages([{ id: idRef.current++, from: 'agent', text: t.greeting, time: timeNow() }])
         setChips([...chipsHome])
-      }, 950)
+      }, 700)
     }
   }
 
@@ -206,13 +260,22 @@ export function LiveChatWidget({ open, onOpen, onClose }: { open: boolean; onOpe
     }, 900)
   }
 
-  return <div className="livechat-wrap">
-    {mobileTarget && createPortal(<button type="button" className="mobile-support-trigger" onClick={() => (open ? onClose() : openPanel())} aria-expanded={open} aria-label={open ? t.closeLabel : t.openLabel}><Headset size={21} aria-hidden="true"/><span>{({ en: 'Live Chat', es: 'Chat en vivo', it: 'Chat dal vivo', ar: 'دردشة مباشرة' })[locale]}</span>{!open && unread > 0 && <b>{unread}</b>}</button>, mobileTarget)}
-    {teaser && !open && <button type="button" className="livechat-teaser" onClick={openPanel}>{t.teaser}</button>}
-    {open && <section className="livechat-panel" role="dialog" aria-label={t.name} aria-modal="false">
+  const panel = (
+    <section ref={panelRef} className="livechat-panel" role="dialog" aria-label={t.name} aria-modal={mounted ? 'true' : 'false'}>
       <header className="livechat-head">
+        <button
+          type="button"
+          className="livechat-back-btn"
+          onClick={onClose}
+          aria-label={tx(locale, { en: 'Back', es: 'Volver', it: 'Indietro', ar: 'رجوع' })}
+        >
+          {locale === 'ar' ? <ArrowRight size={22} /> : <ArrowLeft size={22} />}
+        </button>
         <span className="livechat-avatar" aria-hidden="true"><BrandMark alt="" /></span>
-        <div><strong>{t.name}</strong><span className="livechat-online"><i aria-hidden="true" />{t.online}</span></div>
+        <div className="livechat-head-meta">
+          <strong>{t.name}</strong>
+          <span className="livechat-online"><i aria-hidden="true" />{t.online}</span>
+        </div>
         <button type="button" className="livechat-close" onClick={onClose} aria-label={t.closeLabel}><X size={17} /></button>
       </header>
       <div className="livechat-body" ref={bodyRef} aria-live="polite">
@@ -237,7 +300,13 @@ export function LiveChatWidget({ open, onOpen, onClose }: { open: boolean; onOpe
         <input ref={inputRef} value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={t.inputPh} aria-label={t.inputPh} maxLength={500} autoComplete="off" />
         <button type="submit" className="livechat-send" aria-label={t.sendLabel}><Send size={17} /></button>
       </form>
-    </section>}
+    </section>
+  )
+
+  return <div className="livechat-wrap">
+    {mobileTarget && createPortal(<button type="button" className="mobile-support-trigger" onClick={() => (open ? onClose() : openPanel())} aria-expanded={open} aria-label={open ? t.closeLabel : t.openLabel}><Headset size={21} aria-hidden="true"/><span>{({ en: 'Live Chat', es: 'Chat en vivo', it: 'Chat dal vivo', ar: 'دردشة مباشرة' })[locale]}</span>{!open && unread > 0 && <b>{unread}</b>}</button>, mobileTarget)}
+    {teaser && !open && <button type="button" className="livechat-teaser" onClick={openPanel}>{t.teaser}</button>}
+    {open && (mounted ? createPortal(panel, document.body) : panel)}
     <button type="button" className="livechat-fab" onClick={() => (open ? onClose() : openPanel())} aria-expanded={open} aria-label={open ? t.closeLabel : t.openLabel}>
       {open ? <X size={24} /> : <Headset size={26} />}
       {!open && unread > 0 && <b>{unread}</b>}
