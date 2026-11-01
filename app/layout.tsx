@@ -141,11 +141,6 @@ export default async function RootLayout({
   return (
     <html lang={htmlLang} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
-        {gtmContainerId && (
-          <Script id="gtm-loader" strategy="beforeInteractive">
-            {buildGtmIntegrationSnippet(gtmContainerId)}
-          </Script>
-        )}
         {/* Preconnect to Google Fonts for faster font loading */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -153,6 +148,11 @@ export default async function RootLayout({
         <link rel="preload" as="image" href="/egypt-hero.png" />
       </head>
       <body className={`${montserrat.variable} ${alexandria.variable} antialiased`}>
+        {gtmContainerId && (
+          <Script id="gtm-loader" strategy="beforeInteractive">
+            {buildGtmIntegrationSnippet(gtmContainerId)}
+          </Script>
+        )}
         {gtmContainerId && (
           <noscript>
             <iframe
