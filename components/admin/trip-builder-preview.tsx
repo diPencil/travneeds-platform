@@ -1,10 +1,12 @@
 'use client'
 
+import { RichTextRenderer } from '@/components/rich-text-renderer'
+
 import { useId, useState } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import { Eye, X, Clock3, MapPin, Users, ShieldCheck } from 'lucide-react'
 import type { Tour } from '@/data/types'
-import { ENABLED_LOCALES, LOCALE_LABELS, pickLocaleText, type EnabledLocale } from '@/lib/locale-config'
+import { ENABLED_LOCALES, LOCALE_LABELS, pickLocaleText, type EnabledLocale, type Locale } from '@/lib/locale-config'
 import { buildTripPreview, previewCount, quoteTripPreview, type TripBuilderDraft, type TripPreview, type PreviewTravelers } from '@/lib/trip-builder-preview'
 import { formatPrice } from '@/components/locale'
 import { formatTourDateRange } from '@/lib/tour-format'
@@ -20,7 +22,7 @@ export function safePreviewMedia(value: string | undefined) {
     return url.protocol === 'https:' && !url.username && !url.password ? url.href : ''
   } catch { return '' }
 }
-const copy = (locale: EnabledLocale) => (en: string, es: string, it: string) => pickLocaleText(locale, { en, es, it })
+const copy = (locale: Locale) => (en: string, es: string, it: string) => pickLocaleText(locale, { en, es, it })
 export function PreviewDatePrices({ preview }: { preview: TripPreview }) {
   const rows = (preview.tour.detail ?? preview.tour.dayDetail)?.priceRows ?? [], t = copy(preview.locale)
   const money = (amount: number) => Number.isFinite(amount) && amount >= 0 ? formatPrice(amount, 'USD', preview.locale) : ' - '
@@ -57,7 +59,7 @@ export function TripPreviewContent({ preview, counts, onCount, appearance }: { p
     <div className="tour-detail-layout"><div className="tour-detail-main">
       <section className="tour-gallery">{image ? <div className="tour-gallery-main"><img src={image.src} alt={image.alt}/></div> : <p className="sp-trip-preview-empty">{t('No image selected', 'Sin imagen seleccionada', 'Nessuna immagine selezionata')}</p>}{photos.length > 1 && <div className="tour-thumbs">{photos.map((photo,index) => <button key={photo.src+index} type="button" aria-pressed={selectedIndex === index} aria-label={t(`Show image ${index+1}`, `Mostrar imagen ${index+1}`, `Mostra immagine ${index+1}`)} onClick={() => setSelected(index)}><img src={photo.src} alt=""/></button>)}</div>}</section>
       <div className="tour-facts"><span><Clock3 size={17}/>{tour.duration}</span><span><MapPin size={17}/>{tour.location}</span><span><Users size={17}/>{tour.groupSize}</span><span><ShieldCheck size={17}/>{tour.travelStyle}</span></div>
-      <section className="tour-content-section"><h2>{t('Overview', 'Descripción', 'Panoramica')}</h2>{detail?.overview.map((paragraph,index) => <p key={index}>{paragraph}</p>)}</section>
+      <section className="tour-content-section"><h2>{t('Overview', 'Descripción', 'Panoramica')}</h2><RichTextRenderer content={detail?.overview} /></section>
       {highlights.length > 0 && <section className="tour-content-section"><h2>{t('Highlights', 'Lo más destacado', 'Punti salienti')}</h2>{safePreviewMedia(detail?.highlightImage) && <img className="sp-trip-preview-section-image" src={safePreviewMedia(detail?.highlightImage)} alt=""/>}{highlights.map((group,index) => <details className="tour-accordion" key={index} open><summary>{group.title}</summary><ul>{group.items.map((value,i) => <li key={i}>{value}</li>)}</ul></details>)}</section>}
       {(itinerary.length > 0 || detail?.itineraryNote) && <section className="tour-content-section"><h2>{t('Itinerary', 'Itinerario', 'Itinerario')}</h2>{detail?.itineraryNote && <p>{detail.itineraryNote}</p>}{itinerary.map((day,index) => <details className="tour-accordion" key={index} open><summary>{day.day} · {day.title}</summary><p>{day.description}</p>{day.meals && <p>{day.meals}</p>}{safePreviewMedia(day.image) && <img className="sp-trip-preview-section-image" src={safePreviewMedia(day.image)} alt={day.title}/>}</details>)}</section>}
       {Boolean(detail?.included?.length || detail?.excluded?.length) && <section className="tour-content-section"><h2>{t('Inclusions', 'Servicios incluidos', 'Servizi inclusi')}</h2><div className="inclusion-grid">{[detail?.included ?? [],detail?.excluded ?? []].map((values,index) => <div key={index}><h3>{index === 0 ? t('Included', 'Incluido', 'Incluso') : t('Excluded', 'No incluido', 'Escluso')}</h3><ul>{values.map((value,i) => <li key={i}>{value}</li>)}</ul></div>)}</div></section>}
@@ -71,7 +73,7 @@ export function TripPreviewContent({ preview, counts, onCount, appearance }: { p
 }
 
 export function TripBuilderPreview({ source, draft, clearedTranslations, counts, onCount, showDatePricing = false, appearance }: { source: Tour; draft: TripBuilderDraft; clearedTranslations: ReadonlySet<string>; counts: PreviewTravelers; onCount: (type: keyof PreviewTravelers, count: number) => void; showDatePricing?: boolean; appearance?: AppearanceTokens }) {
-  const [locale, setLocale] = useState<EnabledLocale>('en'), [open, setOpen] = useState(false), [mobile, setMobile] = useState(false)
+  const [locale, setLocale] = useState<Locale>('en'), [open, setOpen] = useState(false), [mobile, setMobile] = useState(false)
   const preview = buildTripPreview(source, draft, locale, clearedTranslations), t = copy(locale)
   const languageControl = <label>{t('Preview language', 'Idioma de vista previa', 'Lingua anteprima')}<select value={locale} onChange={event => { if (ENABLED_LOCALES.includes(event.target.value as EnabledLocale)) setLocale(event.target.value as EnabledLocale) }}>{ENABLED_LOCALES.map(value => <option key={value} value={value}>{LOCALE_LABELS[value]}</option>)}</select></label>
   return <aside className="sp-preview sp-trip-preview-panel"><h3>{t('Live preview', 'Vista previa en directo', 'Anteprima dal vivo')}</h3>{languageControl}

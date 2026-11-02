@@ -1,7 +1,7 @@
 import type { CruiseTypeSlug, Tour, TourCategory, TourLocation, TourVideoPlatform } from '@/data/types'
 import type { Translatable, TourTranslations } from '@/lib/tour-translations'
 import { getBookingTotal, getActiveDealPercent } from '@/data/tours'
-import { sanitizeLocale, type EnabledLocale } from '@/lib/locale-config'
+import { sanitizeLocale, type Locale } from '@/lib/locale-config'
 
 export type BasicForm = Translatable & {
   title: string
@@ -43,7 +43,7 @@ export type TripBuilderDraft = {
   priceRows: PriceMatrixRow[]; locations: LocationRow[]; gallery: GalleryRow[]; videos: VideoRow[];
 }
 export const previewTextKey = (row: object, key: string, locale: string) => `${'id' in row ? String(row.id) : 'form'}|${locale}|${key}`
-export function previewText(row: Translatable & object, key: string, locale: EnabledLocale, cleared: ReadonlySet<string> = new Set()) {
+export function previewText(row: Translatable & object, key: string, locale: Locale, cleared: ReadonlySet<string> = new Set()) {
   if (cleared.has(previewTextKey(row, key, locale))) return ''
   const translated = row.translations?.[locale]
   if (locale !== 'en' && translated && Object.prototype.hasOwnProperty.call(translated, key)) return translated[key]
@@ -67,7 +67,7 @@ export function cleanTravelerPriceRows(values: TravelerPriceRows) {
     infantPrice: infant.find(row => Number(row.travelers) === travelers) ? Number(infant.find(row => Number(row.travelers) === travelers)!.price) : undefined,
   }))
 }
-export function buildTripPreview(source: Tour, draft: TripBuilderDraft, requestedLocale: EnabledLocale, cleared: ReadonlySet<string> = new Set()) {
+export function buildTripPreview(source: Tour, draft: TripBuilderDraft, requestedLocale: Locale, cleared: ReadonlySet<string> = new Set()) {
   const locale = sanitizeLocale(requestedLocale), form = draft.form
   const text = (row: Translatable & object, key: string) => previewText(row, key, locale, cleared)
   const amount = previewAmount(form.price)
