@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Bell,
+  Boxes,
   CalendarCheck,
   CarFront,
   ChevronDown,
@@ -42,7 +43,7 @@ import { NotificationPanel as SharedNotificationPanel } from '@/components/notif
 import { Avatar } from './admin-ui'
 import { AdminBackButton } from './admin-back'
 import { LanguageToggle } from '@/components/language-selector'
-import { ENABLED_LOCALES, LOCALE_LABELS, LOCALE_REGIONS, LOCALE_SHORT_LABELS, sanitizeLocale, type EnabledLocale } from '@/lib/locale-config'
+import { ALL_LOCALES, LOCALE_LABELS, LOCALE_REGIONS, LOCALE_SHORT_LABELS, sanitizeLocale, type Locale } from '@/lib/locale-config'
 import { readAdminProfile } from '@/lib/admin-store'
 import { useMobileDrawer } from '@/lib/use-mobile-drawer'
 import { Toaster } from './admin-toaster'
@@ -106,6 +107,7 @@ const NAV_VIEW_PERMISSIONS: Record<string, string[]> = {
   '/admin/emails': ['emails.view'],
   '/admin/reviews': ['reviews.view'],
   '/admin/users': ['users.view', 'roles.view'],
+  '/admin/addons': ['settings.view'],
   '/admin/settings': ['settings.view'],
   '/admin/website-cms/hero-sections': ['settings.view'],
   '/admin/website-cms': ['settings.view'],
@@ -128,86 +130,75 @@ function canSeeNavItem(
 const groups = [
   {
     label: 'نظرة عامة',
-    labelEn: 'OVERVIEW',
+    labelEn: 'DASHBOARD',
     items: [
       { href: '/admin/dashboard', icon: LayoutDashboard, en: 'Dashboard', ar: 'لوحة المؤشرات' },
     ],
   },
   {
-    label: 'الحجوزات والعملاء',
-    labelEn: 'BOOKINGS & CUSTOMERS',
+    label: 'خدمات السفر والمنتجات',
+    labelEn: 'TRAVEL SERVICES',
     items: [
-      { href: '/admin/bookings', icon: ShoppingCart, en: 'Bookings', ar: 'الحجوزات' },
-      { href: '/admin/payments', icon: CreditCard, en: 'Payments', ar: 'المدفوعات' },
-      { href: '/admin/customers', icon: Users, en: 'Customers', ar: 'العملاء' },
-    ],
-  },
-  {
-    label: 'الرحلات والوجهات',
-    labelEn: 'TOURS & DESTINATIONS',
-    items: [
-      { href: '/admin/trips', icon: Map, en: 'Trips', ar: 'الرحلات' },
+      { href: '/admin/trips', icon: Map, en: 'Tours & Packages', ar: 'الرحلات والبرامج' },
+      { href: '/admin/cars', icon: CarFront, en: 'Rent Cars Fleet', ar: 'أسطول السيارات' },
       { href: '/admin/destinations', icon: MapPinned, en: 'Destinations', ar: 'الوجهات' },
       { href: '/admin/multi-day-categories', icon: Tags, en: 'Multi Day Categories', ar: 'فئات الرحلات' },
-      { href: '/admin/trip-requests', icon: Compass, en: 'Trip Requests', ar: 'طلبات الرحلات' },
-    ],
-  },
-  {
-    label: 'إدارة السيارات',
-    labelEn: 'CAR MANAGEMENT',
-    items: [
-      { href: '/admin/cars', icon: CarFront, en: 'Rent Cars Fleet', ar: 'أسطول تأجير السيارات' },
-      { href: '/admin/rent-cars', icon: Route, en: 'Routes & Prices', ar: 'الأسعار والخطوط' },
-      { href: '/admin/car-requests', icon: ClipboardList, en: 'Car Requests', ar: 'طلبات السيارات' },
-    ],
-  },
-  {
-    label: 'إدارة الفعاليات',
-    labelEn: 'EVENT MANAGEMENT',
-    items: [
       { href: '/admin/events', icon: CalendarCheck, en: 'Events', ar: 'الفعاليات' },
+    ],
+  },
+  {
+    label: 'العمليات والطلبات',
+    labelEn: 'OPERATIONS',
+    items: [
+      { href: '/admin/bookings', icon: ShoppingCart, en: 'Bookings', ar: 'الحجوزات' },
+      { href: '/admin/trip-requests', icon: Compass, en: 'Trip Requests', ar: 'طلبات الرحلات' },
+      { href: '/admin/car-requests', icon: ClipboardList, en: 'Car Requests', ar: 'طلبات السيارات' },
       { href: '/admin/event-requests', icon: ClipboardList, en: 'Event Requests', ar: 'طلبات الفعاليات' },
+      { href: '/admin/rent-cars', icon: Route, en: 'Routes & Prices', ar: 'الأسعار والخطوط' },
     ],
   },
   {
-    label: 'المحتوى والتسويق',
-    labelEn: 'CONTENT & MARKETING',
+    label: 'إدارة الأعمال والعملاء',
+    labelEn: 'BUSINESS MANAGEMENT',
     items: [
-      { href: '/admin/offers', icon: Ticket, en: 'Special Offers', ar: 'العروض الخاصة' },
-      { href: '/admin/blogs', icon: Newspaper, en: 'Blogs', ar: 'المدونة' },
-      { href: '/admin/gallery', icon: Images, en: 'Journey Gallery', ar: 'معرض الرحلات' },
-    ],
-  },
-  {
-    label: 'التواصل',
-    labelEn: 'COMMUNICATION',
-    items: [
-      { href: '/admin/inbox', icon: MessageCircle, en: 'Inbox', ar: 'صندوق المراسلة' },
-      { href: '/admin/emails', icon: Mail, en: 'Emails', ar: 'البريد' },
-      { href: '/admin/reviews', icon: Sparkles, en: 'Reviews', ar: 'التقييمات' },
+      { href: '/admin/customers', icon: Users, en: 'Customers (CRM)', ar: 'العملاء (CRM)' },
+      { href: '/admin/payments', icon: CreditCard, en: 'Finance & Payments', ar: 'المالية والمدفوعات' },
+      { href: '/admin/inbox', icon: MessageCircle, en: 'Support Inbox', ar: 'صندوق الدعم' },
+      { href: '/admin/emails', icon: Mail, en: 'Emails Log', ar: 'سجل البريد' },
+      { href: '/admin/reviews', icon: Sparkles, en: 'Customer Reviews', ar: 'تقييمات العملاء' },
       { href: '/admin/notifications', icon: Bell, en: 'Notifications', ar: 'الإشعارات' },
     ],
   },
   {
-    label: 'إدارة محتوى الموقع',
-    labelEn: 'WEBSITE CMS',
+    label: 'الموقع وإدارة المحتوى',
+    labelEn: 'WEBSITE & CMS',
     items: [
-      { href: '/admin/website-cms', icon: LayoutDashboard, en: 'Overview', ar: 'نظرة عامة' },
+      { href: '/admin/website-cms', icon: LayoutDashboard, en: 'CMS Overview', ar: 'نظرة عامة' },
       { href: '/admin/website-cms/hero-sections', icon: Images, en: 'Hero Sections', ar: 'الأقسام الرئيسية' },
       { href: '/admin/website-cms/pages', icon: Newspaper, en: 'Pages & Sections', ar: 'الصفحات والأقسام' },
-      { href: '/admin/website-cms/navigation', icon: Route, en: 'Navigation Manager', ar: '' },
-      { href: '/admin/website-cms/seo', icon: Search, en: 'SEO Manager', ar: 'إدارة تحسين محركات البحث' },
+      { href: '/admin/website-cms/navigation', icon: Route, en: 'Navigation Manager', ar: 'إدارة القوائم' },
+      { href: '/admin/website-cms/seo', icon: Search, en: 'SEO Manager', ar: 'إدارة الـ SEO' },
+      { href: '/admin/offers', icon: Ticket, en: 'Special Offers', ar: 'العروض الخاصة' },
+      { href: '/admin/blogs', icon: Newspaper, en: 'Travel Blogs', ar: 'المدونة' },
+      { href: '/admin/gallery', icon: Images, en: 'Journey Gallery', ar: 'معرض الرحلات' },
     ],
   },
   {
-    label: 'الإدارة',
-    labelEn: 'ADMINISTRATION',
+    label: 'الإضافات والتراخيص',
+    labelEn: 'ADD-ONS',
     items: [
-      { href: '/admin/users', icon: Users, en: 'Users & Roles', ar: 'المستخدمون والصلاحيات' },
-      { href: '/admin/settings', icon: Settings, en: 'Settings', ar: 'الإعدادات' },
+      { href: '/admin/addons', icon: Boxes, en: 'Add-ons & Modules', ar: 'الإضافات والوحدات' },
     ],
   },
-]
+  {
+    label: 'الإدارة والنظام',
+    labelEn: 'SETTINGS',
+    items: [
+      { href: '/admin/users', icon: Users, en: 'Users & Roles', ar: 'المستخدمون والصلاحيات' },
+      { href: '/admin/settings', icon: Settings, en: 'System Settings', ar: 'إعدادات النظام' },
+    ],
+  },
+];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -220,7 +211,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [locale, setLocale] = useState<'en' | 'ar'>('en')
   // Storefront locale shared with the website (EN/ES/IT). The admin UI
   // itself renders English (Arabic only for legacy stored sessions).
-  const [siteLocale, setSiteLocale] = useState<EnabledLocale>('en')
+  const [siteLocale, setSiteLocale] = useState<Locale>('en')
   const [currency, setCurrency] = useState<Currency>('USD')
   const [languageOpen, setLanguageOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -256,7 +247,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     window.dispatchEvent(new Event('sp-admin-locale'))
   }, [locale])
 
-  const changeLocale = useCallback((next: EnabledLocale) => {
+  const changeLocale = useCallback((next: Locale) => {
     window.localStorage.setItem('star-locale', next)
     setSiteLocale(next)
     setLocale('en')
@@ -510,18 +501,18 @@ function AdminLanguageModal({
   onSelect,
   onCurrency,
 }: {
-  activeLocale: EnabledLocale
+  activeLocale: Locale
   ar: boolean
   currency: Currency
   onClose: () => void
-  onSelect: (locale: EnabledLocale) => void
+  onSelect: (locale: Locale) => void
   onCurrency: (currency: Currency) => void
 }) {
   const copy = adminCopy[ar ? 'ar' : 'en']
   const currencies = currencyChoices(activeLocale)
   // Same region list as the storefront modal: driven by the shared locale
   // config, so both modals stay identical by construction.
-  const regions = ENABLED_LOCALES.map((value) => [LOCALE_REGIONS[value], LOCALE_LABELS[value], value] as const)
+  const regions = ALL_LOCALES.map((value) => [LOCALE_REGIONS[value], LOCALE_LABELS[value], value] as const)
   return (
     <div className="language-backdrop" role="presentation" onMouseDown={onClose}>
       <div className="language-modal" role="dialog" aria-modal="true" aria-labelledby="language-title" onMouseDown={(event) => event.stopPropagation()}>
