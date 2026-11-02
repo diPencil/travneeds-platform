@@ -2,13 +2,13 @@ export const DEFAULT_LOCALE = 'en' as const;
 
 export const ENABLED_LOCALES = ['en', 'es', 'it'] as const;
 
-export const DISABLED_LOCALES = ['ar'] as const;
+export const DISABLED_LOCALES = [] as const;
 
 export const ALL_LOCALES = ['en', 'es', 'it', 'ar'] as const;
 
 export type EnabledLocale = (typeof ENABLED_LOCALES)[number];
 export type DisabledLocale = (typeof DISABLED_LOCALES)[number];
-export type Locale = EnabledLocale | DisabledLocale;
+export type Locale = (typeof ALL_LOCALES)[number];
 
 export const RTL_LOCALES: readonly Locale[] = ['ar'];
 
@@ -41,9 +41,9 @@ export function isLocaleRTL(locale: Locale): boolean {
   return RTL_LOCALES.includes(locale);
 }
 
-export function sanitizeLocale(value: string | null | undefined): EnabledLocale {
-  if (value && isLocaleEnabled(value)) {
-    return value;
+export function sanitizeLocale(value: string | null | undefined): Locale {
+  if (value && (ALL_LOCALES as readonly string[]).includes(value)) {
+    return value as Locale;
   }
   return DEFAULT_LOCALE;
 }
@@ -53,9 +53,9 @@ export function localePreferenceCookie(locale: Locale, secure: boolean): string 
   return `star-locale=${sanitizeLocale(locale)}; Path=/; Max-Age=31536000; SameSite=Lax${secure ? '; Secure' : ''}`;
 }
 
-export function readLocalePreferenceCookie(cookie: string): EnabledLocale | null {
+export function readLocalePreferenceCookie(cookie: string): Locale | null {
   const value = cookie.split(';').map((part) => part.trim()).find((part) => part.startsWith('star-locale='))?.slice('star-locale='.length);
-  return value && isLocaleEnabled(value) ? value : null;
+  return value && (ALL_LOCALES as readonly string[]).includes(value) ? (value as Locale) : null;
 }
 
 /**

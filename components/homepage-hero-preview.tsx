@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react'
 import { RebuiltHomePage } from './homepage'
 import { InitialLocaleProvider } from './locale'
-import type { EnabledLocale } from '@/lib/locale-config'
+import type { Locale } from '@/lib/locale-config'
 import { readHeroPreviewMessage, type HomeHero } from '@/lib/website-heroes'
 import type { PublicPageContent } from '@/lib/page-sections'
 
-export function HomepageHeroPreview({ initialContent, initialLocale, pageContent }: { initialContent: HomeHero | null; initialLocale: EnabledLocale; pageContent?: PublicPageContent }) {
+export function HomepageHeroPreview({ initialContent, initialLocale, pageContent }: { initialContent: HomeHero | null; initialLocale: Locale; pageContent?: PublicPageContent }) {
   const [content, setContent] = useState(initialContent)
   const [locale, setLocale] = useState(initialLocale)
   useEffect(() => {

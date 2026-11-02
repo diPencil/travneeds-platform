@@ -16,11 +16,11 @@ async function withGlobalSocial(metadata: Metadata, locale: string): Promise<Met
 
 export async function pageContentMetadata(pageId: SeoPageId): Promise<Metadata> {
   if (!isPageDocumentId(pageId)) {
-    try { const state = await readSeoState(pageId); const locale = await getServerLocale(); return state.seoManaged ? withGlobalSocial(seoMetadata(currentSeo(state, pageId), locale, await getSiteUrl()), locale) : {} }
+    try { const state = await readSeoState(pageId); const locale = await getServerLocale(); const safeLoc = locale === 'ar' ? 'en' as const : locale; return state.seoManaged ? withGlobalSocial(seoMetadata(currentSeo(state, pageId), safeLoc, await getSiteUrl()), safeLoc) : {} }
     catch { return {} }
   }
   const [state, locale] = await Promise.all([readPublishedPage(pageId), getServerLocale()])
   const seo = state.content?.seo
   if (!seo || state.unavailable) return {}
-  return withGlobalSocial(seoMetadata(seo, locale, await getSiteUrl()), locale)
+  const safeLoc = locale === 'ar' ? 'en' as const : locale; return withGlobalSocial(seoMetadata(seo, safeLoc, await getSiteUrl()), safeLoc)
 }

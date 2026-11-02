@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { sanitizeLocale, type EnabledLocale } from './locale-config'
+import { sanitizeLocale, type Locale } from './locale-config'
 
 export function useCarLocale() {
-  const [locale, setLocale] = useState<EnabledLocale>('en')
+  const [locale, setLocale] = useState<Locale>('en')
   useEffect(() => {
     const sync = () => { try { setLocale(sanitizeLocale(localStorage.getItem('star-locale'))) } catch { setLocale('en') } }
     sync()

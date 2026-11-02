@@ -2,6 +2,7 @@ import type { Tour, Blog } from '@/data/types'
 import { COMPANY_EMAIL, COMPANY_PHONE_E164, COMPANY_MAP_URL } from '@/data/company'
 import { resolveSiteUrl } from '@/lib/seo'
 import { recordStructuredDataEnabled, type RecordSeoKind } from '@/lib/dynamic-seo'
+import { stripHtmlToPlainText } from '@/lib/rich-text'
 
 export async function RecordPageJsonLd({ kind, slug, name, path, collection = false }: {
   kind: RecordSeoKind; slug: string; name: string; path: string; collection?: boolean
@@ -119,7 +120,7 @@ export function generateTouristTripJsonLd(tour: Tour, locale: 'en' | 'es' | 'it'
         '@type': 'ListItem',
         position: index + 1,
         name: day.title,
-        description: day.description,
+        description: stripHtmlToPlainText(day.description),
       })) ?? [],
     },
   }

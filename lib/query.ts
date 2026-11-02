@@ -1,6 +1,7 @@
 import { destinations } from '@/data/content'
 import { dayTourTerms, findTour } from '@/data/tours'
 import type { Tour } from '@/data/types'
+import { isTourPublished } from '@/lib/tour-publish'
 import { TRIP_SOURCE_BLOG_VIP, type TripSourceInput } from '@/lib/trip-request'
 
 type QueryReader = {
@@ -58,7 +59,8 @@ export const parseMakeTripQuery = (params: QueryReader): MakeTripQuery => {
   const destinationSlug = readText(params, 'destination', 80)
   const explicitDestination = destinations.some((item) => item.slug === destinationSlug) ? destinationSlug : ''
   const tourSlug = readText(params, 'tour', 120)
-  const tour = tourSlug ? findTour(tourSlug) : undefined
+  const candidateTour = tourSlug ? findTour(tourSlug) : undefined
+  const tour = candidateTour && isTourPublished(candidateTour) ? candidateTour : undefined
   // Explicit `destination` wins. Otherwise the linked tour's own configured
   // destination applies when it matches a real destination option exactly.
   // Anything else stays empty for the customer  -  never guessed or inferred.

@@ -66,7 +66,7 @@ export function getCurrencyRates(): Record<Currency, number> {
 }
 
 export type LocalizationSettings = {
-  defaultLanguage: EnabledLocale
+  defaultLanguage: Locale
   timezone: string
 }
 

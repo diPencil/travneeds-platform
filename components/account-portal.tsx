@@ -51,7 +51,7 @@ import { WhatsAppGlyph } from '@/components/whatsapp-chat'
 import { BookingPrintDocument } from '@/components/booking-print-document'
 import { BookingPaymentPanel, PaymentInstructions, PaymentProofForm, bookingMoney, bookingPaymentLabel } from '@/components/booking-payment'
 import { LanguageModal } from '@/components/language-selector'
-import { ENABLED_LOCALES, LOCALE_LABELS, LOCALE_SHORT_LABELS, type EnabledLocale } from '@/lib/locale-config'
+import { ALL_LOCALES, ENABLED_LOCALES, LOCALE_LABELS, LOCALE_SHORT_LABELS, type EnabledLocale } from '@/lib/locale-config'
 import { customerErrorText } from '@/lib/customer-error-copy'
 import { useAuthenticatedUser } from '@/components/authenticated-user'
 import { useMobileDrawer } from '@/lib/use-mobile-drawer'
@@ -1844,7 +1844,7 @@ function SettingsSection() {
       <section className="customer-account-block">
         <header><div><span>{tx(locale, { en: 'Preferences', es: 'Preferencias', it: 'Preferenze', ar: 'التفضيلات' })}</span><h2>{tx(locale, { en: 'Language & currency', es: 'Idioma y moneda', it: 'Lingua e valuta', ar: 'اللغة والعملة' })}</h2></div><Globe2 size={19} /></header>
         <div className="customer-settings-selects">
-          <label>{tx(locale, { en: 'Preferred language', es: 'Idioma preferido', it: 'Lingua preferita', ar: 'اللغة المفضلة' })}<SharedSelect value={form.preferredLanguage} onChange={(next) => update('preferredLanguage', next as EnabledLocale)} locale={locale} options={ENABLED_LOCALES.map((value) => ({ value, label: LOCALE_LABELS[value] }))} /></label>
+          <label>{tx(locale, { en: 'Preferred language', es: 'Idioma preferido', it: 'Lingua preferita', ar: 'اللغة المفضلة' })}<SharedSelect value={form.preferredLanguage} onChange={(next) => update('preferredLanguage', next as EnabledLocale)} locale={locale} options={ALL_LOCALES.map((value) => ({ value, label: LOCALE_LABELS[value] }))} /></label>
           <label>{tx(locale, { en: 'Display currency', es: 'Moneda de visualización', it: 'Valuta di visualizzazione', ar: 'عملة العرض' })}<SharedSelect value={selectedCurrency} onChange={(next) => { setSelectedCurrency(next as typeof currency); setSaved(false) }} locale={locale} options={CURRENCY_OPTIONS} /></label>
         </div>
       </section>

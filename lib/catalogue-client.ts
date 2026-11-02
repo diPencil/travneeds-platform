@@ -69,13 +69,16 @@ export type DbListStatus<T> = {
 function createCache<T>(url: string, map: (row: Record<string, unknown>) => T | null, label: string): CacheEntry<T> & { load(): void; invalidate(): void; use(base: readonly T[]): T[]; useStatus(): DbListStatus<T> } {
   const entry: CacheEntry<T> = { list: null, inflight: null, listeners: new Set(), error: null };
   let generation = 0;
-  const load = () => {
-    if (entry.list || entry.inflight) return;
-    const current = generation;
+  let lastFetchedAt = 0;
+  const STALE_MS = 30_000;
+  const load = (force = false) => {
+    if ((entry.list && !force && Date.now() - lastFetchedAt < STALE_MS) || entry.inflight) return;
+    const current = ++generation;
     entry.error = null;
     entry.inflight = (async () => {
       try {
-        const res = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
+        const fetchUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+        const res = await fetch(fetchUrl, { credentials: 'same-origin', cache: 'no-store' });
         if (!res.ok) {
           if (current === generation) entry.error = `Request failed (${res.status}).`;
           return null;
@@ -95,7 +98,6 @@ function createCache<T>(url: string, map: (row: Record<string, unknown>) => T | 
             }
           })
           .filter((v): v is T => Boolean(v));
-        // An empty table is a truthful empty list, not a failure.
         return mapped;
       } catch {
         if (current === generation) entry.error = `Could not reach the database (${label}).`;
@@ -108,6 +110,7 @@ function createCache<T>(url: string, map: (row: Record<string, unknown>) => T | 
       if (current !== generation) return;
       if (list) {
         entry.list = list;
+        lastFetchedAt = Date.now();
       }
       entry.listeners.forEach((notify) => notify());
     });
@@ -118,10 +121,11 @@ function createCache<T>(url: string, map: (row: Record<string, unknown>) => T | 
     invalidate() {
       generation++;
       entry.list = null;
+      lastFetchedAt = 0;
       entry.inflight = null;
       entry.error = null;
       entry.listeners.forEach((notify) => notify());
-      if (entry.listeners.size) load();
+      if (entry.listeners.size) load(true);
     },
     use(base: readonly T[]): T[] {
       // Bumped when the shared DB cache resolves so the memo below recomputes.
@@ -129,9 +133,26 @@ function createCache<T>(url: string, map: (row: Record<string, unknown>) => T | 
       useEffect(() => {
         const notify = () => setVersion((n) => n + 1);
         entry.listeners.add(notify);
-        load();
+        if (!entry.list || Date.now() - lastFetchedAt >= STALE_MS) {
+          load(!entry.list ? false : true);
+        }
+        const onVisibilityOrFocus = () => {
+          if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+            if (Date.now() - lastFetchedAt >= STALE_MS) {
+              load(true);
+            }
+          }
+        };
+        if (typeof window !== 'undefined') {
+          window.addEventListener('visibilitychange', onVisibilityOrFocus);
+          window.addEventListener('focus', onVisibilityOrFocus);
+        }
         return () => {
           entry.listeners.delete(notify);
+          if (typeof window !== 'undefined') {
+            window.removeEventListener('visibilitychange', onVisibilityOrFocus);
+            window.removeEventListener('focus', onVisibilityOrFocus);
+          }
         };
       }, []);
       // Referentially stable: identical `base` yields an identical result,

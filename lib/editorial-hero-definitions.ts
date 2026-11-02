@@ -16,9 +16,9 @@ export function originalEditorialHero(id: EditorialHeroId): FaqHero {
   if (isInformationPageId(id)) return originalInformationPage(id)
   return {
     text: {
-      en: { eyebrow: 'See the full picture', heading: 'Every destination tells a different Egypt story', description: 'Build a trip around the places that make you curious, from ancient capitals to salt-white deserts and coral-blue seas.', action: 'Build my route', alt: '' },
-      es: { eyebrow: 'Mira el panorama completo', heading: 'Cada destino cuenta una historia distinta de Egipto', description: 'Crea un viaje en torno a los lugares que despierten tu curiosidad, desde capitales antiguas hasta desiertos blancos y mares de coral.', action: 'Crea mi ruta', alt: '' },
-      it: { eyebrow: 'Guarda il quadro completo', heading: "Ogni destinazione racconta una storia diversa dell'Egitto", description: 'Costruisci un viaggio intorno ai luoghi che accendono la tua curiosità, dalle antiche capitali ai deserti bianchi e ai mari corallini.', action: 'Crea il mio itinerario', alt: '' },
+      en: { eyebrow: 'See the full picture', heading: 'Egypt Destinations', description: 'Build a trip around the places that make you curious, from ancient capitals to salt-white deserts and coral-blue seas.', action: 'Build my route', alt: '' },
+      es: { eyebrow: 'Mira el panorama completo', heading: 'Destinos Egipto', description: 'Crea un viaje en torno a los lugares que despierten tu curiosidad, desde capitales antiguas hasta desiertos blancos y mares de coral.', action: 'Crea mi ruta', alt: '' },
+      it: { eyebrow: 'Guarda il quadro completo', heading: "Destinazioni Egitto", description: 'Costruisci un viaggio intorno ai luoghi che accendono la tua curiosità, dalle antiche capitali ai deserti bianchi e ai mari corallini.', action: 'Crea il mio itinerario', alt: '' },
     }, image: desertImage, href: '/make-your-trip',
   }
 }

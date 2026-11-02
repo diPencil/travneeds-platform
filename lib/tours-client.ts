@@ -61,6 +61,8 @@ let cachedBySlug: Map<string, Tour> | null = null;
 let inflight: Promise<Map<string, Tour> | null> | null = null;
 let toursError: string | null = null;
 let generation = 0;
+let lastFetchedAt = 0;
+const STALE_MS = 30_000;
 const listeners = new Set<() => void>();
 
 export type DbToursStatus = {
@@ -71,14 +73,18 @@ export type DbToursStatus = {
   retry(): void;
 };
 
-export async function fetchDbTours(): Promise<Map<string, Tour> | null> {
-  if (cachedBySlug) return cachedBySlug;
-  const current = generation;
-  if (!inflight) {
+export async function fetchDbTours(force = false): Promise<Map<string, Tour> | null> {
+  if (cachedBySlug && !force && Date.now() - lastFetchedAt < STALE_MS) return cachedBySlug;
+  const current = ++generation;
+  if (!inflight || force) {
     toursError = null;
     inflight = (async () => {
       try {
-        const res = await fetch('/api/tours?full=1', { credentials: 'same-origin' });
+        const res = await fetch(`/api/tours?full=1&_t=${Date.now()}`, {
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         if (!res.ok) {
           if (current === generation) toursError = `Request failed (${res.status}).`;
           return null;
@@ -97,10 +103,8 @@ export async function fetchDbTours(): Promise<Map<string, Tour> | null> {
             // Skip malformed rows; never substitute unsaved bootstrap data.
           }
         }
-        // An empty table is a truthful empty result, not a failure.
         return map;
       } catch {
-        // Offline/unreachable API: leave the catalogue unavailable.
         if (current === generation) toursError = 'Could not reach the database (tours).';
         return null;
       } finally {
@@ -109,9 +113,10 @@ export async function fetchDbTours(): Promise<Map<string, Tour> | null> {
     })();
   }
   const map = await inflight;
-  if (current !== generation) return null;
+  if (current !== generation) return cachedBySlug;
   if (map) {
     cachedBySlug = map;
+    lastFetchedAt = Date.now();
   }
   listeners.forEach((notify) => notify());
   return map;
@@ -121,10 +126,11 @@ export function invalidateToursCache() {
   if (typeof window !== 'undefined') window.dispatchEvent(new Event('sp-marketing-offers-changed'))
   generation++;
   cachedBySlug = null;
+  lastFetchedAt = 0;
   inflight = null;
   toursError = null;
   listeners.forEach((notify) => notify());
-  if (listeners.size) void fetchDbTours();
+  if (listeners.size) void fetchDbTours(true);
 }
 
 export type DbToursOptions = {
@@ -180,9 +186,26 @@ export function useDbTours(base: readonly Tour[], options?: DbToursOptions): Tou
   useEffect(() => {
     const notify = () => setVersion((n) => n + 1);
     listeners.add(notify);
-    if (!cachedBySlug) void fetchDbTours();
+    if (!cachedBySlug || Date.now() - lastFetchedAt >= STALE_MS) {
+      void fetchDbTours(!cachedBySlug ? false : true);
+    }
+    const onVisibilityOrFocus = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        if (Date.now() - lastFetchedAt >= STALE_MS) {
+          void fetchDbTours(true);
+        }
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('visibilitychange', onVisibilityOrFocus);
+      window.addEventListener('focus', onVisibilityOrFocus);
+    }
     return () => {
       listeners.delete(notify);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('visibilitychange', onVisibilityOrFocus);
+        window.removeEventListener('focus', onVisibilityOrFocus);
+      }
     };
   }, []);
   // Referentially stable: identical `base` yields an identical result, so

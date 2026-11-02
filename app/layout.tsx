@@ -153,9 +153,7 @@ export default async function RootLayout({
       </head>
       <body className={`${montserrat.variable} ${alexandria.variable} antialiased`}>
         {gtmContainerId && (
-          <Script id="gtm-loader" strategy="beforeInteractive">
-            {buildGtmIntegrationSnippet(gtmContainerId)}
-          </Script>
+          <Script id="gtm-loader" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: buildGtmIntegrationSnippet(gtmContainerId) }} />
         )}
         {gtmContainerId && (
           <noscript>

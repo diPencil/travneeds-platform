@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom'
 import { PublicAppearancePortal } from './public-appearance'
 import { Globe2, X } from 'lucide-react'
 import { tx, useLocale, type Currency, type Locale } from './locale'
-import { ENABLED_LOCALES, LOCALE_LABELS, LOCALE_SHORT_LABELS, type EnabledLocale } from '@/lib/locale-config'
+import { ALL_LOCALES, LOCALE_LABELS, LOCALE_SHORT_LABELS } from '@/lib/locale-config'
 
 const copy = {
   en: { modalTitle: 'Language and Currency', curTitle: 'Currency', regTitle: 'Region and Language', soon: 'Soon', comingSoon: 'Coming soon' },
@@ -15,15 +15,16 @@ const copy = {
   ar: { modalTitle: 'اللغة والعملة', curTitle: 'العملة', regTitle: 'المنطقة واللغة', soon: 'قريبًا', comingSoon: 'قريبًا' },
 } as const
 
-export function LanguageModal({ locale, currency, onClose, onSelect, onCurrency }: { locale: Locale; currency: Currency; onClose: () => void; onSelect: (locale: EnabledLocale) => void; onCurrency: (currency: Currency) => void }) {
+export function LanguageModal({ locale, currency, onClose, onSelect, onCurrency }: { locale: Locale; currency: Currency; onClose: () => void; onSelect: (locale: Locale) => void; onCurrency: (currency: Currency) => void }) {
   const text = copy[locale]
   const currencies = currencyChoices(locale)
-  const regionNames = {
+  const regionNames: Record<Locale, string> = {
     en: tx(locale, { en: 'United States', es: 'Estados Unidos', it: 'Stati Uniti', ar: 'الولايات المتحدة' }),
     es: tx(locale, { en: 'Spain', es: 'España', it: 'Spagna', ar: 'إسبانيا' }),
     it: tx(locale, { en: 'Italy', es: 'Italia', it: 'Italia', ar: 'إيطاليا' }),
+    ar: tx(locale, { en: 'Egypt', es: 'Egipto', it: 'Egitto', ar: 'مصر' }),
   }
-  const regions = ENABLED_LOCALES.map((value) => [regionNames[value], LOCALE_LABELS[value], value] as const)
+  const regions = ALL_LOCALES.map((value) => [regionNames[value], LOCALE_LABELS[value], value] as const)
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
   if (!mounted) return null

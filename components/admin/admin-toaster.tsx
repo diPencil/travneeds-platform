@@ -225,8 +225,10 @@ export function getToasts(): Toast[] {
   return toasts
 }
 
+const EMPTY_TOASTS: Toast[] = []
+
 export function getServerToasts(): Toast[] {
-  return []
+  return EMPTY_TOASTS
 }
 
 export function useToasts(): Toast[] {

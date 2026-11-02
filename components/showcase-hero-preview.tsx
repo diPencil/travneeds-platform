@@ -3,8 +3,8 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { InitialLocaleProvider, LocaleProvider } from './locale'
 import { ShowcaseHeroProvider } from './showcase-hero-context'
 import { readShowcasePreviewMessage, type ShowcaseHero, type ShowcaseHeroId } from '@/lib/showcase-heroes'
-import type { EnabledLocale } from '@/lib/locale-config'
-export function ShowcaseHeroPreview({ id, initialContent, initialLocale, children }: { id: ShowcaseHeroId; initialContent: ShowcaseHero | null; initialLocale: EnabledLocale; children: ReactNode }) {
+import type { Locale } from '@/lib/locale-config'
+export function ShowcaseHeroPreview({ id, initialContent, initialLocale, children }: { id: ShowcaseHeroId; initialContent: ShowcaseHero | null; initialLocale: Locale; children: ReactNode }) {
   const [content, setContent] = useState(initialContent)
   const [locale, setLocale] = useState(initialLocale)
   useEffect(() => {

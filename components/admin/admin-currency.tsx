@@ -4,7 +4,7 @@ import { isCurrency, formatCurrency } from '@/lib/currency'
 import { useCallback, useEffect, useState } from 'react'
 import { formatPrice, getCurrencyRates, type Currency } from '@/components/locale'
 import { ensureStorefrontSettings } from '@/lib/storefront-settings'
-import { sanitizeLocale, type EnabledLocale } from '@/lib/locale-config'
+import { sanitizeLocale, type Locale } from '@/lib/locale-config'
 
 /**
  * Shared admin currency conversion (display-only).
@@ -22,13 +22,13 @@ export function readStoredAdminCurrency(): Currency {
   } catch { return 'USD' }
 }
 
-export function readStoredAdminCurrencyLocale(): EnabledLocale {
+export function readStoredAdminCurrencyLocale(): Locale {
   if (typeof window === 'undefined') return 'en'
   try { return sanitizeLocale(window.localStorage.getItem('star-locale')) } catch { return 'en' }
 }
 
 export function useAdminCurrency() {
-  const [adminLocale, setAdminLocale] = useState<EnabledLocale>('en')
+  const [adminLocale, setAdminLocale] = useState<Locale>('en')
   const [currency, setCurrency] = useState<Currency>('USD')
   // Bumped when DB rates land so converted values refresh without reload.
   const [, setRatesTick] = useState(0)

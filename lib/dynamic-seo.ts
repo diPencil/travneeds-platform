@@ -20,7 +20,7 @@ async function publishedMetadata(base: Metadata, kind: RecordSeoKind, slug: stri
   let seoReadFailed = false
   const seo = await getPublishedRecordSeo(kind, slug).catch(() => { seoReadFailed = true; return null })
   const defaults = await getGlobalSeo(locale).catch(() => ({} as Metadata))
-  const copy = seo?.text[locale]
+  const copy = locale === 'ar' ? seo?.text['en'] : seo?.text[locale]
   const title = copy?.title?.trim()
   const description = copy?.description?.trim()
   const canonical = `${await getSiteUrl()}${publicRecordCanonical(seo?.canonical) || path}`

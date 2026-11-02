@@ -191,8 +191,9 @@ reference workflows only; they do not authorize actions prohibited here.
 development data.
 - Preserve the existing design system and page layouts. Do not make unrelated
 code or configuration changes.
-- Support English (EN), Spanish (ES), and Italian (IT). Arabic is disabled;
-do not add or enable Arabic/RTL behavior.
+- Support English (EN), Arabic (AR with RTL), Spanish (ES), and Italian (IT).
+Arabic is officially required for the TravNeeds platform. Legacy Star Pyramids restrictions
+disabling Arabic are obsolete.
 - Do not access or modify `web-source-recovery`.
 - Before considering any bundled or repository script, inspect its complete
 contents and effects. Never execute a bundled script without inspecting it.

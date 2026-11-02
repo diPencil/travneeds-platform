@@ -9,8 +9,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { OfferCards } from './offer-campaigns'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, Heart, Star, CalendarCheck, Sparkles, Users, Landmark, Leaf, MapPin, Award, BadgeCheck, MousePointerClick, CalendarDays, ThumbsUp, Play } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowRight, Heart, Star, CalendarCheck, Sparkles, Users, Landmark, Leaf, MapPin, Award, BadgeCheck, MousePointerClick, CalendarDays, ThumbsUp, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useHomepageGallery } from '@/lib/journey-gallery-client'
 import { galleryPlatformLabel, resolveGalleryVideoSource, type GalleryItem } from '@/lib/journey-gallery'
 import { SiteShell, TripSearchEngine, TourCard } from '@/components/site'
@@ -205,12 +205,136 @@ function JourneyGallerySection({title,subtitle}:{title:string;subtitle:string}){
   return <section className="home-section gal-section"><div className="container"><SectionHeading title={title} subtitle={subtitle}/></div><div className="gal-marquee" dir="ltr">{dbPhotos.length>0&&row(dbPhotos,false)}{videoItems.length>0&&row(videoItems,true)}</div>{selectedId&&<GalleryLightbox items={items} selectedId={selectedId} onSelect={setSelectedId} onClose={()=>setSelectedId(null)} locale={locale}/>}</section>
 }
 
+function TopToursSlider({ tours, viewAllHref = '/trips' }: { tours: Tour[]; viewAllHref?: string }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isInteracting, setIsInteracting] = useState(false)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const { locale } = useLocale()
+
+  const scrollToIndex = (index: number) => {
+    const track = trackRef.current
+    if (!track || !track.children.length) return
+    const safeIndex = (index + tours.length) % tours.length
+    const child = track.children[safeIndex] as HTMLElement
+    if (child) {
+      track.scrollTo({ left: child.offsetLeft, behavior: 'smooth' })
+      setCurrentIndex(safeIndex)
+    }
+  }
+
+  useEffect(() => {
+    if (isInteracting || tours.length <= 1) return
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => {
+        const next = (prev + 1) % tours.length
+        const track = trackRef.current
+        if (track && track.children[next]) {
+          track.scrollTo({ left: (track.children[next] as HTMLElement).offsetLeft, behavior: 'smooth' })
+        }
+        return next
+      })
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [isInteracting, tours.length])
+
+  const onScroll = () => {
+    const track = trackRef.current
+    if (!track || !track.children.length) return
+    const scrollLeft = track.scrollLeft
+    let closestIndex = 0
+    let minDiff = Infinity
+    Array.from(track.children).forEach((child, idx) => {
+      const diff = Math.abs((child as HTMLElement).offsetLeft - scrollLeft)
+      if (diff < minDiff) {
+        minDiff = diff
+        closestIndex = idx
+      }
+    })
+    setCurrentIndex(closestIndex)
+  }
+
+  if (!tours.length) return null
+
+  return (
+    <div
+      className="top-tours-slider-wrap"
+      onMouseEnter={() => setIsInteracting(true)}
+      onMouseLeave={() => setIsInteracting(false)}
+      onTouchStart={() => setIsInteracting(true)}
+      onTouchEnd={() => setIsInteracting(false)}
+      onFocusCapture={() => setIsInteracting(true)}
+      onBlurCapture={() => setIsInteracting(false)}
+    >
+      <div ref={trackRef} className="top-tours-slider-track" onScroll={onScroll}>
+        {tours.map((t) => (
+          <div key={t.slug} className="top-tours-slide">
+            <TourCard tour={t} />
+          </div>
+        ))}
+      </div>
+      <div className="top-tours-bottom-bar">
+        <div className="top-tours-arrows">
+          <button
+            type="button"
+            className="top-tours-nav-btn prev"
+            onClick={() => scrollToIndex(currentIndex - 1)}
+            aria-label={tx(locale, { en: 'Previous tour', es: 'Viaje anterior', it: 'Viaggio precedente', ar: 'الرحلة السابقة' })}
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            type="button"
+            className="top-tours-nav-btn next"
+            onClick={() => scrollToIndex(currentIndex + 1)}
+            aria-label={tx(locale, { en: 'Next tour', es: 'Siguiente viaje', it: 'Viaggio successivo', ar: 'الرحلة التالية' })}
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+        <ViewAll href={viewAllHref} />
+      </div>
+    </div>
+  )
+}
+
 export function RebuiltHomePage({hero,initialLocale,pageContent}:{hero?:PublicHomeHero;initialLocale?:Locale;pageContent?:PublicPageContent}){return <PageContentProvider state={pageContent}><SiteShell initialLocale={initialLocale}><RebuiltHomePageInner hero={hero}/></SiteShell></PageContentProvider>}
-function RebuiltHomePageInner({hero}:{hero?:PublicHomeHero}){const [category,setCategory]=useState('All'); const [msDest,setMsDest]=useState(''); const [msFrom,setMsFrom]=useState(''); const [msTo,setMsTo]=useState(''); const [msGuests,setMsGuests]=useState(''); const {locale:hl}=useLocale(); const hx=useHomeCopy(); const featuredSection=usePageSection('featured'); const popularSection=usePageSection('popular'); const offersSection=usePageSection('offers'); const highlightsSection=usePageSection('highlights'); const blogsSection=usePageSection('blogs'); const howSection=usePageSection('how'); const sustainabilitySection=usePageSection('sustainability'); const faqSection=usePageSection('faq'); const selectedTours=useDbTours(emptyTours,{includeNew:true}); const selectedBlogs=useDbBlogs(emptyBlogs).filter(b=>b.isPublished!==false); const selectedDestinations=useDbDestinations(emptyDestinations).filter(d=>d.isPublished!==false&&d.showInDestinations!==false); const liveBlogs=useDbBlogs(allBlogs).filter((b)=>b.isPublished!==false); const liveDestinations=useDbDestinations(allDestinations).filter((d)=>d.showInDestinations!==false&&d.isPublished!==false); const liveSeasonal=useDbTours(seasonal); const livePopular=useDbTours(popular); const liveCatalog=useDbTours(catalogTours); const goPlan=()=>{const q=new URLSearchParams(); if(msDest)q.set('destination',msDest); if(msFrom)q.set('from',msFrom); if(msTo)q.set('to',msTo); if(msGuests)q.set('guests',msGuests); if(msFrom&&msTo)q.set('step','2'); const s=q.toString(); router.push('/make-your-trip'+(s?`?${s}`:'')); }; const router=useRouter(); const automaticPopular=category==='All'?livePopular:liveCatalog.filter((t)=>t.category===category).slice(0,8); const visiblePopular=popularSection?.selectionMode==='selected'?selectPageRecords(popularSection,selectedTours).filter(t=>category==='All'||t.category===category):selectPageRecords(popularSection,automaticPopular); const featuredTours=selectPageRecords(featuredSection,selectedTours,liveSeasonal); const highlightedDestinations=selectPageRecords(highlightsSection,selectedDestinations,liveDestinations); const blogItems=selectPageRecords(blogsSection,selectedBlogs,liveBlogs); const language=hl==='ar'?'en':hl; return <main className="rebuilt-home">
+function RebuiltHomePageInner({hero}:{hero?:PublicHomeHero}){const [category,setCategory]=useState('All'); const [msDest,setMsDest]=useState(''); const [msFrom,setMsFrom]=useState(''); const [msTo,setMsTo]=useState(''); const [msGuests,setMsGuests]=useState(''); const {locale:hl}=useLocale(); const hx=useHomeCopy(); const featuredSection=usePageSection('featured'); const popularSection=usePageSection('popular'); const offersSection=usePageSection('offers'); const highlightsSection=usePageSection('highlights'); const blogsSection=usePageSection('blogs'); const howSection=usePageSection('how'); const sustainabilitySection=usePageSection('sustainability'); const faqSection=usePageSection('faq'); const selectedTours=useDbTours(emptyTours,{includeNew:true}); const selectedBlogs=useDbBlogs(emptyBlogs).filter(b=>b.isPublished!==false); const selectedDestinations=useDbDestinations(emptyDestinations).filter(d=>d.isPublished!==false&&d.showInDestinations!==false); const liveBlogs=useDbBlogs(emptyBlogs).filter((b)=>b.isPublished!==false); const liveDestinations=useDbDestinations(allDestinations).filter((d)=>d.showInDestinations!==false&&d.isPublished!==false); const liveSeasonal=useDbTours(seasonal); const liveCatalog=useDbTours(catalogTours, { includeNew: true });
+  const [recommendedSlugs, setRecommendedSlugs] = useState<string[]>([]);
+  useEffect(() => {
+    if (!liveCatalog.length) return;
+    const publishedSlugs = liveCatalog.map((t) => t.slug);
+    const SESSION_KEY = 'travneeds_rec_session_slugs';
+    let existing: string[] = [];
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (raw) existing = JSON.parse(raw);
+    } catch { /* ignore */ }
+
+    let valid = Array.isArray(existing) ? existing.filter((slug) => publishedSlugs.includes(slug)) : [];
+    if (valid.length < 8 && publishedSlugs.length > 0) {
+      const remaining = publishedSlugs.filter((slug) => !valid.includes(slug));
+      const shuffled = [...remaining].sort(() => Math.random() - 0.5);
+      valid = [...valid, ...shuffled].slice(0, 8);
+      try {
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(valid));
+      } catch { /* ignore */ }
+    }
+    setRecommendedSlugs(valid);
+  }, [liveCatalog]);
+
+  const recommendedTours = useMemo(() => {
+    if (!recommendedSlugs.length) return liveCatalog.slice(0, 8);
+    const map = new Map(liveCatalog.map((t) => [t.slug, t]));
+    const res = recommendedSlugs.map((s) => map.get(s)).filter((t): t is Tour => Boolean(t));
+    return res.length ? res : liveCatalog.slice(0, 8);
+  }, [recommendedSlugs, liveCatalog]);
+
+  const goPlan=()=>{const q=new URLSearchParams(); if(msDest)q.set('destination',msDest); if(msFrom)q.set('from',msFrom); if(msTo)q.set('to',msTo); if(msGuests)q.set('guests',msGuests); if(msFrom&&msTo)q.set('step','2'); const s=q.toString(); router.push('/make-your-trip'+(s?`?${s}`:'')); }; const router=useRouter(); const automaticPopular=category==='All'?recommendedTours:liveCatalog.filter((t)=>t.category===category).slice(0,8); const visiblePopular=popularSection?.selectionMode==='selected'?selectPageRecords(popularSection,selectedTours).filter(t=>category==='All'||t.category===category):selectPageRecords(popularSection,automaticPopular); const featuredTours=liveCatalog.length?liveCatalog:liveSeasonal; const highlightedDestinations=selectPageRecords(highlightsSection,selectedDestinations,liveDestinations); const blogItems=selectPageRecords(blogsSection,selectedBlogs,liveBlogs); const language=hl==='ar'?'en':hl; return <main className="rebuilt-home">
   <OrderedPageSections>
   <CmsPageSection id="hero"><HomepageHero state={hero} heading={hx.heroTitle} eyebrow={hx.heroSpan}><TripSearchEngine/></HomepageHero></CmsPageSection>
   <CmsPageSection id="stats"><StatsStrip/></CmsPageSection>
-  <CmsPageSection id="featured"><section className="home-section container"><SectionHeading title={hx.xmasT} subtitle={hx.xmasS}/><div className="compact-tour-grid">{featuredTours.map(t=><TourCard key={t.title} tour={t}/>)}</div><div className="center-cta"><ViewAll href="/all-tours/multi-days-tours"/></div></section></CmsPageSection>
+  <CmsPageSection id="featured"><section className="home-section container"><SectionHeading title={hx.xmasT} subtitle={hx.xmasS}/><TopToursSlider tours={featuredTours} viewAllHref="/trips" /></section></CmsPageSection>
   <CmsPageSection id="popular"><section className="home-section home-soft"><div className="container"><SectionHeading title={hx.popT} subtitle={hx.popS}/><div className="category-pills" role="tablist" aria-label="Filter destinations">{[['All',hx.all],['one-day-tours',hx.oneDay],['multi-days-tours',hx.multiDays],['nile-cruises',hx.nileCruises],['shore-excursions',hx.shoreExcursion]].map(([v,l])=><button key={v} type="button" role="tab" aria-selected={category===v} className={category===v?'active':''} onClick={()=>setCategory(v)}>{l}</button>)}</div>{visiblePopular.length?<div className="compact-tour-grid popular-grid">{visiblePopular.map(t=><TourCard key={t.slug} tour={t}/>)}</div>:<div className="account-empty"><h3>{hx.noTours} {category} {hx.noToursEnd}</h3><p>{hx.tryOther}</p><button type="button" className="primary-btn" onClick={()=>setCategory('All')}>{hx.showAll}</button></div>}<div className="center-cta"><ViewAll/></div></div></section></CmsPageSection>
   <CmsPageSection id="planner"><section className="home-section container trip-promo"><SectionHeading title={hx.tripT} subtitle={hx.tripS}/><div className="mini-search"><label><small>{hx.msDest}</small><SharedSelect value={msDest} onChange={setMsDest} locale={hl} label={hx.msDest} placeholder="" guidance={hx.msDestPh} modal={false} options={[...liveDestinations.map((d) => ({ value: d.slug, label: d.title }))]} /></label><div className="ms-dates"><label><small>{hx.msFrom}</small><DateInput aria-label={hx.msFrom} value={msFrom} onChange={(e)=>{const next=e.target.value; setMsFrom(next); if(next&&msTo&&msTo<next)setMsTo('')}}/></label><label><small>{hx.msTo}</small><DateInput aria-label={hx.msTo} value={msTo} min={msFrom||undefined} onChange={(e)=>setMsTo(e.target.value)}/></label></div><label><small>{hx.msTrav}</small><SharedSelect value={msGuests} onChange={setMsGuests} locale={hl} label={hx.msTrav} placeholder="" guidance={hx.msTravPh} modal={false} options={[...[1,2,3,4,5,6,7,8].map((n) => ({ value: String(n), label: `${n} ${n===1?hx.person:hx.people}` })), { value: '9', label: hx.ninePlus }]} /></label><button type="button" className="primary-btn" onClick={goPlan}>{hx.startPlan} <ArrowRight size={17}/></button></div></section></CmsPageSection>
   <CmsPageSection id="offers"><section className="home-section home-soft"><div className="container"><SectionHeading eyebrow={hx.offE} title={hx.offT} subtitle={hx.offS}/><OfferCards placement="home" limit={offersSection?.limit||4} slugs={offersSection?.selectionMode==='selected'?offersSection.selection:undefined}/><div className="center-cta"><ViewAll href="/special-offers"/></div></div></section></CmsPageSection>

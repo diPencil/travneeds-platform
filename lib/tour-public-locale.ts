@@ -6,7 +6,15 @@ import type { Translatable } from './tour-translations'
 export function tourDisplayText(row: Translatable | undefined, key: string, canonical: string, locale: Locale): string {
   if (locale !== 'es' && locale !== 'it') return canonical
   const value = row?.translations?.[locale]?.[key]
-  return typeof value === 'string' && value.trim() ? value : canonical
+  if (typeof value === 'string' && value.trim()) return value
+  if (key === 'overview') {
+    const desc = row?.translations?.[locale]?.['description']
+    if (typeof desc === 'string' && desc.trim()) return desc
+  } else if (key === 'description') {
+    const ov = row?.translations?.[locale]?.['overview']
+    if (typeof ov === 'string' && ov.trim()) return ov
+  }
+  return canonical
 }
 
 const lines = (value: string) => value.split('\n').map(line => line.trim()).filter(Boolean)
@@ -20,11 +28,14 @@ function textFields<T extends Translatable>(row: T, keys: readonly string[], loc
   return copy as T
 }
 
-function detailText<T extends TourDetail | DayTourDetail>(detail: T, locale: Locale): T {
+function detailText<T extends TourDetail | DayTourDetail>(detail: T, locale: Locale, fallbackTranslatable?: Translatable): T {
   const copy = textFields(detail, ['itineraryNote'], locale)
   for (const key of ['overview', 'included', 'excluded'] as const) {
     const value = detail[key]
-    if (value) copy[key] = lines(tourDisplayText(detail, key, value.join('\n'), locale))
+    if (value) {
+      const translated = tourDisplayText(detail, key, '', locale) || (fallbackTranslatable ? tourDisplayText(fallbackTranslatable, key, '', locale) : '')
+      copy[key] = translated ? lines(translated) : value
+    }
   }
   copy.addOns = detail.addOns?.map(row => textFields(row, ['title'], locale))
   copy.priceRows = detail.priceRows?.map(row => ({
@@ -38,12 +49,18 @@ function detailText<T extends TourDetail | DayTourDetail>(detail: T, locale: Loc
 export function localizePublicTour(source: Tour, locale: Locale): Tour {
   if (locale !== 'es' && locale !== 'it') return source
   const owner = source.category === 'one-day-tours' ? source.dayDetail : source.detail
+  const sourceTranslatable = source as unknown as Translatable
   const tour = { ...source }
   for (const key of ['title', 'location', 'duration', 'summary', 'groupSize', 'travelStyle', 'departurePort'] as const) {
-    if (typeof source[key] === 'string') tour[key] = tourDisplayText(owner, key, source[key], locale)
+    if (typeof source[key] === 'string') {
+      const direct = tourDisplayText(sourceTranslatable, key, '', locale)
+      const fromOwner = tourDisplayText(owner, key, '', locale)
+      const val = direct || fromOwner
+      if (val) tour[key] = val
+    }
   }
   if (source.detail) tour.detail = {
-    ...detailText(source.detail, locale),
+    ...detailText(source.detail, locale, sourceTranslatable),
     highlights: source.detail.highlights?.map(row => ({ ...textFields(row, ['title'], locale), items: lines(tourDisplayText(row, 'items', row.items.join('\n'), locale)) })),
     itinerary: source.detail.itinerary?.map(row => textFields(row, ['day', 'title', 'description', 'meals'], locale)),
   }
@@ -51,7 +68,7 @@ export function localizePublicTour(source: Tour, locale: Locale): Tour {
     const detail = source.dayDetail
     const highlightGroups = detail.highlightGroups?.map(row => ({ ...textFields(row, ['title'], locale), items: lines(tourDisplayText(row, 'items', row.items.join('\n'), locale)) }))
     tour.dayDetail = {
-      ...detailText(detail, locale), highlightGroups,
+      ...detailText(detail, locale, sourceTranslatable), highlightGroups,
       highlights: highlightGroups?.length ? highlightGroups.flatMap(row => row.items) : detail.highlights,
       stops: detail.stops?.map(row => textFields(row, ['day', 'title', 'description', 'meals'], locale)),
       gallery: detail.gallery?.map((row, index) => ({ ...row, alt: tourDisplayText(source.galleryCaptions?.[index], 'alt', row.alt, locale) })),
