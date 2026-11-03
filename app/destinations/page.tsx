@@ -5,7 +5,7 @@ import { DestinationsPage } from '@/components/extended-pages'
 import { getSiteUrl, getHreflangEntries } from '@/lib/seo'
 import { readFaqHeroState } from '@/lib/server/faq-hero'
 import { publicFaqHero, type PublicFaqHero } from '@/lib/faq-hero'
-import { FaqHeroProvider } from '@/components/faq-hero-context'
+import { FaqHeroProvider } from '@/components/cms/faq-hero-context'
 import { originalEditorialHero } from '@/lib/editorial-hero-definitions'
 
 export async function generateMetadata(): Promise<Metadata> {

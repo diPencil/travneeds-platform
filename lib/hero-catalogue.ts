@@ -25,5 +25,5 @@ export const heroCatalogue = [
   { id: 'multi-day-category', name: 'Multi-day categories', route: '/all-tours/multi-days-tours/[category]', group: 'Dynamic content', type: 'Category introduction', source: 'components/site.tsx', editor: '/admin/multi-day-categories' },
   { id: 'destination-detail', name: 'Destination stories', route: '/destinations/[slug]', group: 'Dynamic content', type: 'Destination hero', source: 'components/extended-pages.tsx', editor: '/admin/destinations' },
   { id: 'event-detail', name: 'Event details', route: '/events/[slug]', group: 'Dynamic content', type: 'Event hero', source: 'components/extended-pages.tsx', editor: '/admin/events' },
-  { id: 'campaign-detail', name: 'Marketing campaigns', route: '/special-offers/[slug]', group: 'Dynamic content', type: 'Campaign hero', source: 'components/offer-campaigns.tsx', editor: '/admin/offers' },
+  { id: 'campaign-detail', name: 'Marketing campaigns', route: '/special-offers/[slug]', group: 'Dynamic content', type: 'Campaign hero', source: 'components/cms/offer-campaigns.tsx', editor: '/admin/offers' },
 ] as const

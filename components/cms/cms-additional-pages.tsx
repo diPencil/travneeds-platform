@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { useLocale } from './locale'
+import { useLocale } from '@/components/locale'
 import { originalPageContent, type PublicPageContent } from '@/lib/page-sections'
 
 export function CmsFaqBody({ state }: { state?: PublicPageContent }) {

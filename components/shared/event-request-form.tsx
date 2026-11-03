@@ -10,7 +10,7 @@ import { customerErrorText } from '@/lib/customer-error-copy'
 import { countries, defaultCountry } from '@/data/countries'
 import { CountrySelect } from '@/components/shared/country-select'
 import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
-import { tx, useLocale } from './locale'
+import { tx, useLocale } from '@/components/locale'
 
 /**
  * Event Request form (Phase 2D: real backend).

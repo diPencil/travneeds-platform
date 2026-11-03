@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { CampaignPlacementSlot } from './offer-campaigns'
+import { CampaignPlacementSlot } from '@/components/cms/offer-campaigns'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowRight, LayoutGrid, List, MapPin, Search, SlidersHorizontal, X } from 'lucide-react'
 import { catalogTours, tourCategories } from '@/data/tours'

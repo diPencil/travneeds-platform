@@ -1,16 +1,16 @@
 'use client'
-import { EmptyFleetHero, EmptyOffersHero } from './empty-fleet-hero'
+import { EmptyFleetHero, EmptyOffersHero } from '@/components/cms/empty-fleet-hero'
 import { carTripTypeForKey } from '@/lib/car-request'
 import { CmsPublicLink } from '@/components/cms/cms-public-link'
 
 import { usePresentation, PresentationSection, PresentationOrder, useSharedFaqs } from '@/components/presentation-content-context'
 
 
-import { CmsFaqBody } from './cms-additional-pages'
+import { CmsFaqBody } from '@/components/cms/cms-additional-pages'
 import type { PublicPageContent } from '@/lib/page-sections'
 
 import Link from 'next/link'
-import { OfferCards, CampaignDetail, CampaignPlacementSlot } from './offer-campaigns'
+import { OfferCards, CampaignDetail, CampaignPlacementSlot } from '@/components/cms/offer-campaigns'
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ArrowRight, CalendarCheck, CalendarDays, Camera, Check, CircleAlert, Clock3, Compass, CarFront, Eye, EyeOff, Gift, Headphones, Mail, MapPin, MessageCircle, Minus, Phone, Plus, Search, Send, Share2, ShieldCheck, Sparkles, Star, Sun, Ticket, Users, type LucideIcon } from 'lucide-react'
@@ -30,7 +30,7 @@ import { destinationTours } from '@/lib/destination-public'
 import { invalidateToursCache, useDbTours, useDbToursStatus } from '@/lib/tours-client'
 import { eventCity, eventMapQuery, eventPriceLabel, eventStatusLabel, getEventStatus, getPublishedEvents, getRelatedEvents, isEventPublished, parseLegacyEventRange, resolveEventRange } from '@/lib/events'
 import { formatCurrency } from '@/lib/currency'
-import { EventRequestForm } from './event-request-form'
+import { EventRequestForm } from '@/components/shared/event-request-form'
 import { phoneHref, whatsappHref } from '@/data/company'
 import { catalogTours, getDealPrice, getToursBySlugs } from '@/data/tours'
 import type { Blog, Car, Destination, Event, Offer, Tour } from '@/data/types'
@@ -46,7 +46,7 @@ import { SharedSelect } from '@/components/shared/shared-select'
 import { telLink, whatsappLink } from '@/lib/phone'
 import { DateInput } from '@/components/shared/date-input'
 import { customerErrorText } from '@/lib/customer-error-copy'
-import { useFaqHero } from './faq-hero-context'
+import { useFaqHero } from '@/components/cms/faq-hero-context'
 import { useShowcaseHero } from './showcase-hero-context'
 
 export function EditorialHero({ eyebrow, title, copy, image = siteImages.pyramids, action = 'Explore with us', href = '/all-tours/one-day-tours' }: { eyebrow?: string; title: string; copy: string; image?: string; action?: string; href?: string }) {

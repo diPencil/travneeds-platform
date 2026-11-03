@@ -1,7 +1,7 @@
 'use client'
 
-import { useLocale } from './locale'
-import { PageShowcaseHero } from './site'
+import { useLocale } from '@/components/locale'
+import { PageShowcaseHero } from '@/components/site'
 import { originalShowcaseHero } from '@/lib/showcase-heroes'
 
 /** Page presentation remains available independently of fleet records. */

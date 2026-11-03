@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { pageContentMetadata } from '@/lib/server/page-content-metadata'
 import { getSiteUrl, getHreflangEntries } from '@/lib/seo'
 import { readPublishedPage } from '@/lib/server/page-sections'
-import { CmsPolicyPage } from '@/components/cms-additional-pages'
+import { CmsPolicyPage } from '@/components/cms/cms-additional-pages'
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteUrl = await getSiteUrl()

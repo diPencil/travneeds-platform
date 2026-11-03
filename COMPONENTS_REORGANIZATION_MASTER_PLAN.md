@@ -22,7 +22,7 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 
 ## 2. Complete Remaining Component Inventory & Classification
 
-### A. Root `components/` Directory (41 Files Remaining directly in root)
+### A. Root `components/` Directory (29 Files Remaining directly in root)
 
 | Current File | Domain | Responsibility | Importing Files | Target Location | Risk |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -53,17 +53,17 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`homepage.tsx`** | CMS | Home page composition | `/page.tsx` | `components/cms/` | Med |
 | **`homepage-hero.tsx`** | CMS | Interactive hero banner with search | `homepage.tsx` | `components/cms/` | Med |
 | **`homepage-hero-preview.tsx`** | CMS | Live hero preview renderer | `homepage-hero.tsx` | `components/cms/` | Low |
-| **`cms-additional-pages.tsx`** | CMS | Dynamic CMS page dispatcher | `extended-pages.tsx` | `components/cms/` | Med |
+| **`cms-additional-pages.tsx`** | CMS | Dynamic CMS page dispatcher | `extended-pages.tsx` | `components/cms/` (Completed in Batch 15) | Med |
 | **`cms-icons.tsx`** | CMS | SVG iconography for CMS sections | `page-visual-editor.tsx`, `extended-pages.tsx` | `components/cms/` (Completed in Batch 12) | Low |
 | **`cms-image.tsx`** | CMS | Adaptive image renderer | CMS pages | `components/cms/` (Completed in Batch 12) | Low |
 | **`cms-public-link.tsx`** | CMS | Smart CMS internal/external link | CMS pages | `components/cms/` (Completed in Batch 12) | Low |
-| **`empty-fleet-hero.tsx`** | CMS | Empty state fallback hero | `extended-pages.tsx` | `components/cms/` | Low |
-| **`faq-hero-context.tsx`** | CMS | FAQ hero configuration context | `extended-pages.tsx` | `components/cms/` | Low |
+| **`empty-fleet-hero.tsx`** | CMS | Empty state fallback hero | `extended-pages.tsx` | `components/cms/` (Completed in Batch 15) | Low |
+| **`faq-hero-context.tsx`** | CMS | FAQ hero configuration context | `extended-pages.tsx` | `components/cms/` (Completed in Batch 15) | Low |
 | **`information-page.tsx`** & **`.css`** | CMS | Standard legal/informational layout | `extended-pages.tsx` | `components/cms/` (Completed in Batch 13) | Low |
-| **`offer-campaigns.tsx`** & **`campaigns.css`** | CMS | Special offer campaigns grid | `extended-pages.tsx` | `components/cms/` | Low |
+| **`offer-campaigns.tsx`** & **`campaigns.css`** | CMS | Special offer campaigns grid | `extended-pages.tsx` | `components/cms/` (Completed in Batch 15) | Low |
 | **`page-sections-context.tsx`** & **`.css`** | CMS | Page sections dynamic renderer | `extended-pages.tsx` | `components/cms/` | Low |
 | **`presentation-content-context.tsx`** | CMS | Presentation translations | `extended-pages.tsx` | `components/cms/` | Low |
-| **`promo-bar-icons.tsx`** | CMS | Top banner promo icons | `site.tsx` | `components/cms/` | Low |
+| **`promo-bar-icons.tsx`** | CMS | Top banner promo icons | `site.tsx` | `components/cms/` (Completed in Batch 15) | Low |
 | **`promotion-card.tsx`** | CMS | Promotional visual card | `homepage.tsx` | `components/cms/` (Completed in Batch 12) | Low |
 | **`public-appearance.tsx`** | CMS | Custom theme injection | `site.tsx` | `components/cms/` | Low |
 | **`server-showcase-hero.tsx`** | CMS | SSR showcase hero banner | CMS routes | `components/cms/` | Low |
@@ -76,21 +76,21 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`country-flag.tsx`** | Shared | Country flag SVG component | Country select | `components/ui/` (Completed in Batch 11A) | Low |
 | **`country-select.tsx`** | Shared | Country dropdown with dialing codes | Auth & booking forms | `components/shared/` (Completed in Batch 11A) | Low |
 | **`date-input.tsx`** | Shared | Accessible date input | Tour detail, car forms | `components/shared/` (Completed in Batch 11B) | Low |
-| **`enquiry-history-tracking.tsx`** | Shared | Visitor enquiry tracker | Forms | `components/shared/` | Low |
-| **`event-request-form.tsx`** | Shared | Event request modal form | Event pages | `components/shared/` | Low |
+| **`enquiry-history-tracking.tsx`** | Shared | Visitor enquiry tracker | Forms | `components/shared/` (Completed in Batch 14) | Low |
+| **`event-request-form.tsx`** | Shared | Event request modal form | Event pages | `components/shared/` (Completed in Batch 14) | Low |
 | **`gallery-lightbox.tsx`** & **`.css`** | Shared | Fullscreen image lightbox | Image galleries | `components/shared/` (Completed in Batch 10) | Low |
 | **`horizontal-slider.tsx`** | Shared | Accessible horizontal scroll slider | Tour & video carousels | `components/shared/` (Completed in Batch 10) | Low |
 | **`international-phone-input.tsx`** | Shared | Phone input with validation | Auth, checkout | `components/shared/` (Completed in Batch 11A) | Low |
-| **`language-selector.tsx`** | Shared | Locale selector dropdown | Header | `components/shared/` | Low |
+| **`language-selector.tsx`** | Shared | Locale selector dropdown | Header | `components/shared/` (or root) | Low |
 | **`live-chat.tsx`** | Shared | Live chat widget trigger | Shell | `components/shared/` (Completed in Batch 10) | Low |
 | **`locale.tsx`** | Shared | Locale context & formatters | Everywhere | `components/shared/` (or root) | High |
 | **`public-search-page.tsx`** | Shared | Global search results page | `/search/page.tsx` | `components/shared/` | Low |
 | **`rich-text-renderer.tsx`** | Shared | Sanitized rich text viewer | Content pages | `components/shared/` (Completed in Batch 13) | Low |
-| **`shared-help-cta.tsx`** & **`.css`** | Shared | Bottom CTA banner | Extended pages | `components/shared/` | Low |
+| **`shared-help-cta.tsx`** & **`.css`** | Shared | Bottom CTA banner | Extended pages | `components/shared/` (Completed in Batch 14) | Low |
 | **`shared-select.tsx`** | Shared | Base UI custom select | Forms | `components/shared/` (Completed in Batch 11C) | Low |
-| **`social-icons.tsx`** | Shared | Social media SVGs | Footer | `components/shared/` | Low |
+| **`social-icons.tsx`** | Shared | Social media SVGs | Footer | `components/shared/` (Completed in Batch 14) | Low |
 | **`staff-preview-bootstrap.tsx`** | Shared | Preview mode bootstrap | Admin preview | `components/shared/` | Low |
-| **`sustainability-badge.tsx`** | Shared | Sustainability pledge pill | Footer | `components/shared/` | Low |
+| **`sustainability-badge.tsx`** | Shared | Sustainability pledge pill | Footer | `components/shared/` (Completed in Batch 14) | Low |
 | **`whatsapp-chat.tsx`** | Shared | Floating WhatsApp button | Shell | `components/shared/` (Completed in Batch 10) | Low |
 | **`auth-pages.tsx`** | Auth | Login & registration views | `/login`, `/register` | `components/auth/` (Completed in Batch 9) | Med |
 
@@ -177,16 +177,43 @@ flowchart TD
 - **Consumers**: 8 consuming files updated (`extended-pages.tsx`, `hero-catalogue.ts`, `accessible-travel`, `egypt-travel-guide`, `website-cms-preview`, hotel preview, trip preview, hotel & tour detail pages).
 - **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
 
-### Recommended Batch 14: Shared Public CTAs & Brand Utilities
+### Batch 14: Shared Engagement & Public Brand Utilities (Completed)
 - **Target**: `components/shared/`
-- **Candidate Files**:
-  - `components/shared-help-cta.tsx` & `components/shared-help-cta.css` $\rightarrow$ `components/shared/shared-help-cta.tsx` & `.css`
-  - `components/language-selector.tsx` $\rightarrow$ `components/shared/language-selector.tsx`
+- **Files**:
+  - `components/shared-help-cta.tsx` $\rightarrow$ `components/shared/shared-help-cta.tsx`
+  - `components/shared-help-cta.css` $\rightarrow$ `components/shared/shared-help-cta.css`
   - `components/event-request-form.tsx` $\rightarrow$ `components/shared/event-request-form.tsx`
   - `components/enquiry-history-tracking.tsx` $\rightarrow$ `components/shared/enquiry-history-tracking.tsx`
   - `components/social-icons.tsx` $\rightarrow$ `components/shared/social-icons.tsx`
   - `components/sustainability-badge.tsx` $\rightarrow$ `components/shared/sustainability-badge.tsx`
-- **Risk Level**: **Low**. Self-contained UI components consumed by shell footer, header, and informational pages.
+- **Skipped / Protected**:
+  - `language-selector.tsx`: Retained in root/shared per protected list instructions.
+- **Consumers**: 4 consuming files updated (`components/site.tsx`, `components/extended-pages.tsx`, `app/layout.tsx`, `components/homepage.tsx`).
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
+
+### Batch 15: Public CMS Feature Sections & Hero Helpers (Completed)
+- **Target**: `components/cms/`
+- **Files**:
+  - `components/cms-additional-pages.tsx` $\rightarrow$ `components/cms/cms-additional-pages.tsx`
+  - `components/empty-fleet-hero.tsx` $\rightarrow$ `components/cms/empty-fleet-hero.tsx`
+  - `components/faq-hero-context.tsx` $\rightarrow$ `components/cms/faq-hero-context.tsx`
+  - `components/promo-bar-icons.tsx` $\rightarrow$ `components/cms/promo-bar-icons.tsx`
+  - `components/offer-campaigns.tsx` $\rightarrow$ `components/cms/offer-campaigns.tsx`
+  - `components/campaigns.css` $\rightarrow$ `components/cms/campaigns.css`
+- **Consumers**: 10 consuming files updated across App Router routes (`/privacy`, `/terms`, `/faq`, `/destinations`, `/accessible-travel`, `/egypt-travel-guide`, CMS preview routes), `extended-pages.tsx`, `homepage.tsx`, `trips-page.tsx`, `promo-bar-fields.tsx`, `globals.css`, and `hero-catalogue.ts`.
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
+
+### Recommended Batch 16: Public CMS Showcase Heroes & Page Section Renderers
+- **Target**: `components/cms/` & `components/shared/`
+- **Candidate Files**:
+  - `components/server-showcase-hero.tsx` $\rightarrow$ `components/cms/`
+  - `components/server-template-preview.tsx` $\rightarrow$ `components/cms/`
+  - `components/showcase-hero-context.tsx` $\rightarrow$ `components/cms/`
+  - `components/showcase-hero-preview.tsx` $\rightarrow$ `components/cms/`
+  - `components/public-appearance.tsx` $\rightarrow$ `components/cms/`
+  - `components/public-search-page.tsx` $\rightarrow$ `components/shared/`
+  - `components/staff-preview-bootstrap.tsx` $\rightarrow$ `components/shared/`
+- **Risk Level**: **Low**. Self-contained CMS hero renderers and shared preview bootstrap.
 
 ---
 
