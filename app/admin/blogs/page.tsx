@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ExternalLink, Eye, EyeOff, Files, Newspaper, Pencil, Plus, Trash2 } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
-import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card } from '@/components/admin/admin-ui'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminStatSplitValue, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card } from '@/components/admin/admin-ui'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
 import { useAdminLocale } from '@/components/admin/admin-locale'
@@ -89,10 +89,10 @@ export default function BlogsPage() {
   return <>
     <PageHead eyebrow="Content" title="Blogs" titleAr="المدونة" sub="Guides, stories and travel inspiration" subAr="أدلة وقصص وإلهام السفر" actions={<Link className="sp-btn primary" href="/admin/blogs/new"><Plus size={17} /> <AdminText en="New story" ar="مقال جديد" /></Link>} />
     <AdminStats items={[
-      { label: <AdminText en="Stories" ar="المقالات" />, value: liveBlogs.length, note: <AdminText en="DB-backed catalogue" ar="كتالوج قاعدة البيانات" />, icon: Files },
-      { label: <AdminText en="Categories" ar="التصنيفات" />, value: categories.length, note: <AdminText en="Editorial topics" ar="مواضيع تحريرية" />, icon: Newspaper, tone: 'orange' },
-      { label: <AdminText en="Published" ar="المنشورة" />, value: publishedCount, note: <AdminText en="Visible on the website" ar="ظاهرة على الموقع" />, icon: ExternalLink, tone: 'violet' },
-      { label: <AdminText en="Hidden" ar="المخفية" />, value: hiddenCount, note: <AdminText en="Admin only" ar="للإدارة فقط" />, icon: EyeOff, tone: 'orange' },
+      { label: <AdminText en="Stories" ar="المقالات" />, value: <AdminStatSplitValue total={liveBlogs.length} published={publishedCount} ar={ar} />, note: <AdminText en="DB-backed catalogue" ar="كتالوج قاعدة البيانات" />, icon: Files, tone: 'orange' },
+      { label: <AdminText en="Categories" ar="التصنيفات" />, value: categories.length, note: <AdminText en="Editorial topics" ar="مواضيع تحريرية" />, icon: Newspaper, tone: 'green' },
+      { label: <AdminText en="Published" ar="المنشورة" />, value: publishedCount, note: <AdminText en="Visible on the website" ar="ظاهرة على الموقع" />, icon: ExternalLink, tone: 'blue' },
+      { label: <AdminText en="Hidden" ar="المخفية" />, value: hiddenCount, note: <AdminText en="Admin only" ar="للإدارة فقط" />, icon: EyeOff, tone: 'violet' },
     ]} />
     <Card title={<AdminText en="All stories" ar="كل المقالات" />} sub={<AdminText en={`${rows.length} of ${liveBlogs.length} shown`} ar={`عرض ${rows.length} من ${liveBlogs.length}`} />}>
       <AdminTableTools query={query} onQueryChange={setQuery} placeholder={ar ? 'ابحث في المقالات...' : 'Search stories...'}>

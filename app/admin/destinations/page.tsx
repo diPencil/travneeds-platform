@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ExternalLink, Link2, MapPinned, Pencil, Plus, Sparkles, Trash2 } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
-import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminStatSplitValue, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
 import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
@@ -74,9 +74,9 @@ export default function DestinationsPage() {
   return <>
     <PageHead eyebrow="Catalogue" title="Destinations" titleAr="الوجهات" sub="Landing pages, experiences and linked tours" subAr="صفحات الهبوط والتجارب والرحلات المرتبطة" actions={can('destinations.create') ? <Link className="sp-btn primary" href="/admin/destinations/new"><Plus size={17} /> <AdminText en="New destination" ar="وجهة جديدة" /></Link> : undefined} />
     <AdminStats items={[
-      { label: <AdminText en="Destinations" ar="الوجهات" />, value: liveDestinations.length, note: <AdminText en="Published landing pages" ar="صفحات هبوط منشورة" />, icon: MapPinned },
-      { label: <AdminText en="Linked tours" ar="الرحلات المرتبطة" />, value: linkedTours, note: <AdminText en="Tour connections" ar="روابط الرحلات" />, icon: Link2, tone: 'orange' },
-      { label: <AdminText en="Experiences" ar="التجارب" />, value: experiences, note: <AdminText en="Curated highlights" ar="أبرز مختارات" />, icon: Sparkles, tone: 'green' },
+      { label: <AdminText en="Destinations" ar="الوجهات" />, value: <AdminStatSplitValue total={liveDestinations.length} published={published} ar={ar} />, note: <AdminText en="Published landing pages" ar="صفحات هبوط منشورة" />, icon: MapPinned, tone: 'orange' },
+      { label: <AdminText en="Linked tours" ar="الرحلات المرتبطة" />, value: linkedTours, note: <AdminText en="Tour connections" ar="روابط الرحلات" />, icon: Link2, tone: 'green' },
+      { label: <AdminText en="Experiences" ar="التجارب" />, value: experiences, note: <AdminText en="Curated highlights" ar="أبرز مختارات" />, icon: Sparkles, tone: 'blue' },
       { label: <AdminText en="Published" ar="المنشورة" />, value: published, note: <AdminText en="Visible on the website" ar="ظاهرة على الموقع" />, icon: ExternalLink, tone: 'violet' },
     ]} />
     <Card title={<AdminText en="All destinations" ar="كل الوجهات" />} sub={<AdminText en={`${rows.length} of ${liveDestinations.length} shown`} ar={`عرض ${rows.length} من ${liveDestinations.length}`} />}>

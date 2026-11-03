@@ -13,7 +13,7 @@ import { toast } from '@/components/admin/admin-toaster'
 import { slugify } from '@/lib/admin-store'
 import { invalidateOffersBlogsCache, useDbBlogs } from '@/lib/offers-blogs-client'
 import { ImageField } from '@/components/admin/image-field'
-import { BlogEditorialForm } from '@/components/admin/blog-editorial-form'
+import { BlogEditorialForm } from '@/components/admin/blogs/blog-editorial-form'
 import type { Blog } from '@/data/types'
 import { BlogEditorialInputError, emptyBlogEditorial, validateBlogEditorial } from '@/lib/blog-editorial'
 

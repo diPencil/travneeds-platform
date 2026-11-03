@@ -3,17 +3,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileText, Search, Languages, Link2, Pencil, Eye, Save, Send, RotateCcw, Monitor, Smartphone } from 'lucide-react'
-import { PageHead } from './admin-shell'
-import { Card, AdminStats, AdminTableTools, AdminTableWrap, AdminTableActions, AdminIconAction } from './admin-ui'
-import { AdminPagination, usePagination } from './admin-pagination'
-import { AdminConfirmDialog } from './admin-confirm-dialog'
-import { toast } from './admin-toaster'
+import { PageHead } from '@/components/admin/admin-shell'
+import { Card, AdminStats, AdminTableTools, AdminTableWrap, AdminTableActions, AdminIconAction } from '@/components/admin/admin-ui'
+import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
+import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
+import { toast } from '@/components/admin/admin-toaster'
 import { SharedSelect } from '@/components/shared-select'
 import { SEO_PAGES, currentSeo, type SeoAction } from '@/lib/seo-manager'
 import { validateSeoContent, type SeoContent } from '@/lib/seo-content'
 import type { PageContentState } from '@/lib/page-sections'
 import type { SeoPageId as PageDocumentId } from '@/lib/seo-manager'
-import { ENABLED_LOCALES, type EnabledLocale } from '@/lib/locale-config'
+import { ENABLED_LOCALES, LOCALE_LABELS, type EnabledLocale } from '@/lib/locale-config'
 import { protectEnquiryNavigation } from '@/lib/enquiry-navigation'
 import './seo-manager.css'
 import { SeoGlobalSettings } from './seo-global-settings'
@@ -175,7 +175,7 @@ export function SeoEditor({ pageKey, recordKey }: { pageKey: PageDocumentId; rec
   return <div className="seo-manager">
     <PageHead eyebrow="WEBSITE CMS" title={page.name + ' SEO'} sub={state || recordData ? `${page.route} | Revision ${recordData?.state.revision ?? state!.revision}${dirty ? ' | Unsaved changes' : ''}` : 'Loading SEO...'} backHref="/admin/website-cms/seo" />
     <SeoNotice />
-    <div className="cms-editor-toolbar"><nav aria-label="SEO language">{ENABLED_LOCALES.map(language => <button className="sp-btn" type="button" key={language} disabled={busy} aria-pressed={locale === language} onClick={() => { setLocale(language); setSavedPreview(null); setPreviewError('') }}>{language.toUpperCase()}</button>)}</nav><div>
+    <div className="cms-editor-toolbar"><nav className="sp-builder-language-tabs" aria-label="SEO language">{ENABLED_LOCALES.map(language => <button type="button" key={language} disabled={busy} data-active={locale === language ? '' : undefined} aria-pressed={locale === language} onClick={() => { setLocale(language); setSavedPreview(null); setPreviewError('') }}>{LOCALE_LABELS[language] ?? language}</button>)}</nav><div>
       <button className="sp-btn" type="button" disabled={busy} onClick={() => dirty ? setConfirm('reload') : void load()}><RotateCcw size={16} /> Reload</button>
       <button className="sp-btn" type="button" disabled={disabled || !dirty} onClick={() => void action('save-draft')}><Save size={16} /> Save draft</button>
       <button className="sp-btn" type="button" disabled={!content || busy} onClick={() => setPreviewOpen(value => !value)}><Eye size={16} /> {previewOpen ? 'Close preview' : 'Preview draft'}</button>

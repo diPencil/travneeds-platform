@@ -2,6 +2,9 @@ export const DEFAULT_LOCALE = 'en' as const;
 
 export const ENABLED_LOCALES = ['en', 'es', 'it'] as const;
 
+export const ADMIN_CONTENT_LOCALES = ['en', 'ar', 'es', 'it'] as const;
+export type AdminContentLocale = (typeof ADMIN_CONTENT_LOCALES)[number];
+
 export const DISABLED_LOCALES = [] as const;
 
 export const ALL_LOCALES = ['en', 'es', 'it', 'ar'] as const;

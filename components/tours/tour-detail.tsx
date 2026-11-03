@@ -2,7 +2,7 @@
 
 import "leaflet/dist/leaflet.css"
 import Image from "next/image"
-import { MobileBookingShortcut } from "./mobile-booking-shortcut"
+import { MobileBookingShortcut } from "@/components/mobile-booking-shortcut"
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -14,14 +14,14 @@ import { cruiseArabicCopy } from "@/data/cruise-ar"
 import { shoreArabicCopy } from "@/data/shore-ar"
 import type { Tour, TourLocation } from "@/data/types"
 import { formatTourDateRange, localizeTourDuration, localizeTourLocation } from "@/lib/tour-format"
-import { tx, useLocale, formatPrice } from "./locale"
-import { TourReviewsSection } from "./reviews"
+import { tx, useLocale, formatPrice } from "@/components/locale"
+import { TourReviewsSection } from "@/components/reviews"
 import { TourVideoGallery } from "./tour-video-gallery"
-import { AskQuestionButton } from "./ask-question"
-import { HorizontalSlider } from "./horizontal-slider"
+import { AskQuestionButton } from "@/components/ask-question"
+import { HorizontalSlider } from "@/components/horizontal-slider"
 import { localizePublicTour, tourDisplayText } from '@/lib/tour-public-locale'
 import type { TourTranslations } from '@/lib/tour-translations'
-import { DateInput } from "./date-input"
+import { DateInput } from "@/components/date-input"
 import { isLocaleRTL, pickLocaleText, type Locale } from '@/lib/locale-config'
 import { RichTextRenderer } from '@/components/rich-text-renderer'
 import { stripHtmlToPlainText } from '@/lib/rich-text'
@@ -311,7 +311,7 @@ export function TourDetailPage({ tour: sourceTour, related }: { tour: Tour; rela
           <div className="tour-facts"><span><Clock3 size={18}/><b>{ui('Duration')}</b> {duration}</span><span><MapPin size={18}/><b>{ui('Destinations')}</b> {location}</span><span><Users size={18}/><b>{ui('Group size')}</b> {ui(tour.groupSize??'On request')}</span><span><ShieldCheck size={18}/><b>{ui('Travel style')}</b> {ui(tour.travelStyle??'Tailored')}</span></div>
           {isShore && tour.departurePort && <div className="shore-port-note"><MapPin size={18}/><span><b>{ui('Departure port')}:</b> {locale === 'ar' ? localizeTourLocation(tour.departurePort) : tour.departurePort}</span><span className="shore-port-separator" aria-hidden="true"/><span><b>{ui('Ship schedule')}:</b> {ui('Meeting and return are confirmed with your ship schedule.')}</span></div>}
           {tabs.length>1&&<nav className="tour-tabs" aria-label={tx(locale, { en: 'Tour sections', es: 'Secciones del viaje', it: 'Sezioni del viaggio', ar: 'أقسام الرحلة' })}>{tabs.map(tab=><button key={tab} className={activeTab===tab ? "active" : ""} onClick={()=>{setActiveTab(tab); document.getElementById(tab.toLowerCase())?.scrollIntoView({behavior:"smooth"})}}>{ui(tab)}</button>)}</nav>}
-          <section id="overview" className="tour-content-section"><h2>{ui('Overview')}</h2><div className="overview-grid"><div><small>{ui('Duration')}</small><b>{duration}</b></div><div><small>{ui('Tour type')}</small><b>{ui(tour.travelStyle??'Tailored experience')}</b></div></div>{summaryLead&&<p className="tour-summary-lead">{summaryLead}</p>}{detail?detail.overview?.map(paragraph=><p key={paragraph}>{paragraph}</p>):<p><strong>{tx(locale, {"en":"The full day-by-day itinerary and exact inclusions are available on request.","es":"El itinerario completo día a día y los servicios incluidos exactos están disponibles a petición.","it":"L’itinerario completo giorno per giorno e i servizi inclusi esatti sono disponibili su richiesta."})}</strong></p>}</section>
+          <section id="overview" className="tour-content-section"><h2>{ui('Overview')}</h2><div className="overview-grid"><div><small>{ui('Duration')}</small><b>{duration}</b></div><div><small>{ui('Tour type')}</small><b>{ui(tour.travelStyle??'Tailored experience')}</b></div></div>{summaryLead&&<p className="tour-summary-lead">{summaryLead}</p>}{detail ? <RichTextRenderer content={detail.overview} /> : <p><strong>{tx(locale, {"en":"The full day-by-day itinerary and exact inclusions are available on request.","es":"El itinerario completo día a día y los servicios incluidos exactos están disponibles a petición.","it":"L’itinerario completo giorno per giorno e i servizi inclusi esatti sono disponibili su richiesta."})}</strong></p>}</section>
           {detail&&<>
           {detail.highlights?.length>0&&<section id="highlights" className="tour-content-section"><div className="section-title-row"><h2>{ui('Highlights')}</h2><span className="section-actions"><Link href="/destinations" className="text-link">{ui('View Destinations')}</Link><button type="button" className="link-btn" onClick={() => setExpandAll((v) => (v === true ? false : true))}>{expandAll === true ? ui('Collapse all') : ui('Expand all')}</button></span></div><div className="highlight-card"><Image src={detail.highlightImage ?? gallery[0]} alt={title} fill sizes="(max-width: 700px) 100vw, 260px"/><div><h3>{detail.highlights?.[0]?.title}</h3><p>{detail.highlights?.[0]?.items.join(', ')}</p></div></div><div key={'hl' + String(expandAll)}>{detail.highlights?.map((group,gi) => <Accordion key={group.title} title={group.title} open={expandAll === null ? gi === 0 : expandAll}><ul>{group.items.map(item => <li key={item}><Check size={15}/>{item}</li>)}</ul></Accordion>)}</div></section>}
           {detail.itinerary?.length>0&&<section id="itinerary" className="tour-content-section"><div className="section-title-row"><h2>{ui('Itinerary')}</h2><button type="button" className="outline-btn" onClick={downloadItinerary}>{ui('Download itinerary')}</button></div>{detail.itineraryNote&&<div className="tour-itinerary-note"><ShieldCheck size={17}/><RichTextRenderer content={detail.itineraryNote} /></div>}<div className="itinerary-list">{detail.itinerary?.map((item,index)=>{const canonicalDay=sourceTour.detail?.itinerary[index]?.day ?? item.day; const open=openDay===canonicalDay; return <article key={`${item.day}-${index}`} className={open?'open':'closed'}><span className="day-dot"/><div className="day-board"><button type="button" className="day-toggle" onClick={()=>setOpenDay(open?null:canonicalDay)} aria-expanded={open}><span className="day-pill">{item.day}</span><span className="day-title">{item.title}</span><ChevronDown size={17}/></button><div className="day-body"><Image src={item.image ?? detail.itineraryImages?.[index] ?? gallery[index%gallery.length]} alt={item.title} width={300} height={240} className="day-thumb"/><div><RichTextRenderer content={item.description} />{item.meals&&<p className="tour-day-meals"><b>{tx(locale, { en: 'Meals:', es: 'Comidas:', it: 'Pasti:', ar: 'الوجبات:' })}</b> {item.meals}</p>}</div></div></div></article>;})}</div></section>}

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ExternalLink, Eye, EyeOff, Megaphone, Pencil, Plus, Tags, Ticket, Trash2 } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
-import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card } from '@/components/admin/admin-ui'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminStatSplitValue, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card } from '@/components/admin/admin-ui'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
 import { useAdminLocale } from '@/components/admin/admin-locale'
@@ -94,13 +94,20 @@ export default function OffersPage() {
   const hiddenCount = liveOffers.filter((o) => o.isPublished === false).length
   const publishedCount = liveOffers.length - hiddenCount
 
+  const tourOffers = liveOffers.filter((o) => Boolean(o.tourSlug))
+  const tourOffersPublished = tourOffers.filter((o) => o.isPublished !== false).length
+  const campaigns = liveOffers.filter((o) => !o.tourSlug && !isPromoBar(o))
+  const campaignsPublished = campaigns.filter((o) => o.isPublished !== false).length
+  const bars = liveOffers.filter((o) => isPromoBar(o))
+  const barsPublished = bars.filter((o) => o.isPublished !== false).length
+
   return <>
     <PageHead eyebrow="Content" title="Special Offers" titleAr="العروض الخاصة" sub="Discounts, campaign labels and linked journeys" subAr="الخصومات وشارات الحملات والرحلات المرتبطة" actions={<Link className="sp-btn primary" href="/admin/offers/new"><Plus size={17} /> <AdminText en="New offer" ar="عرض جديد" /></Link>} />
     <AdminStats items={[
-      { label: <AdminText en="Tour offers" ar="عروض الرحلات" />, value: liveOffers.filter((o) => Boolean(o.tourSlug)).length, note: <AdminText en="Linked journeys" ar="رحلات مرتبطة" />, icon: Ticket },
-      { label: <AdminText en="Marketing campaigns" ar="الحملات التسويقية" />, value: liveOffers.filter((o) => !o.tourSlug && !isPromoBar(o)).length, note: <AdminText en="Standalone travel campaigns" ar="حملات سفر مستقلة" />, icon: Tags, tone: 'orange' },
-      { label: <AdminText en="Promotional bars" ar="الأشرطة الترويجية" />, value: liveOffers.filter((o) => isPromoBar(o)).length, note: <AdminText en="Top and footer bars" ar="الشريطان العلوي والفوتر" />, icon: Megaphone, tone: 'violet' },
-      { label: <AdminText en="Visibility" ar="الظهور" />, value: <span className="sp-stat-split"><span>{publishedCount}</span><i aria-hidden="true" /><span>{hiddenCount}</span></span>, note: <AdminText en="Published / Hidden" ar="منشورة / مخفية" />, icon: Eye, tone: 'green' },
+      { label: <AdminText en="Tour offers" ar="عروض الرحلات" />, value: <AdminStatSplitValue total={tourOffers.length} published={tourOffersPublished} ar={ar} />, note: <AdminText en="Linked journeys" ar="رحلات مرتبطة" />, icon: Ticket, tone: 'orange' },
+      { label: <AdminText en="Marketing campaigns" ar="الحملات التسويقية" />, value: <AdminStatSplitValue total={campaigns.length} published={campaignsPublished} ar={ar} />, note: <AdminText en="Standalone travel campaigns" ar="حملات سفر مستقلة" />, icon: Tags, tone: 'green' },
+      { label: <AdminText en="Promotional bars" ar="الأشرطة الترويجية" />, value: <AdminStatSplitValue total={bars.length} published={barsPublished} ar={ar} />, note: <AdminText en="Top and footer bars" ar="الشريطان العلوي والفوتر" />, icon: Megaphone, tone: 'blue' },
+      { label: <AdminText en="All offers" ar="كل العروض" />, value: <AdminStatSplitValue total={liveOffers.length} published={publishedCount} ar={ar} />, note: <AdminText en="Published / Total" ar="منشورة / الإجمالي" />, icon: Eye, tone: 'violet' },
     ]} />
     <Card title={<AdminText en="All offers" ar="كل العروض" />} sub={<AdminText en={`${rows.length} of ${liveOffers.length} offers shown`} ar={`عرض ${rows.length} من ${liveOffers.length} عروض`} />}>
       <AdminTableTools query={query} onQueryChange={setQuery} placeholder={ar ? 'ابحث بعنوان العرض أو الحملة...' : 'Search offer title or campaign...'}>

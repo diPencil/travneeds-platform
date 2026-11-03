@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { CalendarCheck, ExternalLink, Eye, EyeOff, MapPin, Pencil, Plus, Trash2 } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
-import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card } from '@/components/admin/admin-ui'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminStatSplitValue, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card } from '@/components/admin/admin-ui'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
 import { useAdminLocale } from '@/components/admin/admin-locale'
@@ -110,10 +110,10 @@ export default function EventsPage() {
   return <>
     <PageHead eyebrow="Content" title="Events" titleAr="الفعاليات" sub="Programs, inclusions, dates and event landing pages" subAr="البرامج والمشمول والمواعيد وصفحات الفعاليات" actions={<Link className="sp-btn primary" href="/admin/events/new"><Plus size={17} /> <AdminText en="New event" ar="فعالية جديدة" /></Link>} />
     <AdminStats items={[
-      { label: <AdminText en="Events" ar="الفعاليات" />, value: liveEvents.length, note: <AdminText en="DB-backed catalogue" ar="كتالوج قاعدة البيانات" />, icon: CalendarCheck },
+      { label: <AdminText en="Events" ar="الفعاليات" />, value: <AdminStatSplitValue total={liveEvents.length} published={publishedCount} ar={ar} />, note: <AdminText en="DB-backed catalogue" ar="كتالوج قاعدة البيانات" />, icon: CalendarCheck, tone: 'orange' },
       { label: <AdminText en="Upcoming" ar="القادمة" />, value: upcoming, note: <AdminText en="Structured status" ar="حالة منظمة" />, icon: CalendarCheck, tone: 'green' },
-      { label: <AdminText en="Published" ar="المنشورة" />, value: publishedCount, note: <AdminText en="Visible on the website" ar="ظاهرة على الموقع" />, icon: ExternalLink, tone: 'violet' },
-      { label: <AdminText en="Hidden" ar="المخفية" />, value: hiddenCount, note: <AdminText en="Admin only" ar="للإدارة فقط" />, icon: EyeOff, tone: 'orange' },
+      { label: <AdminText en="Published" ar="المنشورة" />, value: publishedCount, note: <AdminText en="Visible on the website" ar="ظاهرة على الموقع" />, icon: ExternalLink, tone: 'blue' },
+      { label: <AdminText en="Hidden" ar="المخفية" />, value: hiddenCount, note: <AdminText en="Admin only" ar="للإدارة فقط" />, icon: EyeOff, tone: 'violet' },
     ]} />
     <Card title={<AdminText en="All events" ar="كل الفعاليات" />} sub={<AdminText en={`${rows.length} of ${liveEvents.length} events shown`} ar={`عرض ${rows.length} من ${liveEvents.length} فعاليات`} />}>
       <AdminTableTools query={query} onQueryChange={setQuery} placeholder={ar ? 'ابحث بفعالية أو تاريخ أو موقع...' : 'Search event, date or location...'}>

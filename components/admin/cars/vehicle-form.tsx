@@ -3,11 +3,11 @@
 import { useRef, useState } from 'react'
 import { ContentLanguageTabs, TranslatedInput, TranslatedTextarea } from '@/components/admin/content-language-tabs'
 import { type CatalogueTranslations } from '@/lib/catalogue-translations'
-import { AdminText, Card } from './admin-ui'
-import { useAdminLocale } from './admin-locale'
-import { toast } from './admin-toaster'
+import { AdminText, Card } from '@/components/admin/admin-ui'
+import { useAdminLocale } from '@/components/admin/admin-locale'
+import { toast } from '@/components/admin/admin-toaster'
 import { SharedSelect } from '@/components/shared-select'
-import { ImageField } from './image-field'
+import { ImageField } from '@/components/admin/image-field'
 import { slugify } from '@/lib/admin-store'
 import type { Car } from '@/data/types'
 
@@ -56,13 +56,13 @@ export function VehicleForm({
     setSaving(true)
     try {
       await onSubmit({
-      translations,
-      title: title.trim(),
-      slug: initial?.slug ?? slugify(title),
-      image: image.trim(),
-      seats: seats.trim(),
-      transmission,
-      copy: copy.trim() || title.trim(),
+        translations,
+        title: title.trim(),
+        slug: initial?.slug ?? slugify(title),
+        image: image.trim(),
+        seats: seats.trim(),
+        transmission,
+        copy: copy.trim() || title.trim(),
       })
     } catch (error) {
       toast.error(error instanceof Error ? error.message : (ar ? 'تعذر حفظ السيارة.' : 'Failed to save vehicle.'), { dedupeKey: 'car-editor-save' })
@@ -74,23 +74,23 @@ export function VehicleForm({
 
   return (
     <Card title={<AdminText en="Vehicle details" ar="بيانات السيارة" />}>
-<ContentLanguageTabs translations={translations} setTranslations={setTranslations}>
-      <div className="sp-form">
-        <div className="sp-form-2">
-          <label><AdminText en="Name" ar="الاسم" /><TranslatedInput field="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Toyota Corolla" /></label>
-          <label><AdminText en="Capacity" ar="السعة" /><input value={seats} onChange={(e) => setSeats(e.target.value)} placeholder="4 seats" /></label>
+      <ContentLanguageTabs translations={translations} setTranslations={setTranslations}>
+        <div className="sp-form">
+          <div className="sp-form-2">
+            <label><AdminText en="Name" ar="الاسم" /><TranslatedInput field="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Toyota Corolla" /></label>
+            <label><AdminText en="Capacity" ar="السعة" /><input value={seats} onChange={(e) => setSeats(e.target.value)} placeholder="4 seats" /></label>
+          </div>
+          <div className="sp-form-2">
+            <label><AdminText en="Transmission" ar="ناقل الحركة" /><SharedSelect value={transmission} onChange={setTransmission} locale={ar ? 'ar' : 'en'} options={[{ value: 'Automatic', label: 'Automatic' }, { value: 'Manual', label: 'Manual' }]} /></label>
+          </div>
+          <ImageField value={image} onChange={setImage} />
+          <label><AdminText en="Description" ar="الوصف" /><TranslatedTextarea field="copy" rows={3} value={copy} onChange={(e) => setCopy(e.target.value)} /></label>
         </div>
-        <div className="sp-form-2">
-          <label><AdminText en="Transmission" ar="ناقل الحركة" /><SharedSelect value={transmission} onChange={setTransmission} locale={ar ? 'ar' : 'en'} options={[{ value: 'Automatic', label: 'Automatic' }, { value: 'Manual', label: 'Manual' }]} /></label>
+        {error && <p role="alert" style={{ color: '#b91c1c' }}>{error}</p>}
+        <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+          <button type="button" className="sp-btn primary" onClick={save} disabled={saving}>{submitLabel}</button>
         </div>
-        <ImageField value={image} onChange={setImage} />
-        <label><AdminText en="Description" ar="الوصف" /><TranslatedTextarea field="copy" rows={3} value={copy} onChange={(e) => setCopy(e.target.value)} /></label>
-      </div>
-      {error && <p role="alert" style={{ color: '#b91c1c' }}>{error}</p>}
-      <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-        <button type="button" className="sp-btn primary" onClick={save} disabled={saving}>{submitLabel}</button>
-      </div>
-    </ContentLanguageTabs>
-</Card>
+      </ContentLanguageTabs>
+    </Card>
   )
 }

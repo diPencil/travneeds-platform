@@ -1,12 +1,12 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { Save, Send, RotateCcw, EyeOff } from 'lucide-react'
-import { PageHead } from './admin-shell'
-import { Card } from './admin-ui'
-import { toast } from './admin-toaster'
-import { AdminConfirmDialog } from './admin-confirm-dialog'
-import { SharedSelect } from '../shared-select'
-import { ENABLED_LOCALES, type EnabledLocale } from '@/lib/locale-config'
+import { PageHead } from '@/components/admin/admin-shell'
+import { Card } from '@/components/admin/admin-ui'
+import { toast } from '@/components/admin/admin-toaster'
+import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
+import { SharedSelect } from '@/components/shared-select'
+import { ENABLED_LOCALES, LOCALE_LABELS, type EnabledLocale } from '@/lib/locale-config'
 import { FAQ_HERO_DESTINATIONS } from '@/lib/faq-hero'
 import { originalShowcaseHero, SHOWCASE_PAGES, type ShowcaseHero, type ShowcaseHeroId, type ShowcaseHeroState } from '@/lib/showcase-heroes'
 import type { HeroAction } from '@/lib/website-heroes'
@@ -80,12 +80,25 @@ export function ShowcaseHeroEditor({ id }: { id: ShowcaseHeroId }) {
       {!state && <button className="sp-btn" type="button" onClick={() => void load()}>Reload</button>}
       <form className="cms-hero-form" onSubmit={(event) => { event.preventDefault(); void action('save-draft') }}>
         <fieldset disabled={disabled}>
-          <nav className="cms-hero-tabs" aria-label="Content language">{ENABLED_LOCALES.map((value) => <button className="sp-btn" type="button" key={value} aria-pressed={locale === value} onClick={() => setLocale(value)}>{value.toUpperCase()}</button>)}</nav>
-          <div className="cms-hero-fields">{Object.keys(draft.text[locale]).map((field) => <label key={field}>{labels[field] ?? field} ({locale.toUpperCase()})<input required maxLength={field === 'intro' ? 600 : field === 'title' || field === 'railTitle' ? 160 : 100} value={draft.text[locale][field]} onChange={(event) => change({ text: { ...draft.text, [locale]: { ...draft.text[locale], [field]: event.target.value } } })} /></label>)}</div>
+          <nav className="sp-builder-language-tabs" aria-label="Content language">
+            {ENABLED_LOCALES.map((value) => (
+              <button
+                className="sp-btn"
+                type="button"
+                key={value}
+                data-active={locale === value ? '' : undefined}
+                aria-pressed={locale === value}
+                onClick={() => setLocale(value)}
+              >
+                {LOCALE_LABELS[value] ?? value}
+              </button>
+            ))}
+          </nav>
+          <div className="cms-hero-fields">{Object.keys(draft.text[locale]).map((field) => <label key={field}>{labels[field] ?? field}<input required maxLength={field === 'intro' ? 600 : field === 'title' || field === 'railTitle' ? 160 : 100} value={draft.text[locale][field]} onChange={(event) => change({ text: { ...draft.text, [locale]: { ...draft.text[locale], [field]: event.target.value } } })} /></label>)}</div>
           {Object.keys(draft.links).map((field) => <label className="cms-hero-media-field" key={field}>{field === 'primaryHref' ? 'Primary button destination' : field === 'secondaryHref' ? 'Secondary button destination' : 'Featured panel destination'}<SharedSelect disabled={disabled} value={draft.links[field]} onChange={(value) => change({ links: { ...draft.links, [field]: value } })} label={field} options={[...new Set([...Object.values(original().links), ...FAQ_HERO_DESTINATIONS])].map((value) => ({ value, label: value }))} /></label>)}
           {!isCompactHeroId(id) && <>
           {(['image', 'mobileImage'] as const).map((field) => <label className="cms-hero-media-field" key={field}>{field === 'image' ? 'Desktop image override' : 'Mobile image override'}<input value={draft[field]} maxLength={2000} onChange={(event) => change({ [field]: event.target.value })} /><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => { void upload(event.target.files?.[0], field); event.target.value = '' }} />{draft[field] && <button className="sp-btn" type="button" onClick={() => change({ [field]: '' })}>Use original media</button>}</label>)}
-          <label className="cms-hero-media-field">Image alt ({locale.toUpperCase()})<input value={draft.alt[locale]} maxLength={250} onChange={(event) => change({ alt: { ...draft.alt, [locale]: event.target.value } })} /></label>
+          <label className="cms-hero-media-field">Image alt<input value={draft.alt[locale]} maxLength={250} onChange={(event) => change({ alt: { ...draft.alt, [locale]: event.target.value } })} /></label>
           <label>Position<SharedSelect disabled={disabled} label="Position" value={draft.position} onChange={(value) => change({ position: value as ShowcaseHero['position'] })} options={['source', 'center', 'top', 'bottom', 'left', 'right'].map((value) => ({ value, label: value === 'source' ? 'Original position' : value }))} /></label>
           <label className="cms-hero-media-field"><input type="checkbox" checked={draft.overlay !== null} onChange={(event) => change({ overlay: event.target.checked ? 0.4 : null })} /> Custom overlay</label>
           {draft.overlay !== null && <label>Overlay {Math.round(draft.overlay * 100)}%<input type="range" min="0" max="85" value={Math.round(draft.overlay * 100)} onChange={(event) => change({ overlay: Number(event.target.value) / 100 })} /></label>}

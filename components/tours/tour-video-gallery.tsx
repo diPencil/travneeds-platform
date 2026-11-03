@@ -3,8 +3,8 @@
 import { useMemo } from "react"
 import { ExternalLink, Play } from "lucide-react"
 import type { TourJourneyVideo, TourVideoPlatform } from "@/data/types"
-import { HorizontalSlider } from "./horizontal-slider"
-import { tx } from "./locale"
+import { HorizontalSlider } from "@/components/horizontal-slider"
+import { tx } from "@/components/locale"
 import { pickLocaleText, type Locale } from '@/lib/locale-config'
 import { useMergedTourVideos, useTourGalleryVideos } from "@/lib/journey-gallery-client"
 

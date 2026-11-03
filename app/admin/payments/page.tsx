@@ -98,9 +98,9 @@ export default function PaymentsPage() {
     <>
       <PageHead eyebrow="Orders" title="Payments" titleAr="المدفوعات" sub="Payment attempts, collection and history" subAr="محاولات الدفع والتحصيل والسجل" />
       <AdminStats items={[
-        { label: <AdminText en="All payments" ar="كل المدفوعات" />, value: loading ? '…' : rows.length, note: <AdminText en="Stored payment records" ar="سجلات الدفع المحفوظة" />, icon: CreditCard },
-        { label: <AdminText en="Awaiting provider" ar="بانتظار المزود" />, value: loading ? '…' : rows.filter((row) => row.status === 'pending' || row.status === 'processing').length, note: <AdminText en="Pending handoff" ar="بانتظار التحويل" />, icon: Clock3, tone: 'orange' },
-        { label: <AdminText en="Collected" ar="المحصّل" />, value: loading ? '…' : collectedLabel, note: <AdminText en="Totals by stored currency" ar="الإجماليات حسب العملة المحفوظة" />, icon: CircleDollarSign, tone: 'green' },
+        { label: <AdminText en="All payments" ar="كل المدفوعات" />, value: loading ? '…' : rows.length, note: <AdminText en="Stored payment records" ar="سجلات الدفع المحفوظة" />, icon: CreditCard, tone: 'orange' },
+        { label: <AdminText en="Awaiting provider" ar="بانتظار المزود" />, value: loading ? '…' : rows.filter((row) => row.status === 'pending' || row.status === 'processing').length, note: <AdminText en="Pending handoff" ar="بانتظار التحويل" />, icon: Clock3, tone: 'green' },
+        { label: <AdminText en="Collected" ar="المحصّل" />, value: loading ? '…' : collectedLabel, note: <AdminText en="Totals by stored currency" ar="الإجماليات حسب العملة المحفوظة" />, icon: CircleDollarSign, tone: 'blue' },
         { label: <AdminText en="Records" ar="السجلات" />, value: loading ? '…' : rows.length, note: <AdminText en="Immutable history" ar="سجل غير قابل للتعديل" />, icon: ReceiptText, tone: 'violet' },
       ]} />
       <Card title={<AdminText en="All payments" ar="كل المدفوعات" />} sub={<AdminText en={`${visible.length} of ${rows.length} payments shown`} ar={`عرض ${visible.length} من ${rows.length} مدفوعات`} />}>

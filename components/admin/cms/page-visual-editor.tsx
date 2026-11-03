@@ -3,17 +3,17 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowDown, ArrowUp, EyeOff, Plus, RotateCcw, Save, Send, Trash2 } from 'lucide-react'
-import { PageHead } from './admin-shell'
-import { AdminConfirmDialog } from './admin-confirm-dialog'
-import { toast } from './admin-toaster'
+import { PageHead } from '@/components/admin/admin-shell'
+import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
+import { toast } from '@/components/admin/admin-toaster'
 import { SharedSelect } from '@/components/shared-select'
-import { ENABLED_LOCALES, type EnabledLocale } from '@/lib/locale-config'
+import { ENABLED_LOCALES, LOCALE_LABELS, type EnabledLocale } from '@/lib/locale-config'
 import { pageSections, CMS_ICON_IDS, originalPageContent, validatePageContent, type PageContent, type PageContentState, type PageSection, type SectionItem, type CmsIconId } from '@/lib/page-sections'
 import { PAGE_DOCUMENTS, type PageDocumentId } from '@/lib/additional-page-content'
 import { isTemplatePageId } from '@/lib/template-presentation'
 import type { HeroAction } from '@/lib/website-heroes'
 import { CmsIcon } from '@/components/cms-icons'
-import { CmsLinkField, CmsRecordPicker } from './cms-reference-picker'
+import { CmsLinkField, CmsRecordPicker } from '@/components/admin/cms-reference-picker'
 import { CmsDevicePreview } from './cms-device-preview'
 import { protectEnquiryNavigation } from '@/lib/enquiry-navigation'
 import { cmsFieldMax } from '@/lib/page-sections'
@@ -103,10 +103,10 @@ export function PageVisualEditor({ pageId = 'homepage' }: { pageId?: PageDocumen
     } catch (error) { setError(error instanceof Error ? error.message : 'Could not save the page.') }
     finally { lock.current = false; setBusy(false); setConfirm(null) }
   }
-  const textFields = (fields: readonly string[], values: Record<string, string>, update: (key: string, value: string) => void, labels?: Record<string, string>) => fields.map((key) => <label key={key}>{labels?.[key] ?? fieldLabel(key)} ({locale.toUpperCase()})<textarea rows={key.toLowerCase().includes('description') || key.endsWith('S') || key === 'answer' ? 4 : 2} maxLength={cmsFieldMax(key)} disabled={disabled} value={values[key]} onChange={(event) => update(key, event.target.value)} /></label>)
+  const textFields = (fields: readonly string[], values: Record<string, string>, update: (key: string, value: string) => void, labels?: Record<string, string>) => fields.map((key) => <label key={key}>{labels?.[key] ?? fieldLabel(key)}<textarea rows={key.toLowerCase().includes('description') || key.endsWith('S') || key === 'answer' ? 4 : 2} maxLength={cmsFieldMax(key)} disabled={disabled} value={values[key]} onChange={(event) => update(key, event.target.value)} /></label>)
   return <>
     <PageHead eyebrow="WEBSITE CMS" title={PAGE_DOCUMENTS[pageId].name} sub={state ? `Revision ${state.revision} · ${state.mode}${dirty ? ' · Unsaved changes' : ''}` : 'Loading page content…'} backHref="/admin/website-cms/pages" />
-    <div className="cms-editor-toolbar"><nav aria-label="Content language">{ENABLED_LOCALES.map((language) => <button className="sp-btn" type="button" key={language} aria-pressed={locale === language} onClick={() => setLocale(language)}>{language.toUpperCase()} · {draft.sections.every((s) => Object.values(s.text[language]).every((value) => value.trim()) && (s.items ?? []).every((item) => Object.values(item.text[language]).every((value) => value.trim()))) ? 'Complete' : 'Check fields'}</button>)}</nav><div>
+    <div className="cms-editor-toolbar"><nav className="sp-builder-language-tabs" aria-label="Content language">{ENABLED_LOCALES.map((language) => <button type="button" key={language} data-active={locale === language ? '' : undefined} aria-pressed={locale === language} onClick={() => setLocale(language)}>{LOCALE_LABELS[language] ?? language} · {draft.sections.every((s) => Object.values(s.text[language]).every((value) => value.trim()) && (s.items ?? []).every((item) => Object.values(item.text[language]).every((value) => value.trim()))) ? 'Complete' : 'Check fields'}</button>)}</nav><div>
       <button className="sp-btn" type="button" disabled={busy} onClick={() => dirty ? setConfirm('reload') : void load()}><RotateCcw size={16} /> Reload</button>
       <button className="sp-btn" type="button" disabled={disabled || !dirty} onClick={() => void action('save-draft')}><Save size={16} /> Save Draft</button>
       <button className="sp-btn" type="button" disabled={disabled || dirty || !state?.draft} onClick={() => setConfirm('publish')}><Send size={16} /> Publish</button>

@@ -27,6 +27,7 @@
     "@prisma/client": "6.19.3",
     "@tiptap/core": "^3.32.2",
     "@tiptap/extension-link": "^3.32.2",
+    "@tiptap/extension-placeholder": "^3.32.2",
     "@tiptap/extension-text-align": "^3.32.2",
     "@tiptap/extension-underline": "^3.32.2",
     "@tiptap/pm": "^3.32.2",

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { Armchair, CarFront, ExternalLink, Eye, EyeOff, Gauge, Pencil, Plus, ShoppingCart, Trash2 } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
-import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminStatSplitValue, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
 import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
@@ -105,12 +105,16 @@ export default function CarsPage() {
   }, 'vehicle', 'asc')
   const paging = usePagination(carSort.sortedRows)
 
+  const publishedCount = liveCars.filter((car) => !isHidden(car.slug)).length
+  const autoCars = liveCars.filter((car) => car.transmission === 'Automatic')
+  const autoPublished = autoCars.filter((car) => !isHidden(car.slug)).length
+
   return <>
     <PageHead eyebrow="Fleet" title="Rent Cars" titleAr="تأجير السيارات" sub="Fleet inventory, capacity, transmission and website visibility" subAr="مخزون الأسطول والسعة وناقل الحركة والظهور على الموقع" actions={<Link className="sp-btn primary" href="/admin/cars/new"><Plus size={17} /> <AdminText en="New vehicle" ar="سيارة جديدة" /></Link>} />
     <AdminStats items={[
-      { label: <AdminText en="Fleet vehicles" ar="مركبات الأسطول" />, value: liveCars.length, note: <AdminText en="DB-backed records" ar="سجلات قاعدة البيانات" />, icon: CarFront },
-      { label: <AdminText en="Automatic" ar="أوتوماتيك" />, value: liveCars.filter((car) => car.transmission === 'Automatic').length, note: <AdminText en="Automatic transmission" ar="ناقل حركة أوتوماتيك" />, icon: Gauge, tone: 'orange' },
-      { label: <AdminText en="Maximum capacity" ar="السعة القصوى" />, value: ar ? `${maxSeats} مقاعد` : `${maxSeats} seats`, note: <AdminText en="Largest group vehicle" ar="أكبر مركبة للمجموعات" />, icon: Armchair, tone: 'green' },
+      { label: <AdminText en="Fleet vehicles" ar="مركبات الأسطول" />, value: <AdminStatSplitValue total={liveCars.length} published={publishedCount} ar={ar} />, note: <AdminText en="DB-backed records" ar="سجلات قاعدة البيانات" />, icon: CarFront, tone: 'orange' },
+      { label: <AdminText en="Automatic" ar="أوتوماتيك" />, value: <AdminStatSplitValue total={autoCars.length} published={autoPublished} ar={ar} />, note: <AdminText en="Automatic transmission" ar="ناقل حركة أوتوماتيك" />, icon: Gauge, tone: 'green' },
+      { label: <AdminText en="Maximum capacity" ar="السعة القصوى" />, value: ar ? `${maxSeats} مقاعد` : `${maxSeats} seats`, note: <AdminText en="Largest group vehicle" ar="أكبر مركبة للمجموعات" />, icon: Armchair, tone: 'blue' },
       { label: <AdminText en="Confirmed bookings" ar="الحجوزات المؤكدة" />, value: stats ? stats.totalConfirmedBookings : '…', note: <AdminText en="Confirmed transfer requests" ar="طلبات نقل مؤكدة" />, icon: ShoppingCart, tone: 'violet' },
     ]} />
     <Card title={<AdminText en="Fleet" ar="الأسطول" />} sub={<AdminText en={`${rows.length} of ${liveCars.length} vehicles shown`} ar={`عرض ${rows.length} من ${liveCars.length} مركبات`} />}>

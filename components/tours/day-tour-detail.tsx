@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { MobileBookingShortcut } from "./mobile-booking-shortcut"
+import { MobileBookingShortcut } from "@/components/mobile-booking-shortcut"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -9,18 +9,18 @@ import { ArrowRight, CalendarDays, Check, ChevronDown, Clock3, Heart, MapPin, Mi
 import { dayTourTerms, getBookingTotal, getDealOriginalPrice, getDealPrice, getTourDestinationSlug, getToursByCategory, normalizeTourPricePeriods } from "@/data/tours"
 import { destinations, findDestination, siteImages } from "@/data/content"
 import type { Tour, TourAddOn } from "@/data/types"
-import { formatPrice, tx, useLocale } from "./locale"
+import { formatPrice, tx, useLocale } from "@/components/locale"
 import { pickLocaleText } from "@/lib/locale-config"
 import { addToCart } from "@/lib/cart"
 import { useCustomerFavorites } from "@/lib/customer-account"
 import { formatTourDateRange, localizeTourDuration, localizeTourLocation } from "@/lib/tour-format"
-import { TourReviewsSection } from "./reviews"
+import { TourReviewsSection } from "@/components/reviews"
 import { TourVideoGallery } from "./tour-video-gallery"
-import { AskQuestionButton } from "./ask-question"
-import { HorizontalSlider } from "./horizontal-slider"
+import { AskQuestionButton } from "@/components/ask-question"
+import { HorizontalSlider } from "@/components/horizontal-slider"
 import { TourLocationMap } from "./tour-detail"
 import { useDbDestinations } from '@/lib/catalogue-client'
-import { DateInput } from "./date-input"
+import { DateInput } from "@/components/date-input"
 import { localizePublicTour } from '@/lib/tour-public-locale'
 import { RichTextRenderer } from '@/components/rich-text-renderer'
 

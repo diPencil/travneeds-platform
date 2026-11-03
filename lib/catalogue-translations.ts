@@ -1,4 +1,4 @@
-import { ENABLED_LOCALES, type Locale } from './locale-config'
+import { ALL_LOCALES, ENABLED_LOCALES, type Locale } from './locale-config'
 
 export type CatalogueKind = 'destination' | 'category' | 'event' | 'offer' | 'blog' | 'car'
 export type CatalogueTranslations = Partial<Record<Locale, Record<string, string>>>
@@ -26,7 +26,7 @@ export function validateCatalogueTranslations(kind: CatalogueKind, value: unknow
   const result: CatalogueTranslations = {}
   let count = 0
   for (const [locale, entries] of Object.entries(value)) {
-    if (!ENABLED_LOCALES.some((entry) => entry === locale) || locale === 'en' || !entries || typeof entries !== 'object' || Array.isArray(entries)) throw new Error('Invalid translation language.')
+    if (!ALL_LOCALES.some((entry) => entry === locale) || locale === 'en' || !entries || typeof entries !== 'object' || Array.isArray(entries)) throw new Error('Invalid translation language.')
     const next: Record<string, string> = {}
     for (const [key, text] of Object.entries(entries)) {
       if (++count > 500 || !fields[kind].test(key) || key.length > 160 || typeof text !== 'string' || text.length > 10000) throw new Error('Invalid translation field or length.')

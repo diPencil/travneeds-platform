@@ -213,7 +213,8 @@ export function getEgyptTourNavLinks(t: Record<string, string>, ex: Record<strin
     [ex.cat4, '/all-tours/shore-excursions'],
   ] as const
   const destination = [tx(locale, { en: 'Destinations', es: 'Destinos', it: 'Destinazioni', ar: 'الوجهات' }), '/destinations'] as const
-  return { desktop: [...categories, destination], mobile: [...categories, [t.offer, '/special-offers'] as const, destination] }
+  const hotels = [tx(locale, { en: 'Hotels & Stays', es: 'Hoteles', it: 'Hotel', ar: 'الفنادق والإقامة' }), '/hotels'] as const
+  return { desktop: [...categories, hotels, destination], mobile: [...categories, hotels, [t.offer, '/special-offers'] as const, destination] }
 }
 
 /**
@@ -517,6 +518,7 @@ function DynamicFooter() {
         <Link href="/all-tours/multi-days-tours">{ex.cat2}</Link>
         <Link href="/all-tours/nile-cruises">{ex.cat3}</Link>
         <Link href="/all-tours/shore-excursions">{ex.cat4}</Link>
+        <Link href="/hotels">{tx(locale, { en: 'Hotels & Stays', es: 'Hoteles', it: 'Hotel', ar: 'الفنادق والإقامة' })}</Link>
         <Link href="/special-offers">{t.offer}</Link>
       </div>
       <div>

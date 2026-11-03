@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { Eye, Pencil } from 'lucide-react'
-import { Card, AdminTableTools, AdminTableWrap, AdminTableActions, AdminIconAction } from './admin-ui'
-import { AdminPagination, usePagination } from './admin-pagination'
+import { Card, AdminTableTools, AdminTableWrap, AdminTableActions, AdminIconAction } from '@/components/admin/admin-ui'
+import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
 import { SharedSelect } from '@/components/shared-select'
 import { SeoEditor } from './seo-manager'
 import type { RecordSeoDescriptor, RecordSeoState } from '@/lib/record-seo'
 import type { Metadata } from 'next'
 import type { EnabledLocale } from '@/lib/locale-config'
 
-export const RECORD_KINDS = ['tour', 'blog', 'destination', 'event', 'offer', 'category'] as const
+export const RECORD_KINDS = ['tour', 'blog', 'destination', 'event', 'offer', 'category', 'hotel'] as const
 export type SeoRecordResponse = {
   record: RecordSeoDescriptor
   state: RecordSeoState

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { findCmsPage } from '@/lib/cms-coverage'
-import { PageVisualEditor } from '@/components/admin/page-visual-editor'
+import { PageVisualEditor } from '@/components/admin/cms/page-visual-editor'
 import { PageHead } from '@/components/admin/admin-shell'
 import { Card } from '@/components/admin/admin-ui'
 import { isPageDocumentId } from '@/lib/additional-page-content'

@@ -3,15 +3,15 @@ import { useEffect, useRef, useState } from 'react'
 import { Eye, EyeOff, RotateCcw, Save, Send, Upload } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { Card } from '@/components/admin/admin-ui'
-import { toast } from './admin-toaster'
+import { toast } from '@/components/admin/admin-toaster'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import { SharedSelect } from '@/components/shared-select'
-import { ENABLED_LOCALES, type EnabledLocale } from '@/lib/locale-config'
+import { ENABLED_LOCALES, LOCALE_LABELS, type EnabledLocale } from '@/lib/locale-config'
 import { FAQ_HERO_DESTINATIONS, type FaqHero, type FaqHeroState } from '@/lib/faq-hero'
 import { originalEditorialHero, EDITORIAL_HERO_PAGES, type EditorialHeroId } from '@/lib/editorial-hero-definitions'
 import type { HeroAction } from '@/lib/website-heroes'
 import { isInformationPageId } from '@/lib/information-pages'
-import { EditorialSectionsEditor } from './editorial-sections-editor'
+import { EditorialSectionsEditor } from '@/components/admin/editorial-sections-editor'
 import '@/app/admin/website-cms/hero-sections/homepage/hero-editor.css'
 
 export function EditorialHeroEditor({ id }: { id: EditorialHeroId }) {
@@ -78,8 +78,20 @@ export function EditorialHeroEditor({ id }: { id: EditorialHeroId }) {
       {!state && <button type="button" className="sp-btn" onClick={() => void load()}>Reload</button>}
       <form className="cms-hero-form" onSubmit={(event) => { event.preventDefault(); void action('save-draft') }}>
         <fieldset disabled={disabled}>
-          <nav className="cms-hero-tabs" aria-label="Content language">{ENABLED_LOCALES.map((value) => <button key={value} type="button" className="sp-btn" aria-pressed={locale === value} onClick={() => setLocale(value)}>{value.toUpperCase()}</button>)}</nav>
-          <div className="cms-hero-fields">{(Object.keys(labels) as (keyof typeof labels)[]).map((field) => <label key={field}>{labels[field]} ({locale.toUpperCase()})<input value={fields[field]} maxLength={field === 'description' ? 600 : field === 'heading' ? 160 : field === 'alt' ? 250 : 100} required={field !== 'eyebrow' && field !== 'alt'} onChange={(event) => change({ text: { ...draft.text, [locale]: { ...fields, [field]: event.target.value } } })} /></label>)}</div>
+          <nav className="sp-builder-language-tabs" aria-label="Content language">
+            {ENABLED_LOCALES.map((value) => (
+              <button
+                key={value}
+                type="button"
+                data-active={locale === value ? '' : undefined}
+                aria-pressed={locale === value}
+                onClick={() => setLocale(value)}
+              >
+                {LOCALE_LABELS[value] ?? value}
+              </button>
+            ))}
+          </nav>
+          <div className="cms-hero-fields">{(Object.keys(labels) as (keyof typeof labels)[]).map((field) => <label key={field}>{labels[field]}<input value={fields[field]} maxLength={field === 'description' ? 600 : field === 'heading' ? 160 : field === 'alt' ? 250 : 100} required={field !== 'eyebrow' && field !== 'alt'} onChange={(event) => change({ text: { ...draft.text, [locale]: { ...fields, [field]: event.target.value } } })} /></label>)}</div>
           <label className="cms-hero-media-field">Image URL<input value={draft.image} maxLength={2000} required onChange={(event) => change({ image: event.target.value })} /></label>
           <label className="cms-hero-media-field"><span><Upload size={16} /> Upload image</span><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => { void upload(event.target.files?.[0]); event.target.value = '' }} /></label>
           <label>Button destination<SharedSelect value={draft.href} onChange={(href) => change({ href })} label="Button destination" disabled={disabled} options={FAQ_HERO_DESTINATIONS.map((value) => ({ value, label: value }))} /></label>

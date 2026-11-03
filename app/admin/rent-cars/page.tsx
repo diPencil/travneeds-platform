@@ -7,9 +7,9 @@
 // tab share one source of truth per resource.
 
 import { useEffect, useMemo, useState } from 'react'
-import { CircleDollarSign, MapPin, Pencil, Plus, Route as RouteIcon, Trash2 } from 'lucide-react'
+import { CarFront, CircleDollarSign, MapPin, Pencil, Plus, Route as RouteIcon, Trash2 } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
-import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminStatSplitValue, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
 import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
@@ -17,7 +17,7 @@ import { SharedSelect } from '@/components/shared-select'
 import { useDbCarsStatus } from '@/lib/events-cars-client'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import { toast } from '@/components/admin/admin-toaster'
-import { CarPricingManager } from '@/components/admin/car-pricing-manager'
+import { CarPricingManager } from '@/components/admin/cars/car-pricing-manager'
 import type { PricingTier as PriceRow } from '@/lib/car-pricing-admin'
 
 type LocationRow = {
@@ -107,10 +107,10 @@ export default function RentCarsOpsPage() {
       subAr="مواقع النقل، والخطوط الاتجاهية، وأسعار كل مركبة"
     />
     <AdminStats items={[
-      { label: <AdminText en="Locations" ar="المواقع" />, value: locations.data.filter((row) => row.isActive).length, note: <AdminText en="Active pick-up points" ar="نقاط استلام نشطة" />, icon: MapPin },
-      { label: <AdminText en="Routes" ar="الخطوط" />, value: routes.data.filter((row) => row.isActive).length, note: <AdminText en="Directional pairs (A→B, B→A)" ar="أزواج اتجاهية (أ→ب، ب→أ)" />, icon: RouteIcon },
-      { label: <AdminText en="Passenger tiers" ar="أسعار مسجّلة" />, value: prices.data.filter((row) => row.isActive).length, note: <AdminText en="Active passenger ranges" ar="سجلات خط × مركبة نشطة" />, icon: CircleDollarSign },
-      { label: <AdminText en="Fleet vehicles" ar="مركبات الأسطول" />, value: vehicles.length, note: <AdminText en="Available for pricing" ar="متاحة للأسعار" />, icon: CircleDollarSign, tone: 'violet' },
+      { label: <AdminText en="Locations" ar="المواقع" />, value: <AdminStatSplitValue total={locations.data.length} published={locations.data.filter((row) => row.isActive).length} ar={ar} />, note: <AdminText en="Active pick-up points" ar="نقاط استلام نشطة" />, icon: MapPin, tone: 'orange' },
+      { label: <AdminText en="Routes" ar="الخطوط" />, value: <AdminStatSplitValue total={routes.data.length} published={routes.data.filter((row) => row.isActive).length} ar={ar} />, note: <AdminText en="Directional pairs (A→B, B→A)" ar="أزواج اتجاهية (أ→ب، ب→أ)" />, icon: RouteIcon, tone: 'green' },
+      { label: <AdminText en="Passenger tiers" ar="أسعار مسجّلة" />, value: <AdminStatSplitValue total={prices.data.length} published={prices.data.filter((row) => row.isActive).length} ar={ar} />, note: <AdminText en="Active passenger ranges" ar="سجلات خط × مركبة نشطة" />, icon: CircleDollarSign, tone: 'blue' },
+      { label: <AdminText en="Fleet vehicles" ar="مركبات الأسطول" />, value: vehicles.length, note: <AdminText en="Available for pricing" ar="متاحة للأسعار" />, icon: CarFront, tone: 'violet' },
     ]} />
     <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
       {tabs.map((item) => (

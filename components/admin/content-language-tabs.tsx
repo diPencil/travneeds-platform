@@ -2,18 +2,18 @@
 
 import { createContext, useContext, useState, type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode, type Dispatch, type SetStateAction } from 'react'
 import { Tabs } from '@base-ui/react/tabs'
-import { ENABLED_LOCALES, LOCALE_LABELS, type EnabledLocale } from '@/lib/locale-config'
+import { ADMIN_CONTENT_LOCALES, LOCALE_LABELS, type AdminContentLocale } from '@/lib/locale-config'
 import { removeTranslationRow, type CatalogueTranslations } from '@/lib/catalogue-translations'
 
-type LanguageContext = { locale: EnabledLocale; translations: CatalogueTranslations; setTranslations: Dispatch<SetStateAction<CatalogueTranslations>> }
+type LanguageContext = { locale: AdminContentLocale; translations: CatalogueTranslations; setTranslations: Dispatch<SetStateAction<CatalogueTranslations>> }
 const Context = createContext<LanguageContext | null>(null)
 export function useContentLanguage() { return useContext(Context) }
 
 export function ContentLanguageTabs({ translations, setTranslations, children }: Omit<LanguageContext, 'locale'> & { children: ReactNode }) {
-  const [locale, setLocale] = useState<EnabledLocale>('en')
+  const [locale, setLocale] = useState<AdminContentLocale>('en')
   return <Context.Provider value={{ locale, translations, setTranslations }}>
-    <Tabs.Root value={locale} onValueChange={(value) => { const next = ENABLED_LOCALES.find((entry) => entry === value); if (next) setLocale(next) }} className="sp-builder-languages">
-      <Tabs.List className="sp-builder-language-tabs" aria-label="Content language">{ENABLED_LOCALES.map((entry) => <Tabs.Tab key={entry} value={entry}>{LOCALE_LABELS[entry]}</Tabs.Tab>)}</Tabs.List>
+    <Tabs.Root value={locale} onValueChange={(value) => { const next = ADMIN_CONTENT_LOCALES.find((entry) => entry === value); if (next) setLocale(next) }} className="sp-builder-languages">
+      <Tabs.List className="sp-builder-language-tabs" aria-label="Content language">{ADMIN_CONTENT_LOCALES.map((entry) => <Tabs.Tab key={entry} value={entry}>{LOCALE_LABELS[entry]}</Tabs.Tab>)}</Tabs.List>
       <Tabs.Panel value={locale} className="sp-form" lang={locale}>{children}</Tabs.Panel>
     </Tabs.Root>
   </Context.Provider>

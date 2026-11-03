@@ -5,9 +5,9 @@ import { RotateCw, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { protectEnquiryNavigation } from '@/lib/enquiry-navigation';
 import { DEFAULT_GTM_CONTAINER_ID } from '@/lib/tracking';
-import { Card } from './admin-ui';
-import { AdminConfirmDialog } from './admin-confirm-dialog';
-import { toast } from './admin-toaster';
+import { Card } from '@/components/admin/admin-ui';
+import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog';
+import { toast } from '@/components/admin/admin-toaster';
 
 const fields = [
   ['site.seoTitle', 'Default SEO title', 160],

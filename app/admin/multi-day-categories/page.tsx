@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ExternalLink, Eye, EyeOff, Link2, Pencil, Plus, Tags, Trash2 } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
-import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
+import { AdminEmpty, AdminIconAction, AdminStats, AdminStatSplitValue, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Card, StatusPill } from '@/components/admin/admin-ui'
 import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
@@ -74,9 +74,9 @@ export default function MultiDayCategoriesPage() {
   return <>
     <PageHead eyebrow="Catalogue" title="Multi Day Categories" titleAr="فئات الرحلات متعددة الأيام" sub="Manage themed collections and their linked multi-day tours" subAr="إدارة المجموعات الموضوعية ورحلاتها المرتبطة" actions={<Link className="sp-btn primary" href="/admin/multi-day-categories/new"><Plus size={17} /> <AdminText en="New category" ar="فئة جديدة" /></Link>} />
     <AdminStats items={[
-      { label: <AdminText en="Categories" ar="الفئات" />, value: liveCategories.length, note: <AdminText en="Themed collections" ar="مجموعات موضوعية" />, icon: Tags },
-      { label: <AdminText en="Linked tours" ar="الرحلات المرتبطة" />, value: assignments, note: <AdminText en="Category assignments" ar="ارتباطات الفئات" />, icon: Link2, tone: 'orange' },
-      { label: <AdminText en="Published" ar="المنشورة" />, value: published, note: <AdminText en="Visible on the website" ar="ظاهرة على الموقع" />, icon: Eye, tone: 'green' },
+      { label: <AdminText en="Categories" ar="الفئات" />, value: <AdminStatSplitValue total={liveCategories.length} published={published} ar={ar} />, note: <AdminText en="Themed collections" ar="مجموعات موضوعية" />, icon: Tags, tone: 'orange' },
+      { label: <AdminText en="Linked tours" ar="الرحلات المرتبطة" />, value: assignments, note: <AdminText en="Category assignments" ar="ارتباطات الفئات" />, icon: Link2, tone: 'green' },
+      { label: <AdminText en="Published" ar="المنشورة" />, value: published, note: <AdminText en="Visible on the website" ar="ظاهرة على الموقع" />, icon: Eye, tone: 'blue' },
       { label: <AdminText en="Hidden" ar="المخفية" />, value: liveCategories.length - published, note: <AdminText en="Hidden from the website" ar="مخفية عن الموقع" />, icon: EyeOff, tone: 'violet' },
     ]} />
     <Card title={<AdminText en="All categories" ar="كل الفئات" />} sub={<AdminText en={`${rows.length} of ${liveCategories.length} shown`} ar={`عرض ${rows.length} من ${liveCategories.length}`} />}>

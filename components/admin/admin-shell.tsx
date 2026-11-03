@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Bell,
   Boxes,
+  Building2,
   CalendarCheck,
   CarFront,
   ChevronDown,
@@ -90,6 +91,7 @@ const NAV_VIEW_PERMISSIONS: Record<string, string[]> = {
   '/admin/bookings': ['bookings.view'],
   '/admin/payments': ['payments.view'],
   '/admin/trips': ['tours.view'],
+  '/admin/hotels': ['hotels.view', 'hotels.manage'],
   '/admin/destinations': ['destinations.view'],
   '/admin/multi-day-categories': ['categories.view'],
   '/admin/events': ['events.view'],
@@ -140,6 +142,7 @@ const groups = [
     labelEn: 'TRAVEL SERVICES',
     items: [
       { href: '/admin/trips', icon: Map, en: 'Tours & Packages', ar: 'الرحلات والبرامج' },
+      { href: '/admin/hotels', icon: Building2, en: 'Hotels & Lodging', ar: 'الفنادق والإقامة' },
       { href: '/admin/cars', icon: CarFront, en: 'Rent Cars Fleet', ar: 'أسطول السيارات' },
       { href: '/admin/destinations', icon: MapPinned, en: 'Destinations', ar: 'الوجهات' },
       { href: '/admin/multi-day-categories', icon: Tags, en: 'Multi Day Categories', ar: 'فئات الرحلات' },

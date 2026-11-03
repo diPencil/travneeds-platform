@@ -124,9 +124,9 @@ export default function BookingsPage() {
     <>
       <PageHead eyebrow="Orders" title="Bookings" titleAr="الحجوزات" sub="Follow-up, confirmation and invoicing" subAr="المتابعة والتأكيد والفواتير" />
       <AdminStats items={[
-        { label: <AdminText en="All bookings" ar="كل الحجوزات" />, value: loading ? '…' : rows.length, note: <AdminText en="Stored bookings" ar="الحجوزات المحفوظة" />, icon: ShoppingCart },
-        { label: <AdminText en="Needs follow-up" ar="تحتاج متابعة" />, value: loading ? '…' : rows.filter((row) => row.status === 'pending').length, note: <AdminText en="Pending confirmation" ar="بانتظار التأكيد" />, icon: CalendarClock, tone: 'orange' },
-        { label: <AdminText en="Confirmed" ar="المؤكدة" />, value: loading ? '…' : rows.filter((row) => row.status === 'confirmed').length, note: <AdminText en="Ready for operations" ar="جاهزة للتشغيل" />, icon: CheckCircle2, tone: 'green' },
+        { label: <AdminText en="All bookings" ar="كل الحجوزات" />, value: loading ? '…' : rows.length, note: <AdminText en="Stored bookings" ar="الحجوزات المحفوظة" />, icon: ShoppingCart, tone: 'orange' },
+        { label: <AdminText en="Needs follow-up" ar="تحتاج متابعة" />, value: loading ? '…' : rows.filter((row) => row.status === 'pending').length, note: <AdminText en="Pending confirmation" ar="بانتظار التأكيد" />, icon: CalendarClock, tone: 'green' },
+        { label: <AdminText en="Confirmed" ar="المؤكدة" />, value: loading ? '…' : rows.filter((row) => row.status === 'confirmed').length, note: <AdminText en="Ready for operations" ar="جاهزة للتشغيل" />, icon: CheckCircle2, tone: 'blue' },
         { label: <AdminText en="Collected from confirmed bookings" ar="المحصل من الحجوزات المؤكدة" />, value: loading ? '…' : confirmedRevenueLabel, note: <AdminText en="Totals by stored currency" ar="الإجماليات حسب العملة المحفوظة" />, icon: CircleDollarSign, tone: 'violet' },
       ]} />
       <Card title={<AdminText en="All bookings" ar="كل الحجوزات" />} sub={<AdminText en={`${visible.length} of ${rows.length} bookings shown`} ar={`عرض ${visible.length} من ${rows.length} حجوزات`} />}>

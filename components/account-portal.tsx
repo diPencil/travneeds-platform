@@ -7,7 +7,7 @@ import { formatCurrency, CURRENCY_OPTIONS, type Currency } from '@/lib/currency'
 // server-rendered payload that ships in the HTML.
 
 import Link from 'next/link'
-import { CarQuoteSummary } from './car-quote-summary'
+import { CarQuoteSummary } from './cars/car-quote-summary'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
 import {

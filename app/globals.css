@@ -1170,27 +1170,53 @@ html[dir="rtl"] .about-way-action svg,html[dir="rtl"] .about-hero-actions svg,ht
 .rev-trip-reference a:hover{text-decoration:underline}
 .rev-category-pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block}
 
-/* Tiptap Rich Text Editor & Content Styles */
-.sp-rich-editor .sp-toolbar-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:var(--text);cursor:pointer;transition:all .15s ease}
-.sp-rich-editor .sp-toolbar-btn:hover{background:#e2e8f0;color:var(--blue)}
-.sp-rich-editor .sp-toolbar-btn.active{background:var(--blue);color:#fff}
-.sp-rich-editor .sp-toolbar-btn:disabled{opacity:0.4;cursor:not-allowed}
-.sp-rich-editor .sp-toolbar-sep{width:1px;height:18px;background:var(--border);margin:0 4px}
-.sp-rich-editor .tiptap{outline:none;font-size:13.5px;line-height:1.6;color:var(--text);min-height:100px}
-.sp-rich-editor .tiptap p{margin:0 0 8px}
-.sp-rich-editor .tiptap h2{font-size:18px;font-weight:700;margin:12px 0 6px;color:var(--blue)}
-.sp-rich-editor .tiptap h3{font-size:15.5px;font-weight:700;margin:10px 0 4px;color:var(--text)}
-.sp-rich-editor .tiptap ul,.sp-rich-editor .tiptap ol{padding-inline-start:22px;margin:0 0 10px}
-.sp-rich-editor .tiptap li{margin-bottom:3px}
-.sp-rich-editor .tiptap a{color:var(--blue);text-decoration:underline}
+/* Tiptap Rich Text Editor — Modular Pro Layout */
+.sp-field{display:grid;gap:6px;width:100%}
+.sp-field .sp-label{font-size:12.5px;font-weight:700;color:var(--sp-blue-deep,#0d2250);display:block}
+.sp-rich-editor-wrapper{display:flex;flex-direction:column;gap:8px;width:100%}
+.sp-editor-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.02)}
+.sp-format-select-container{position:relative;display:inline-flex;align-items:center;margin-inline-end:4px}
+.sp-editor-toolbar select.sp-format-select{appearance:none;-webkit-appearance:none;background:#fff!important;border:1px solid #e2e8f0!important;border-radius:8px!important;padding:4px 28px 4px 10px!important;font-size:13px!important;font-weight:500!important;color:#334155!important;cursor:pointer;outline:none!important;transition:border-color .15s ease;height:32px!important;min-height:32px!important;width:auto!important;line-height:20px!important;box-shadow:none!important}
+.sp-editor-toolbar select.sp-format-select:hover{border-color:#cbd5e1!important}
+.sp-editor-toolbar select.sp-format-select:focus{border-color:#3b82f6!important;box-shadow:0 0 0 2px rgba(59,130,246,.2)!important}
+.sp-format-select-icon{position:absolute;right:8px;pointer-events:none;color:#64748b}
+[dir="rtl"] .sp-editor-toolbar select.sp-format-select{padding:4px 10px 4px 28px!important}
+[dir="rtl"] .sp-format-select-icon{right:auto;left:8px}
+.sp-editor-toolbar .sp-toolbar-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#475569;cursor:pointer;transition:all .15s ease;padding:0;line-height:1}
+.sp-editor-toolbar .sp-toolbar-btn:hover:not(:disabled){background:#f8fafc;color:#0f172a}
+.sp-editor-toolbar .sp-toolbar-btn.active{border-color:#3b82f6;background:#eff6ff;color:#2563eb}
+.sp-editor-toolbar .sp-toolbar-btn:disabled{opacity:.35;cursor:not-allowed}
+.sp-tx-glyph{font-family:inherit;font-weight:700;font-size:13px;line-height:1;display:inline-flex;align-items:baseline;letter-spacing:-.5px}
+.sp-tx-glyph small{font-size:10px;font-weight:600;margin-left:1px}
+.sp-editor-content-box{background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:14px 16px;cursor:text;transition:border-color .15s ease,box-shadow .15s ease;display:flex;flex-direction:column}
+.sp-editor-content-box.focused,.sp-editor-content-box:focus-within{border-color:#f7951d;box-shadow:0 0 0 2px rgba(247,149,29,.15)}
+.sp-editor-content-box>div{flex:1;display:flex;flex-direction:column}
+.sp-editor-content-box .tiptap{flex:1;outline:none;font-size:14px;line-height:1.65;color:var(--text);min-height:140px;cursor:text}
+.sp-editor-content-box .tiptap p.is-editor-empty:first-child::before{content:attr(data-placeholder);float:left;color:#94a3b8;pointer-events:none;height:0}
+[dir="rtl"] .sp-editor-content-box .tiptap p.is-editor-empty:first-child::before{float:right}
+.sp-editor-content-box .tiptap p{margin:0 0 10px}
+.sp-editor-content-box .tiptap p:last-child{margin-bottom:0}
+.sp-editor-content-box .tiptap h2{font-size:19px;font-weight:700;margin:14px 0 6px;color:var(--blue)}
+.sp-editor-content-box .tiptap h3{font-size:16px;font-weight:700;margin:12px 0 4px;color:var(--text)}
+.sp-editor-content-box .tiptap ul{list-style-type:disc!important;padding-inline-start:26px!important;margin:8px 0 12px!important}
+.sp-editor-content-box .tiptap ol{list-style-type:decimal!important;padding-inline-start:26px!important;margin:8px 0 12px!important}
+.sp-editor-content-box .tiptap li{display:list-item!important;margin-bottom:4px!important;list-style:inherit!important}
+.sp-editor-content-box .tiptap [style*="text-align: center"]{text-align:center!important}
+.sp-editor-content-box .tiptap [style*="text-align: right"]{text-align:right!important}
+.sp-editor-content-box .tiptap [style*="text-align: left"]{text-align:left!important}
+.sp-editor-content-box .tiptap a{color:var(--blue);text-decoration:underline}
 
 /* Public & Preview Rich Text Rendering */
 .rich-text-content p{margin-bottom:12px;line-height:1.7}
 .rich-text-content p:last-child{margin-bottom:0}
 .rich-text-content h2{font-size:22px;font-weight:800;margin:18px 0 8px;color:var(--blue)}
 .rich-text-content h3{font-size:18px;font-weight:700;margin:14px 0 6px;color:var(--text)}
-.rich-text-content ul,.rich-text-content ol{padding-inline-start:24px;margin-bottom:14px}
-.rich-text-content li{margin-bottom:4px;line-height:1.6}
+.rich-text-content ul{list-style-type:disc!important;padding-inline-start:26px!important;margin:8px 0 14px!important}
+.rich-text-content ol{list-style-type:decimal!important;padding-inline-start:26px!important;margin:8px 0 14px!important}
+.rich-text-content li{display:list-item!important;margin-bottom:4px;line-height:1.6;list-style:inherit!important}
+.rich-text-content [style*="text-align: center"]{text-align:center!important}
+.rich-text-content [style*="text-align: right"]{text-align:right!important}
+.rich-text-content [style*="text-align: left"]{text-align:left!important}
 .rich-text-content a{color:var(--blue);text-decoration:underline;font-weight:600}
 .rich-text-content a:hover{color:var(--primary)}
 /* Events module */

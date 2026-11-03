@@ -89,6 +89,25 @@ export function StatusPill({ status }: { status: string }) {
   return <span className={`sp-pill is-${status}`}>{status}</span>
 }
 
+export function AdminStatSplitValue({
+  total,
+  published,
+  ar = false,
+}: {
+  total: number | string
+  published: number | string
+  ar?: boolean
+}) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px', whiteSpace: 'nowrap' }}>
+      <span>{total}</span>
+      <span style={{ fontSize: '11px', fontWeight: 500, color: '#64748b' }}>
+        / {published} {ar ? 'منشور' : 'published'}
+      </span>
+    </span>
+  )
+}
+
 export type AdminStat = {
   label: React.ReactNode
   value: React.ReactNode

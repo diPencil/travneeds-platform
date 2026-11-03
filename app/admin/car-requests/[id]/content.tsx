@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CarQuoteSummary } from '@/components/car-quote-summary'
+import { CarQuoteSummary } from '@/components/cars/car-quote-summary'
 import { useCarLocale } from '@/lib/use-car-locale'
 import { useEffect, useState } from 'react'
 import { CalendarDays, CarFront, FlaskConical, Mail, MapPin, MessageCircle, Phone, Users } from 'lucide-react'
