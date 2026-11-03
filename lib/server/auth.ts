@@ -187,6 +187,8 @@ export async function validatePasswordResetToken(
   return { userId: record.userId };
 }
 
+import { revokeGuestBookingTokens } from './booking-access';
+
 export async function consumePasswordResetToken(
   token: string,
   newPassword: string,
@@ -197,19 +199,47 @@ export async function consumePasswordResetToken(
   const passwordHash = await import('../core/password').then((m) =>
     m.hashPassword(newPassword),
   );
-  await db.$transaction([
-    db.user.update({
+
+  const linkedRefs = await db.$transaction(async (tx) => {
+    const user = await tx.user.update({
       where: { id: userId },
-      data: { passwordHash },
-    }),
-    db.accountSetupToken.update({
+      data: {
+        passwordHash,
+        status: 'ACTIVE',
+        emailVerifiedAt: new Date(),
+      },
+      select: { email: true, id: true },
+    });
+
+    await tx.accountSetupToken.update({
       where: { tokenHash: hashToken(token) },
       data: { usedAt: new Date() },
-    }),
-    // Password was reset out-of-band: revoke every session for this
-    // user so any active (possibly stolen) session is invalidated.
-    db.session.deleteMany({ where: { userId } }),
-  ]);
+    });
+
+    // Revoke all existing sessions for this user on password update
+    await tx.session.deleteMany({ where: { userId } });
+
+    // Link any guest bookings for this customer's email
+    const guestBookings = await tx.booking.findMany({
+      where: { contactEmail: user.email, userId: null },
+      select: { reference: true },
+    });
+
+    if (guestBookings.length > 0) {
+      await tx.booking.updateMany({
+        where: { contactEmail: user.email, userId: null },
+        data: { userId: user.id },
+      });
+    }
+
+    return guestBookings.map((b) => b.reference);
+  });
+
+  // Revoke temporary guest tokens for linked bookings
+  for (const ref of linkedRefs) {
+    await revokeGuestBookingTokens(ref).catch(() => undefined);
+  }
+
   return { success: true };
 }
 

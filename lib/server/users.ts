@@ -2,7 +2,10 @@
 // never raw Prisma calls from routes, never role claims from the client.
 import 'server-only';
 
-import { Prisma, type UserStatus } from '@prisma/client';
+import { Prisma, SetupTokenType, type UserStatus } from '@prisma/client';
+import { randomInt } from 'node:crypto';
+import { generateOpaqueToken, hashToken } from '../core/tokens';
+import { sendCustomerEmailSafe } from './email';
 
 import { db } from './db';
 import { hashPassword } from '../core/password';
@@ -181,6 +184,95 @@ export async function createCustomerUser(
     select: publicSelect,
   });
   return toPublicUser(row);
+}
+
+export type GuestCustomerPendingInput = {
+  email: string;
+  name: string;
+  phone?: string;
+  bookingReference: string;
+};
+
+/**
+ * Guest auto-registration on first booking:
+ * - Checks if an account exists for this normalized email. If yes, leaves it untouched.
+ * - If not, creates an inactive (PENDING) customer user and issues a secure 1-hour
+ *   PASSWORD_SETUP token.
+ * - Sends an account setup email with an absolute link allowing the customer to set their password.
+ * - Does not create duplicates and does not reveal passwords in email.
+ */
+export async function createGuestCustomerPendingUser(
+  input: GuestCustomerPendingInput,
+): Promise<{ user: PublicUser; token: string | null; created: boolean }> {
+  const email = input.email.trim();
+  const normalized = normalizeEmail(email);
+
+  const existing = await db.user.findUnique({
+    where: { emailNormalized: normalized },
+    select: publicSelect,
+  });
+  if (existing) {
+    return { user: toPublicUser(existing), token: null, created: false };
+  }
+
+  const nameParts = input.name.trim().split(/\s+/).filter(Boolean);
+  const firstName = nameParts[0] || 'Traveler';
+  const lastName = nameParts.slice(1).join(' ') || null;
+
+  const emailPrefix = normalized.split('@')[0].replace(/[^a-z0-9]/gi, '').slice(0, 15) || 'traveler';
+  const candidateUsername = normalizeUsername(`${emailPrefix}${randomInt(1000, 9999)}`);
+
+  const rawToken = generateOpaqueToken(32);
+  const tokenHash = hashToken(rawToken);
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour token validity
+
+  const row = await db.$transaction(async (tx) => {
+    const newUser = await tx.user.create({
+      data: {
+        email,
+        emailNormalized: normalized,
+        firstName,
+        lastName,
+        username: candidateUsername,
+        phone: input.phone ? normalizePhone(input.phone) : null,
+        status: 'PENDING',
+        roles: {
+          create: {
+            assignedBy: 'guest-checkout-auto-register',
+            role: { connect: { key: 'CUSTOMER' } },
+          },
+        },
+      },
+      select: publicSelect,
+    });
+
+    await tx.accountSetupToken.create({
+      data: {
+        tokenHash,
+        userId: newUser.id,
+        type: SetupTokenType.PASSWORD_SETUP,
+        expiresAt,
+      },
+    });
+
+    return newUser;
+  });
+
+  const baseSiteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://travneeds.com';
+  const setupUrl = `${baseSiteUrl.replace(/\/+$/, '')}/verify-account?token=${encodeURIComponent(rawToken)}`;
+
+  await sendCustomerEmailSafe(
+    'account_setup',
+    email,
+    {
+      name: input.name,
+      reference: input.bookingReference,
+      setupUrl,
+    },
+    { relatedReference: input.bookingReference, idempotencyKey: `account_setup:${input.bookingReference}` },
+  ).catch(() => undefined);
+
+  return { user: toPublicUser(row), token: rawToken, created: true };
 }
 
 export async function updateCustomerIdentity(

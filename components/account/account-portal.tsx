@@ -480,13 +480,30 @@ function OverviewSection() {
   const inquiries = useVisibleInquiries()
   const supportThread = useSupportChat()
   const hasSupportThread = supportThread.conversation !== null || supportThread.messages.length > 0
-  const cart = useCart()
-  const cartEstimate = useMemo(() => estimateCart(cart.items), [cart.items])
-  const latestBooking = bookings[0]
   const liveTours = useDbTours(catalogTours, { includeNew: true })
+  const cart = useCart()
+  const cartEstimate = useMemo(() => estimateCart(cart.items, liveTours), [cart.items, liveTours])
+  const latestBooking = bookings[0]
   const savedTours = favorites.slugs.map((slug) => liveTours.find((tour) => tour.slug === slug)).filter((tour) => Boolean(tour)).slice(0, 3)
+  const hasIncompleteProfile = !profile.phone?.trim() || !profile.fullName?.trim() || !profile.country?.trim()
 
   return <>
+    {hasIncompleteProfile && (
+      <aside className="customer-incomplete-banner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', background: 'var(--brand-muted, #f3f7fa)', borderRadius: '8px', border: '1px solid var(--border)', marginBottom: '16px', gap: '16px', flexWrap: 'wrap' }} role="status">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <CircleAlert size={18} style={{ color: 'var(--brand-primary, #1a3a5c)', flexShrink: 0 }} />
+          <span>{tx(locale, {
+            en: 'Please complete your contact details (phone and country) to ensure seamless booking coordination.',
+            es: 'Completa tus datos de contacto (teléfono y país) para coordinar tus reservas fácilmente.',
+            it: 'Completa i tuoi dati di contatto (telefono e paese) per gestire le prenotazioni senza problemi.',
+            ar: 'يرجى استكمال بيانات التواصل (رقم الهاتف والدولة) لتنسيق حجوزاتك ومواعيدك بسلاسة.',
+          })}</span>
+        </div>
+        <Link href="/account/profile" style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--brand-primary, #1a3a5c)', textDecoration: 'underline', whiteSpace: 'nowrap' }}>
+          {tx(locale, { en: 'Update profile', es: 'Actualizar perfil', it: 'Aggiorna profilo', ar: 'استكمال البيانات' })}
+        </Link>
+      </aside>
+    )}
     <section className="customer-welcome-band">
       <div><span>{tx(locale, { en: 'Welcome back', es: 'Te damos la bienvenida', it: 'Bentornato', ar: 'أهلًا بعودتك' })}</span><h2>{displayName.split(' ')[0]}, {tx(locale, { en: 'let us keep your next journey moving.', es: 'sigamos preparando tu próximo viaje.', it: 'continuiamo a preparare il tuo prossimo viaggio.', ar: 'خلينا نجهز رحلتك القادمة.' })}</h2><p>{latestBooking ? (locale === 'es' ? `La última actualización de tu reserva está lista en ${latestBooking.reference}.` : locale === 'it' ? `L'ultimo aggiornamento della tua prenotazione è pronto in ${latestBooking.reference}.` : locale === 'ar' ? `آخر تحديث على الحجز ${latestBooking.reference}` : `Your latest booking update is ready under ${latestBooking.reference}.`) : (tx(locale, { en: 'Save a trip or add it to your cart and everything will stay organized here.', es: 'Guarda un viaje o añádelo a tu cesta y todo quedará organizado aquí.', it: 'Salva un viaggio o aggiungilo al carrello e tutto resterà organizzato qui.', ar: 'احفظ الرحلات أو أضفها للسلة وسيظهر كل شيء هنا.' }))}</p></div>
       <Link href={latestBooking ? '/account/bookings' : '/trips'}>{latestBooking ? (tx(locale, { en: 'Track booking', es: 'Seguir la reserva', it: 'Segui la prenotazione', ar: 'متابعة الحجز' })) : (tx(locale, { en: 'Find a trip', es: 'Buscar un viaje', it: 'Trova un viaggio', ar: 'ابحث عن رحلة' }))} <ArrowRight size={17} /></Link>

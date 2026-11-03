@@ -2,18 +2,23 @@
 
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { ArrowRight, CalendarDays, CircleAlert, ShoppingCart, Trash2, Users } from 'lucide-react'
+import { ArrowRight, CalendarDays, CircleAlert, Loader2, RefreshCw, ShoppingCart, Trash2, Users, X } from 'lucide-react'
 import { Breadcrumb, SiteShell } from '@/components/site'
 import { formatPrice, tx, useLocale } from '@/components/locale'
-import { clearCart, removeFromCart, useCart } from '@/lib/cart'
+import { clearCart, removeAddonFromCartItem, removeFromCart, useCart } from '@/lib/cart'
 import { estimateCart } from '@/lib/booking'
+import { catalogTours } from '@/data/tours'
+import { useDbToursStatus } from '@/lib/tours-client'
 
 export function CartPage() {
   const { currency, locale } = useLocale()
   const { items } = useCart()
-  const estimate = useMemo(() => estimateCart(items), [items])
+  const dbStatus = useDbToursStatus(catalogTours, { includeNew: true })
+  const tourCatalog = dbStatus.data ?? catalogTours
+  const estimate = useMemo(() => estimateCart(items, tourCatalog), [items, tourCatalog])
   const openDateLabel = tx(locale, { en: 'Open date', es: 'Fecha abierta', it: 'Data aperta', ar: 'التاريخ مفتوح' })
   const removeLabel = tx(locale, { en: 'Remove from cart', es: 'Quitar del carrito', it: 'Rimuovi dal carrello', ar: 'إزالة من السلة' })
+  const removeAddonLabel = tx(locale, { en: 'Remove add-on', es: 'Quitar servicio adicional', it: 'Rimuovi servizio extra', ar: 'إزالة الإضافة' })
 
   return <SiteShell>
     <Breadcrumb items={[tx(locale, { en: 'Cart', es: 'Carrito', it: 'Carrello', ar: 'سلة الرحلات' })]} />
@@ -27,6 +32,17 @@ export function CartPage() {
         <h2>{tx(locale, { en: 'Your cart is empty', es: 'Tu carrito está vacío', it: 'Il tuo carrello è vuoto', ar: 'سلة الرحلات فارغة' })}</h2>
         <p>{tx(locale, { en: 'Browse the tours and add what you like to review it here.', es: 'Explora los tours y añade lo que te guste para revisarlo aquí.', it: 'Sfoglia i tour e aggiungi ciò che ti piace per rivederlo qui.', ar: 'تصفح الرحلات وأضف ما يعجبك لمراجعته هنا.' })}</p>
         <Link href="/trips" className="primary-btn">{tx(locale, { en: 'Browse trips', es: 'Explorar viajes', it: 'Sfoglia i viaggi', ar: 'تصفح الرحلات' })} <ArrowRight size={17} /></Link>
+      </div> : dbStatus.loading && !dbStatus.data ? <div className="cart-empty" role="status">
+        <Loader2 size={36} className="animate-spin" />
+        <h2>{tx(locale, { en: 'Checking live tour availability…', es: 'Comprobando disponibilidad de tours…', it: 'Verifica disponibilità dei tour in corso…', ar: 'جارٍ التحقق من إتاحة الرحلات والأسعار الحالية…' })}</h2>
+        <p>{tx(locale, { en: 'We are validating current pricing and schedule from our live catalogue.', es: 'Estamos validando precios y horarios vigentes de nuestro catálogo.', it: 'Stiamo verificando prezzi e orari aggiornati dal nostro catalogo.', ar: 'نتحقق من الأسعار والمواعيد المحدثة من الكتالوج المعتمد.' })}</p>
+      </div> : dbStatus.error && !dbStatus.data ? <div className="cart-empty" role="alert">
+        <CircleAlert size={36} />
+        <h2>{tx(locale, { en: 'Could not load tour pricing', es: 'No se pudieron cargar los precios', it: 'Impossibile caricare i prezzi dei tour', ar: 'تعذر تحميل بيانات الرحلات المحدثة' })}</h2>
+        <p>{tx(locale, { en: 'Your cart items are safe. Check your connection and retry to confirm current rates.', es: 'Los elementos de tu carrito están seguros. Revisa tu conexión y vuelve a intentarlo para confirmar las tarifas.', it: 'Gli articoli nel carrello sono al sicuro. Controlla la connessione e riprova per confermare le tariffe.', ar: 'عناصر سلتك محفوظة بأمان. يرجى التحقق من الاتصال وإعادة المحاولة لتأكيد الأسعار الحالية.' })}</p>
+        <button type="button" className="primary-btn" onClick={() => dbStatus.retry()}>
+          <RefreshCw size={16} /> {tx(locale, { en: 'Retry', es: 'Reintentar', it: 'Riprova', ar: 'إعادة المحاولة' })}
+        </button>
       </div> : <div className="cart-layout">
         <div className="cart-items">
           {estimate.validLines.map(({ item, adultUnit, childUnit, infantUnit, canonicalTotal, pricedAddons, onRequestAddons }) => <article key={item.key} className="cart-item">
@@ -38,8 +54,14 @@ export function CartPage() {
                 <span><Users size={14} />{item.adults} {tx(locale, { en: 'adult(s)', es: 'adultos', it: 'adulti', ar: 'بالغون' })}, {item.children} {tx(locale, { en: 'child(ren)', es: 'niños', it: 'bambini', ar: 'أطفال' })}, {item.infants} {tx(locale, { en: 'infant(s)', es: 'bebés', it: 'neonati', ar: 'رضّع' })}</span>
               </div>
               {(pricedAddons.length > 0 || onRequestAddons.length > 0) && <div className="cart-addons">
-                {pricedAddons.map((a) => <span key={a}>{a}</span>)}
-                {onRequestAddons.map((a) => <span key={a} className="on-request">{a} · {tx(locale, { en: 'on request', es: 'bajo petición', it: 'su richiesta', ar: 'حسب الطلب' })}</span>)}
+                {pricedAddons.map((a) => <span key={a}>
+                  {a}
+                  <button type="button" className="cart-addon-remove" onClick={() => removeAddonFromCartItem(item.key, a)} aria-label={`${removeAddonLabel}: ${a}`}><X size={12} /></button>
+                </span>)}
+                {onRequestAddons.map((a) => <span key={a} className="on-request">
+                  {a} · {tx(locale, { en: 'on request', es: 'bajo petición', it: 'su richiesta', ar: 'حسب الطلب' })}
+                  <button type="button" className="cart-addon-remove" onClick={() => removeAddonFromCartItem(item.key, a)} aria-label={`${removeAddonLabel}: ${a}`}><X size={12} /></button>
+                </span>)}
               </div>}
               <div className="cart-line-bottom"><small>{formatPrice(adultUnit, currency, locale)}{tx(locale, { en: ' per adult', es: ' por adulto', it: ' per adulto', ar: ' للبالغ' })}{item.children > 0 && `${formatPrice(childUnit, currency, locale)}${tx(locale, { en: ' per child', es: ' por niño', it: ' per bambino', ar: ' للطفل' })}`}{item.infants > 0 && `${formatPrice(infantUnit, currency, locale)}${tx(locale, { en: ' per infant', es: ' por bebé', it: ' per neonato', ar: ' للرضيع' })}`}</small><strong>{formatPrice(canonicalTotal, currency, locale)}</strong></div>
             </div>

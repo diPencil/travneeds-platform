@@ -20,6 +20,7 @@ import {
 import { dayTourTerms, getBookingTotal, getTravelerUnitPrices } from '@/data/tours';
 import { isTourPublished } from '@/lib/tour-publish';
 import { findTourBySlug } from './tours';
+import { createGuestCustomerPendingUser } from './users';
 import {
   BOOKING_FINANCIAL_REVIEW_CODE,
   bookingCancelExposure,
@@ -150,6 +151,22 @@ const GUEST_ACCESS_NOTE =
  * one, so exactly one guest link is ever live (the newest email wins)  - 
  * the same "latest link is authoritative" model as password reset.
  */
+export function getBaseSiteUrl(): string {
+  const envUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
+  if (envUrl && typeof envUrl === 'string') {
+    return envUrl.trim().replace(/\/+$/, '');
+  }
+  return 'https://travneeds.com';
+}
+
+export function toAbsoluteUrl(path: string): string {
+  if (!path) return getBaseSiteUrl();
+  if (/^https?:\/\//i.test(path)) return path;
+  const base = getBaseSiteUrl();
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${cleanPath}`;
+}
+
 async function ownerBookingLink(
   reference: string,
   isGuest: boolean,
@@ -157,21 +174,19 @@ async function ownerBookingLink(
 ): Promise<{ detailUrl: string; accessNote: string }> {
   if (!isGuest) {
     return {
-      detailUrl: `/account/bookings/detail?ref=${encodeURIComponent(reference)}`,
+      detailUrl: toAbsoluteUrl(`/account/bookings/detail?ref=${encodeURIComponent(reference)}`),
       accessNote: '',
     };
   }
   if (rotate) await revokeGuestBookingTokens(reference);
   const issued = await issueGuestBookingToken(reference);
-  // No token means no booking row (or it belongs to an account after all).
-  // Fall back to the reference-based link rather than leaking an empty URL.
   if (!issued) {
     return {
-      detailUrl: `/account/bookings/detail?ref=${encodeURIComponent(reference)}`,
+      detailUrl: toAbsoluteUrl(`/account/bookings/detail?ref=${encodeURIComponent(reference)}`),
       accessNote: '',
     };
   }
-  return { detailUrl: guestBookingPath(issued.token), accessNote: GUEST_ACCESS_NOTE };
+  return { detailUrl: toAbsoluteUrl(guestBookingPath(issued.token)), accessNote: GUEST_ACCESS_NOTE };
 }
 
 function mintReferenceCandidate(): string {
@@ -236,6 +251,7 @@ export interface ValidatedBookingLine {
   children: number;
   infants: number;
   addons: string[];
+  unconfirmedAddons?: string[];
   adultUnitCents: number;
   childUnitCents: number;
   infantUnitCents: number;
@@ -316,12 +332,20 @@ async function resolveLine(raw: unknown): Promise<ValidatedBookingLine> {
   }
   const catalog = await addonCatalog(tourSlug);
   let addonTotalCents = 0;
+  const pricedTitles: string[] = [];
+  const unconfirmedTitles: string[] = [];
   for (const title of titles) {
-    const match = catalog.find((addon) => addon.title === title);
-    if (!match || typeof match.price !== 'number') {
-      throw new Error(`“${title}” is no longer available. Remove it and try again.`);
+    const matches = catalog.filter((addon) => addon.title.trim().toLowerCase() === title.trim().toLowerCase());
+    if (matches.length > 1 && matches.some((m) => m.price !== matches[0]?.price)) {
+      throw new Error(`“${title}” has conflicting rates in our catalogue and requires review.`);
     }
-    addonTotalCents += toCents(match.price);
+    const match = matches[0];
+    if (!match || typeof match.price !== 'number' || match.price <= 0) {
+      unconfirmedTitles.push(title);
+    } else {
+      pricedTitles.push(match.title);
+      addonTotalCents += toCents(match.price);
+    }
   }
 
   const pricing = getBookingTotal(tour, adults, children, infants);
@@ -346,7 +370,8 @@ async function resolveLine(raw: unknown): Promise<ValidatedBookingLine> {
     adults,
     children,
     infants,
-    addons: titles,
+    addons: pricedTitles,
+    unconfirmedAddons: unconfirmedTitles,
     adultUnitCents,
     childUnitCents,
     infantUnitCents,
@@ -409,6 +434,12 @@ export async function validateBookingDraft(input: unknown): Promise<ValidatedBoo
   const idempotencyKey = text(body.idempotencyKey)?.trim() ?? '';
   if (!KEY_PATTERN.test(idempotencyKey)) throw new Error('Invalid request.');
 
+  const allUnconfirmed = lines.flatMap((l) => l.unconfirmedAddons ?? []);
+  const unconfirmedNote = allUnconfirmed.length > 0
+    ? `[Unconfirmed Add-on Requests: ${allUnconfirmed.join(', ')}]`
+    : '';
+  const mergedNotes = [notes, unconfirmedNote].filter(Boolean).join('\n\n');
+
   const subtotalCents = lines.reduce((sum, line) => sum + line.lineOriginalCents, 0);
   if (subtotalCents <= 0) throw new Error('Your cart has no chargeable items.');
   // Booking snapshot semantics: `subtotal` is the ORIGINAL list value,
@@ -423,7 +454,7 @@ export async function validateBookingDraft(input: unknown): Promise<ValidatedBoo
     contactName,
     contactEmail,
     contactPhone: normalizePhone(contactPhoneRaw),
-    notes,
+    notes: mergedNotes,
     idempotencyKey,
   };
 }
@@ -661,48 +692,74 @@ export async function createBookingRecord(
         },
         include: rowInclude,
       });
+      // Auto-register guest on first booking: creates an inactive (PENDING) customer
+      // account and issues a 1-hour secure password setup token without sending cleartext password.
+      if (userId === null) {
+        try {
+          await createGuestCustomerPendingUser({
+            email: draft.contactEmail,
+            name: draft.contactName,
+            phone: draft.contactPhone,
+            bookingReference: reference,
+          });
+        } catch (err) {
+          console.error('Guest auto-registration error:', err);
+        }
+      }
+
       // Guest checkouts (userId NULL) have no account to log into, so a
       // private expiring link is minted and emailed to them. Account
       // bookings keep the existing session-owned customer link.
       const { detailUrl, accessNote } = await ownerBookingLink(reference, userId === null, true);
-      // Receipt for the new booking. Idempotent replays return early
-      // above with created:false, so a retried key never notifies twice.
-      // Guests (userId NULL) are skipped  -  no account to notify.
-      await notifyUser(userId, {
-        type: 'booking_created',
-        title: 'Booking received',
-        message: `We received your booking ${reference}. Track its status here.`,
-        href: `/account/bookings/detail?ref=${encodeURIComponent(reference)}`,
-      });
-      // Operational copy for staff (guests included). Runs only on the
-      // created path above, so idempotent replays never double-notify.
-      await notifyStaff({
-        type: 'admin_booking_created',
-        title: 'New booking received',
-        message: `Booking ${reference} needs review.`,
-        href: `/admin/bookings/${encodeURIComponent(reference)}`,
-      });
-      // Email receipts (best-effort  -  never break booking creation).
-      // Customer copy goes to the address given at checkout (guests
-      // included); staff copy goes to the configured operational
-      // recipient. Idempotency key matches the booking reference so a
-      // retried submission never sends twice.
-      await sendCustomerEmailSafe('booking_created', draft.contactEmail, {
-        name: draft.contactName,
-        reference,
-        tourTitle: draft.lines.map((line) => line.tourTitle).join(', '),
-        total: (draft.totalCents / 100).toFixed(2),
-        currency: 'USD',
-        detailUrl,
-        accessNote,
-      }, { relatedReference: reference, idempotencyKey: `booking_created:${reference}` });
-      await sendStaffEmailSafe('admin_booking_created', {
-        name: draft.contactName,
-        reference,
-        total: (draft.totalCents / 100).toFixed(2),
-        currency: 'USD',
-        detailUrl: `/admin/bookings/${encodeURIComponent(reference)}`,
-      }, { relatedReference: reference, idempotencyKey: `admin_booking_created:${reference}` });
+
+      // Best-effort notifications & emails: secondary actions never break the created booking.
+      try {
+        await notifyUser(userId, {
+          type: 'booking_created',
+          title: 'Booking received',
+          message: `We received your booking ${reference}. Track its status here.`,
+          href: `/account/bookings/detail?ref=${encodeURIComponent(reference)}`,
+        });
+      } catch (err) {
+        console.error('User notification error:', err);
+      }
+
+      try {
+        await notifyStaff({
+          type: 'admin_booking_created',
+          title: 'New booking received',
+          message: `Booking ${reference} needs review.`,
+          href: `/admin/bookings/${encodeURIComponent(reference)}`,
+        });
+      } catch (err) {
+        console.error('Staff notification error:', err);
+      }
+
+      try {
+        await sendCustomerEmailSafe('booking_created', draft.contactEmail, {
+          name: draft.contactName,
+          reference,
+          tourTitle: draft.lines.map((line) => line.tourTitle).join(', '),
+          total: (draft.totalCents / 100).toFixed(2),
+          currency: 'USD',
+          detailUrl,
+          accessNote,
+        }, { relatedReference: reference, idempotencyKey: `booking_created:${reference}` });
+      } catch (err) {
+        console.error('Customer email error:', err);
+      }
+
+      try {
+        await sendStaffEmailSafe('admin_booking_created', {
+          name: draft.contactName,
+          reference,
+          total: (draft.totalCents / 100).toFixed(2),
+          currency: 'USD',
+          detailUrl: toAbsoluteUrl(`/admin/bookings/${encodeURIComponent(reference)}`),
+        }, { relatedReference: reference, idempotencyKey: `admin_booking_created:${reference}` });
+      } catch (err) {
+        console.error('Staff email error:', err);
+      }
       return {
         booking: toCustomerView(row),
         created: true,
@@ -743,6 +800,46 @@ export async function listCustomerBookings(userId: string): Promise<Booking[]> {
   return rows.map((row) =>
     toCustomerView({ ...row, activities: [], user: null }),
   );
+}
+
+export async function requestGuestBookingRecovery(
+  email: string,
+  reference?: string,
+): Promise<{ success: true }> {
+  const normalized = normalizeEmail(email);
+  if (!isValidEmail(normalized)) {
+    return { success: true };
+  }
+
+  const whereClause: Prisma.BookingWhereInput = {
+    contactEmail: normalized,
+    userId: null,
+  };
+  if (reference && typeof reference === 'string') {
+    whereClause.reference = reference.trim().toUpperCase();
+  }
+
+  const bookings = await db.booking.findMany({
+    where: whereClause,
+    orderBy: { createdAt: 'desc' },
+    take: 3,
+  });
+
+  for (const b of bookings) {
+    const { detailUrl } = await ownerBookingLink(b.reference, true, true);
+    await sendCustomerEmailSafe(
+      'guest_booking_recovery',
+      normalized,
+      {
+        name: b.contactName,
+        reference: b.reference,
+        detailUrl,
+      },
+      { relatedReference: b.reference, idempotencyKey: `guest_recovery:${b.reference}:${Date.now().toString(36)}` },
+    ).catch(() => undefined);
+  }
+
+  return { success: true };
 }
 
 export async function getCustomerBooking(

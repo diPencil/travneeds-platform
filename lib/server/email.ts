@@ -209,7 +209,9 @@ export type EmailEventType =
   | 'admin_payment_initiated'
   | 'admin_payment_proof_submitted'
   | 'admin_support_message_received'
-  | 'password_reset';
+  | 'password_reset'
+  | 'account_setup'
+  | 'guest_booking_recovery';
 
 interface EmailTemplateDefinition {
   subject: string;
@@ -352,6 +354,16 @@ const TEMPLATES: Record<EmailEventType, EmailTemplateDefinition> = {
     subject: 'Reset your TravNeeds Tours password',
     bodyHtml: '<h2>Reset your password</h2><p>Hi {{name}},</p><p>You requested a password reset for your TravNeeds Tours account. Click the button below to set a new password:</p><p><a href="{{resetUrl}}" class="btn">Reset password</a></p><p>This link expires in 1 hour. If you did not request this, you can safely ignore this email.</p>',
     bodyText: 'Reset your password\n\nHi {{name}},\n\nYou requested a password reset for your TravNeeds Tours account. Visit the link below to set a new password:\n\n{{resetUrl}}\n\nThis link expires in 1 hour. If you did not request this, you can safely ignore this email.',
+  },
+  account_setup: {
+    subject: 'Set up your TravNeeds Tours account - {{reference}}',
+    bodyHtml: '<h2>Welcome to TravNeeds Tours!</h2><p>Hi {{name}},</p><p>Thank you for your booking request <strong>{{reference}}</strong>. An account has been created for you to track your reservations and manage your trips.</p><p>Please set your password using this secure link (valid for 1 hour):</p><p><a href="{{setupUrl}}" class="btn">Set up your password</a></p><p>If you did not request this booking, you can safely ignore this email.</p>',
+    bodyText: 'Welcome to TravNeeds Tours!\n\nHi {{name}},\n\nThank you for your booking request {{reference}}. An account has been created for you to track your reservations and manage your trips.\n\nPlease set your password using this secure link (valid for 1 hour):\n\n{{setupUrl}}\n\nIf you did not request this booking, you can safely ignore this email.',
+  },
+  guest_booking_recovery: {
+    subject: 'Your TravNeeds booking access link - {{reference}}',
+    bodyHtml: '<h2>Your booking link</h2><p>Hi {{name}},</p><p>You requested your private access link for booking <strong>{{reference}}</strong>:</p><p><a href="{{detailUrl}}" class="btn">View your booking</a></p><p>Keep this link private as it provides access to your booking itinerary.</p>',
+    bodyText: 'Your booking link\n\nHi {{name}},\n\nYou requested your private access link for booking {{reference}}:\n\n{{detailUrl}}\n\nKeep this link private as it provides access to your booking itinerary.',
   },
 };
 

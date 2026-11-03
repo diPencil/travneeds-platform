@@ -363,12 +363,19 @@ function addonCatalog(tour: Tour): readonly { title: string; price?: number }[] 
 
 /**
  * Revalidate one persisted cart line against canonical tour data.
+ * Accepts an optional live tour catalog (e.g. from `/api/tours` or `useDbTours`)
+ * with fallback to the bundled catalog (`findTour`).
  * Uses the single pricing engine (`getBookingTotal`); never parses price
  * strings or invents rates. Display estimate only  -  the backend
  * recalculates authoritatively at checkout.
  */
-export function resolveCartLine(item: CartItem): ResolvedCartLine {
-  const tour = findTour(item.tourSlug) ?? null
+export function resolveCartLine(item: CartItem, tourCatalog?: readonly Tour[]): ResolvedCartLine {
+  const normSlug = item.tourSlug.trim().toLowerCase()
+  const tour =
+    tourCatalog?.find((t) => t.slug.toLowerCase() === normSlug || t.aliases?.some((a) => a.toLowerCase() === normSlug)) ??
+    findTour(item.tourSlug) ??
+    null
+
   if (!tour) {
     return {
       item, tour, stale: true,
@@ -377,19 +384,35 @@ export function resolveCartLine(item: CartItem): ResolvedCartLine {
       pricedAddons: [], onRequestAddons: item.addons, addonTotal: 0, canonicalTotal: 0,
     }
   }
-  const pricing = getBookingTotal(tour, item.adults, item.children, item.infants)
+
+  // Headcount validation: at least 1 adult, max 50 per group, max 60 total
+  const clampedAdults = Math.max(1, Math.min(50, item.adults || 1))
+  const clampedChildren = Math.max(0, Math.min(50, item.children || 0))
+  const clampedInfants = Math.max(0, Math.min(50, item.infants || 0))
+
+  const pricing = getBookingTotal(tour, clampedAdults, clampedChildren, clampedInfants)
   const catalog = addonCatalog(tour)
   const pricedAddons: string[] = []
   const onRequestAddons: string[] = []
+
   for (const title of item.addons) {
-    const match = catalog.find((addon) => addon.title === title)
-    if (match && typeof match.price === 'number') pricedAddons.push(title)
-    else onRequestAddons.push(title)
+    const matches = catalog.filter((addon) => addon.title.trim().toLowerCase() === title.trim().toLowerCase())
+    // Conflict detection: if multiple entries with same title have conflicting prices, treat as on-request for manual review
+    const hasPriceConflict = matches.length > 1 && matches.some((m) => m.price !== matches[0]?.price)
+    const match = matches[0]
+
+    if (!hasPriceConflict && match && typeof match.price === 'number' && match.price > 0) {
+      pricedAddons.push(match.title)
+    } else {
+      onRequestAddons.push(title)
+    }
   }
+
   const addonTotal = pricedAddons.reduce((sum, title) => {
-    const match = catalog.find((addon) => addon.title === title)
-    return sum + (match?.price ?? 0)
+    const match = catalog.find((addon) => addon.title.trim().toLowerCase() === title.trim().toLowerCase())
+    return sum + (match?.price && match.price > 0 ? match.price : 0)
   }, 0)
+
   const travelerTotal = pricing.total
   return {
     item, tour, stale: false,
@@ -409,8 +432,8 @@ export type CartEstimate = {
   discount: number
 }
 
-export function estimateCart(items: readonly CartItem[]): CartEstimate {
-  const lines = items.map(resolveCartLine)
+export function estimateCart(items: readonly CartItem[], tourCatalog?: readonly Tour[]): CartEstimate {
+  const lines = items.map((item) => resolveCartLine(item, tourCatalog))
   const validLines = lines.filter((line) => !line.stale)
   const staleLines = lines.filter((line) => line.stale)
   const round2 = (v: number) => Math.round(v * 100) / 100
@@ -445,4 +468,19 @@ export function validateBookingContact(contact: BookingContact): ContactErrors {
 
 export function hasContactErrors(errors: ContactErrors): boolean {
   return Boolean(errors.name || errors.email || errors.phone)
+}
+
+export type LineHeadcountError = 'adults_required' | 'adults_max' | 'children_max' | 'infants_max' | 'total_max'
+
+/**
+ * Headcount bounds: at least 1 adult, max 50 per category (adults, children, infants),
+ * max 60 total travelers per line item.
+ */
+export function validateLineHeadcount(line: { adults: number; children: number; infants: number }): LineHeadcountError | null {
+  if (!line.adults || line.adults < 1) return 'adults_required'
+  if (line.adults > 50) return 'adults_max'
+  if (line.children > 50) return 'children_max'
+  if (line.infants > 50) return 'infants_max'
+  if (line.adults + line.children + line.infants > 60) return 'total_max'
+  return null
 }

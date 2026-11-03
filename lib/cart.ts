@@ -93,8 +93,13 @@ export function sanitizeCartItem(value: unknown): CartItem | null {
   const title = typeof raw.title === 'string' ? raw.title.trim() : ''
   if (!tourSlug || !title) return null
   const adults = sanitizeCount(raw.adults, 1, 50, 1)
-  const children = sanitizeCount(raw.children, 0, 50, 0)
-  const infants = sanitizeCount(raw.infants, 0, 50, 0)
+  let children = sanitizeCount(raw.children, 0, 50, 0)
+  let infants = sanitizeCount(raw.infants, 0, 50, 0)
+  if (adults + children + infants > 60) {
+    const available = Math.max(0, 60 - adults)
+    children = Math.min(children, available)
+    infants = Math.min(infants, Math.max(0, available - children))
+  }
   const candidate: Omit<CartItem, 'key'> = {
     tourSlug,
     title,
@@ -113,21 +118,26 @@ export function sanitizeCartItem(value: unknown): CartItem | null {
   return { ...candidate, key: cartKey(candidate) }
 }
 
+let inMemoryFallback: CartItem[] = []
+
 function readCart(): CartItem[] {
   if (typeof window === 'undefined') return []
   try {
     const raw = localStorage.getItem(KEY)
-    if (!raw) return []
+    if (!raw) return inMemoryFallback
     const parsed: unknown = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
+    if (!Array.isArray(parsed)) return inMemoryFallback
     const items: CartItem[] = []
     for (const entry of parsed) {
       const item = sanitizeCartItem(entry)
       if (item && !items.some((kept) => kept.key === item.key)) items.push(item)
       if (items.length >= MAX_LINES) break
     }
+    inMemoryFallback = items
     return items
-  } catch { return [] }
+  } catch {
+    return inMemoryFallback
+  }
 }
 
 let cache: CartItem[] | null = null
@@ -143,7 +153,8 @@ function getServerSnapshot(): CartItem[] {
 
 function update(next: CartItem[]) {
   cache = next
-  try { localStorage.setItem(KEY, JSON.stringify(next)) } catch { /* private mode */ }
+  inMemoryFallback = next
+  try { localStorage.setItem(KEY, JSON.stringify(next)) } catch { /* private mode or quota exceeded: in-memory fallback active */ }
   listeners.forEach((notify) => notify())
 }
 
@@ -163,7 +174,15 @@ function subscribe(notify: () => void) {
 }
 
 export function cartKey(item: Omit<CartItem, 'key'>): string {
-  return [item.tourSlug, item.date || 'open', item.adults, item.children, item.infants, item.addons.join('+')].join('|')
+  const sortedAddons = [...item.addons].map((a) => a.trim()).filter(Boolean).sort()
+  return [
+    item.tourSlug.trim().toLowerCase(),
+    item.date || 'open',
+    item.adults,
+    item.children,
+    item.infants,
+    sortedAddons.join('+'),
+  ].join('|')
 }
 
 /**
@@ -183,6 +202,35 @@ export function addToCart(item: Omit<CartItem, 'key'>): string {
 
 export function removeFromCart(key: string) {
   update(getSnapshot().filter((entry) => entry.key !== key))
+}
+
+/**
+ * Remove a single add-on title from an existing cart line without
+ * deleting the entire trip configuration.
+ */
+export function removeAddonFromCartItem(key: string, addonToRemove: string) {
+  const items = getSnapshot()
+  const found = items.find((entry) => entry.key === key)
+  if (!found) return
+  const nextAddons = found.addons.filter((a) => a !== addonToRemove)
+  const candidate: Omit<CartItem, 'key'> = {
+    tourSlug: found.tourSlug,
+    title: found.title,
+    image: found.image,
+    date: found.date,
+    adults: found.adults,
+    children: found.children,
+    infants: found.infants,
+    addons: nextAddons,
+    addonTotal: found.addonTotal,
+    adultUnit: found.adultUnit,
+    childUnit: found.childUnit,
+    infantUnit: found.infantUnit,
+    total: found.total,
+  }
+  const nextKey = cartKey(candidate)
+  const nextItem: CartItem = { ...candidate, key: nextKey }
+  update(items.map((entry) => (entry.key === key ? nextItem : entry)))
 }
 
 export function clearCart() {
