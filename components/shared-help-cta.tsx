@@ -4,8 +4,8 @@ import { extra } from '@/lib/site-copy'
 import { defaultCountry } from '@/data/countries'
 import { useLocale, tx } from './locale'
 import { useSharedCopy } from './presentation-content-context'
-import { CountrySelect } from './country-select'
-import { InternationalPhoneInput } from './international-phone-input'
+import { CountrySelect } from '@/components/shared/country-select'
+import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import './shared-help-cta.css'
 
 export function SharedHelpCTA() {

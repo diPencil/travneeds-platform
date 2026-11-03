@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 import { Select } from '@base-ui/react/select'
-import type { CountryPopupWidth } from '@/components/country-select'
+import type { CountryPopupWidth } from '@/components/shared/country-select'
 import { tx } from '@/components/locale'
 import type { Locale } from '@/lib/locale-config'
 

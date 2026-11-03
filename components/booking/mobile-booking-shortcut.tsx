@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ArrowRight, CalendarDays } from 'lucide-react'
-import { tx, useLocale } from './locale'
+import { tx, useLocale } from '@/components/locale'
 
 export function MobileBookingShortcut() {
   const { locale } = useLocale()

@@ -71,7 +71,7 @@ persisted or secure production behavior.
 | Unified trip catalogue and filters | `components/trips-page.tsx`; membership in `data/tours.ts` |
 | Header, footer, shell, search engine, tour listing, shared travel UI | `components/site.tsx` |
 | Content, account, password recovery, cars, policies, search, and detail pages | `components/extended-pages.tsx` |
-| Login and registration experiences, social-auth previews, and registration fields | `components/auth-pages.tsx`; country metadata in `data/countries.ts` |
+| Login and registration experiences, social-auth previews, and registration fields | `components/auth/auth-pages.tsx`; country metadata in `data/countries.ts` |
 | Tour detail presentation | `components/tour-detail.tsx` (packages and other tours); `components/day-tour-detail.tsx` (one-day tours); shared social video reels in `components/tour-video-gallery.tsx` |
 | Tour entities, canonical slugs, category collections, and rich tour content | `data/tours.ts` |
 | Shared frontend domain contracts | `data/types.ts` |
@@ -103,7 +103,7 @@ genuinely route-specific behavior.
 | `/make-your-trip` | Route-local interactive planner in `app/make-your-trip/page.tsx` |
 | `/rent-car`, `/rent-car/request` | `components/extended-pages.tsx`; car data in `data/content.ts` |
 | `/search` | `components/extended-pages.tsx`; index in `data/content.ts` |
-| `/login`, `/register` | Thin route wrappers -> `components/auth-pages.tsx`; country metadata in `data/countries.ts` |
+| `/login`, `/register` | Thin route wrappers -> `components/auth/auth-pages.tsx`; country metadata in `data/countries.ts` |
 | `/forgot-password` | `components/extended-pages.tsx` |
 | `/account`, `/account/profile`, `/account/bookings`, `/account/favorites` | `components/extended-pages.tsx` (`AccountPage`) |
 | `/privacy`, `/terms` | `components/extended-pages.tsx`; copy in `data/content.ts` |

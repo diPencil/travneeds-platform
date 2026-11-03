@@ -22,7 +22,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { SiteShell, Breadcrumb, HelpCTA } from '@/components/site';
-import { DateInput } from '@/components/date-input';
+import { DateInput } from '@/components/shared/date-input';
 import { RichTextRenderer } from '@/components/rich-text-renderer';
 import { formatPrice, tx, useLocale } from '@/components/locale';
 import { useCustomerFavorites } from '@/lib/customer-account';

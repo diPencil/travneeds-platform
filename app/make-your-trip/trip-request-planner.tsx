@@ -26,11 +26,11 @@ import { findTour } from '@/data/tours'
 import { useCurrentUser } from '@/lib/use-current-user'
 import { readCustomerProfile, saveCustomerProfile } from '@/lib/customer-account'
 import { countries, countryByDialCode, countryCode as resolveCountryCode, countryDisplayName, defaultCountry, nationalPhone } from '@/data/countries'
-import { CountrySelect } from '@/components/country-select'
+import { CountrySelect } from '@/components/shared/country-select'
 import { SharedSelect } from '@/components/shared-select'
-import { InternationalPhoneInput } from '@/components/international-phone-input'
+import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import { displayInternationalPhone } from '@/lib/phone'
-import { DateInput } from '@/components/date-input'
+import { DateInput } from '@/components/shared/date-input'
 
 const stepLabels = ['Quick information', 'Personal information', 'Confirmation']
 const timeOptions: ReadonlyArray<readonly [TripTimeMode, string]> = [['exact', 'Have An Exact Time'], ['approx', 'Have An Approximate Time'], ['unsure', 'Not Sure Yet']] as const

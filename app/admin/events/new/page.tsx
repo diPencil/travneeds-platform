@@ -18,8 +18,8 @@ import { ImageField } from '@/components/admin/image-field'
 import { SharedSelect } from '@/components/shared-select'
 import { events } from '@/data/content'
 import type { Event } from '@/data/types'
-import { InternationalPhoneInput } from '@/components/international-phone-input'
-import { DateInput } from '@/components/date-input'
+import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
+import { DateInput } from '@/components/shared/date-input'
 
 type HighlightRow = { title: string; titleAr: string; description: string; descriptionAr: string }
 type ProgramRow = { day: string; title: string; description: string }

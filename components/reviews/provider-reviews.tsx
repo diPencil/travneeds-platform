@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import { useLocale, tx } from './locale'
+import { useLocale, tx } from '@/components/locale'
 import { PlatformIcon, StarsRow, ReviewWriteModal, type ReviewSummary } from './reviews'
 import { WebsiteReviews } from './website-reviews'
 import { ReviewMarquee } from './review-marquee'

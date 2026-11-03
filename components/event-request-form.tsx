@@ -8,8 +8,8 @@ import { getEventStatus } from '@/lib/events'
 import { hasEventRequestErrors, validateEventRequestDraft, type EventRequest } from '@/lib/event-request'
 import { customerErrorText } from '@/lib/customer-error-copy'
 import { countries, defaultCountry } from '@/data/countries'
-import { CountrySelect } from '@/components/country-select'
-import { InternationalPhoneInput } from '@/components/international-phone-input'
+import { CountrySelect } from '@/components/shared/country-select'
+import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import { tx, useLocale } from './locale'
 
 /**

@@ -2,7 +2,7 @@
 import { BrandMark } from '@/components/brand-mark'
 
 import { formatCurrency } from '@/lib/currency'
-import { tx, useLocale } from './locale'
+import { tx, useLocale } from '@/components/locale'
 import { bookingMoney, bookingPaymentLabel } from './booking-payment'
 import type { Booking } from '@/lib/booking'
 

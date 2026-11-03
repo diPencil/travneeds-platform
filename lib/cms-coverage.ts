@@ -21,7 +21,7 @@ const functionalRoutes = [
   ['privacy', 'Privacy policy', '/privacy', 'app/privacy/page.tsx', true], ['terms', 'Terms of use', '/terms', 'app/terms/page.tsx', true],
   ['search', 'Site search', '/search', 'components/extended-pages.tsx'], ['planner', 'Make Your Trip', '/make-your-trip', 'app/make-your-trip/page.tsx'],
   ['car-request', 'Car request', '/rent-car/request', 'components/extended-pages.tsx'], ['cart', 'Trip cart', '/cart', 'app/cart/page.tsx'], ['checkout', 'Checkout', '/checkout', 'app/checkout/page.tsx'],
-  ['login', 'Sign in', '/login', 'components/auth-pages.tsx'], ['register', 'Registration', '/register', 'components/auth-pages.tsx'], ['forgot-password', 'Password recovery', '/forgot-password', 'components/extended-pages.tsx'], ['reset-password', 'Password reset', '/reset-password', 'app/reset-password/page.tsx'],
+  ['login', 'Sign in', '/login', 'components/auth/auth-pages.tsx'], ['register', 'Registration', '/register', 'components/auth/auth-pages.tsx'], ['forgot-password', 'Password recovery', '/forgot-password', 'components/extended-pages.tsx'], ['reset-password', 'Password reset', '/reset-password', 'app/reset-password/page.tsx'],
   ['guest-booking', 'Guest booking access', '/booking/[token]', 'app/booking/[token]/page.tsx'], ['voucher', 'Voucher verification', '/verify-voucher/[token]', 'app/verify-voucher/[token]/page.tsx'],
 ] as const
 const accountRoutes = ['', '/profile', '/bookings', '/bookings/detail', '/favorites', '/change-password', '/payments', '/payments/detail', '/car-requests', '/car-requests/detail', '/event-requests', '/event-requests/detail', '/trip-requests', '/trip-requests/detail', '/messages', '/settings']

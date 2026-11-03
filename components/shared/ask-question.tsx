@@ -7,7 +7,7 @@ import { WhatsAppGlyph } from './whatsapp-chat'
 import { saveInquiry, useBrandSettings } from '@/lib/admin-store'
 import { buildQuestionMessage, buildQuestionSubject, type EnquirySubjectType } from '@/lib/enquiry-message'
 import { useCurrentUser } from '@/lib/use-current-user'
-import { tx, useLocale } from './locale'
+import { tx, useLocale } from '@/components/locale'
 
 export function AskQuestionButton({
   tourSlug,

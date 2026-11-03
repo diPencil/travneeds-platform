@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useMemo } from 'react'
 import { ArrowRight, CalendarDays, CircleAlert, ShoppingCart, Trash2, Users } from 'lucide-react'
 import { Breadcrumb, SiteShell } from '@/components/site'
-import { formatPrice, tx, useLocale } from './locale'
+import { formatPrice, tx, useLocale } from '@/components/locale'
 import { clearCart, removeFromCart, useCart } from '@/lib/cart'
 import { estimateCart } from '@/lib/booking'
 

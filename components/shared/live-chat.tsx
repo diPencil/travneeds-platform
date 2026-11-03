@@ -9,7 +9,7 @@ import { getToursByCategory } from '@/data/tours'
 import { useDbTours } from '@/lib/tours-client'
 import { whatsappHref } from '@/data/company'
 import { useBrandSettings } from '@/lib/admin-store'
-import { formatPrice, useLocale, tx, type Locale } from './locale'
+import { formatPrice, useLocale, tx, type Locale } from '@/components/locale'
 
 type ChatMsg = { id: number; from: 'agent' | 'user'; text: string; time: string }
 type ChipId = 'prices' | 'agent' | 'booking' | 'browse' | 'trips' | 'plan' | 'contact' | 'wa'

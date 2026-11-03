@@ -18,7 +18,7 @@ import { cleanTravelerPriceRows, previewTextKey, type BasicForm, type AddOnRow, 
 import { isTourImage, tourWritePayload } from '@/lib/tour-write'
 import { ImageField } from './image-field'
 import { SharedSelect } from '@/components/shared-select'
-import { DateInput } from '@/components/date-input'
+import { DateInput } from '@/components/shared/date-input'
 import { Tabs } from '@base-ui/react/tabs'
 import { ADMIN_CONTENT_LOCALES, LOCALE_LABELS, type AdminContentLocale } from '@/lib/locale-config'
 import { readTourText, writeTourText, type Translatable, type TourTranslations } from '@/lib/tour-translations'

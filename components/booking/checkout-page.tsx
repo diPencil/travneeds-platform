@@ -4,13 +4,13 @@ import Link from 'next/link'
 import { useMemo, useState, type FormEvent } from 'react'
 import { ArrowRight, CalendarDays, Check, CircleAlert, ShieldCheck, Trash2, Users } from 'lucide-react'
 import { Breadcrumb, SiteShell } from '@/components/site'
-import { formatPrice, tx, useLocale } from './locale'
+import { formatPrice, tx, useLocale } from '@/components/locale'
 import { clearCart, removeFromCart, useCart } from '@/lib/cart'
 import {
   estimateCart, hasContactErrors, validateBookingContact,
   type Booking, type BookingContact, type ContactErrors,
 } from '@/lib/booking'
-import { InternationalPhoneInput } from './international-phone-input'
+import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import { PaymentInstructions } from './booking-payment'
 import { customerErrorText } from '@/lib/customer-error-copy'
 

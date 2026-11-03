@@ -3,7 +3,7 @@ import { BrandMark } from '@/components/brand-mark'
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { PublicAppearancePortal } from './public-appearance'
+import { PublicAppearancePortal } from '@/components/public-appearance'
 import { Star, CheckCircle2, Search, ChevronDown, Check } from 'lucide-react'
 import { useLocale, tx } from '@/components/locale'
 import { cn } from '@/lib/utils'

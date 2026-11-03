@@ -20,7 +20,7 @@ import { useDbToursStatus, invalidateToursCache } from '@/lib/tours-client'
 import { ImageField } from '@/components/admin/image-field'
 import { SharedSelect } from '@/components/shared-select'
 import type { Offer } from '@/data/types'
-import { DateInput } from '@/components/date-input'
+import { DateInput } from '@/components/shared/date-input'
 
 const cleanSlugInput = (value: string) =>
   value.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '').replace(/-+/g, '-').slice(0, 80)

@@ -4,7 +4,7 @@ import { BrandMark } from '@/components/brand-mark'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowLeft, ArrowRight, CheckCheck, Send, X } from 'lucide-react'
-import { useLocale, tx } from './locale'
+import { useLocale, tx } from '@/components/locale'
 import { whatsappNumber } from '@/data/company'
 import { useBrandSettings } from '@/lib/admin-store'
 

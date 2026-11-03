@@ -2,7 +2,7 @@
 
 import "leaflet/dist/leaflet.css"
 import Image from "next/image"
-import { MobileBookingShortcut } from "@/components/mobile-booking-shortcut"
+import { MobileBookingShortcut } from "@/components/booking/mobile-booking-shortcut"
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -15,13 +15,13 @@ import { shoreArabicCopy } from "@/data/shore-ar"
 import type { Tour, TourLocation } from "@/data/types"
 import { formatTourDateRange, localizeTourDuration, localizeTourLocation } from "@/lib/tour-format"
 import { tx, useLocale, formatPrice } from "@/components/locale"
-import { TourReviewsSection } from "@/components/reviews"
+import { TourReviewsSection } from "@/components/reviews/reviews"
 import { TourVideoGallery } from "./tour-video-gallery"
-import { AskQuestionButton } from "@/components/ask-question"
-import { HorizontalSlider } from "@/components/horizontal-slider"
+import { AskQuestionButton } from "@/components/shared/ask-question"
+import { HorizontalSlider } from "@/components/shared/horizontal-slider"
 import { localizePublicTour, tourDisplayText } from '@/lib/tour-public-locale'
 import type { TourTranslations } from '@/lib/tour-translations'
-import { DateInput } from "@/components/date-input"
+import { DateInput } from "@/components/shared/date-input"
 import { isLocaleRTL, pickLocaleText, type Locale } from '@/lib/locale-config'
 import { RichTextRenderer } from '@/components/rich-text-renderer'
 import { stripHtmlToPlainText } from '@/lib/rich-text'

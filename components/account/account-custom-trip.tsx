@@ -11,14 +11,14 @@ import { destinations } from '@/data/content'
 import { useDbDestinations } from '@/lib/catalogue-client'
 import { catalogTours } from '@/data/tours'
 import { countries, countryByDialCode, countryCode as resolveCountryCode, countryDisplayName, defaultCountry } from '@/data/countries'
-import { CountrySelect } from '@/components/country-select'
+import { CountrySelect } from '@/components/shared/country-select'
 import { SharedSelect } from '@/components/shared-select'
 import { displayInternationalPhone } from '@/lib/phone'
-import { InternationalPhoneInput } from '@/components/international-phone-input'
-import { DateInput } from '@/components/date-input'
+import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
+import { DateInput } from '@/components/shared/date-input'
 import { customerErrorText } from '@/lib/customer-error-copy'
 import { toISO, todayYMD } from '@/lib/date-calendar'
-import { useAuthenticatedUser } from '@/components/authenticated-user'
+import { useAuthenticatedUser } from './authenticated-user'
 import {
   TRIP_BUDGET_CAP,
   TRIP_NOTE_MAX,

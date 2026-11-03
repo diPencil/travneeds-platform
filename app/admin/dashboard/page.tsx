@@ -9,7 +9,7 @@ import { AdminEmpty, AdminIconAction, AdminText, Avatar, Card, Delta, StatusPill
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { useAdminCurrency } from '@/components/admin/admin-currency'
 import { RevenueTrend } from '@/components/admin/revenue-trend'
-import { DateInput } from '@/components/date-input'
+import { DateInput } from '@/components/shared/date-input'
 import { addDays, toISO, todayYMD } from '@/lib/date-calendar'
 import type { AnalyticsResponse } from '@/lib/analytics'
 import type { StaffBooking } from '@/lib/booking'

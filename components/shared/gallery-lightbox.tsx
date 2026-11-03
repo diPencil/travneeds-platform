@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { resolveGalleryVideoSource, type GalleryItem } from '@/lib/journey-gallery'
 import { bindGalleryDialog, galleryNextIndex, stopGalleryVideo } from '@/lib/gallery-lightbox'
 import { sanitizeLocale, pickLocaleText, type Locale } from '@/lib/locale-config'
-import { PublicAppearancePortal } from './public-appearance'
+import { PublicAppearancePortal } from '@/components/public-appearance'
 import './gallery-lightbox.css'
 
 export function GalleryLightboxMedia({ item, locale }: { item: GalleryItem; locale: Locale }) {

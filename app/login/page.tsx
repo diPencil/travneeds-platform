@@ -1,6 +1,6 @@
 import { authPageMetadata } from '@/lib/auth-page-metadata'
 import { getServerLocale } from '@/lib/server/locale'
-import { LoginPage } from '@/components/auth-pages'
+import { LoginPage } from '@/components/auth/auth-pages'
 
 export async function generateMetadata() {
   return authPageMetadata('login', await getServerLocale())

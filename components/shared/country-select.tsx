@@ -4,7 +4,7 @@ import { Check, ChevronDown } from 'lucide-react'
 import { Select } from '@base-ui/react/select'
 import { countries } from '@/data/countries'
 import { countryLabel as localizedName } from '@/lib/country-label'
-import { CountryFlag } from '@/components/country-flag'
+import { CountryFlag } from '@/components/ui/country-flag'
 import { tx } from '@/components/locale'
 import type { Locale } from '@/lib/locale-config'
 

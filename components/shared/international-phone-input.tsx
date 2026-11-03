@@ -5,7 +5,7 @@ import { Phone } from 'lucide-react'
 import { countryByCode, countryFromPhone, internationalPhone, nationalPhone } from '@/data/countries'
 import { stripTrunkZero } from '@/lib/phone'
 import { countryLabel } from '@/lib/country-label'
-import { CountrySelect } from '@/components/country-select'
+import { CountrySelect } from '@/components/shared/country-select'
 import { tx } from '@/components/locale'
 import type { Locale } from '@/lib/locale-config'
 

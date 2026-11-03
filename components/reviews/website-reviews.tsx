@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import type { ReviewScope } from '@/lib/review-scope'
 import { useEffect, useState } from 'react'
-import { useLocale, tx } from './locale'
+import { useLocale, tx } from '@/components/locale'
 import { PlatformIcon, StarsRow, getCategoryLabel, type CustomerReview, type ReviewSummary } from './reviews'
 import { ReviewMarquee } from './review-marquee'
 import { cn } from '@/lib/utils'

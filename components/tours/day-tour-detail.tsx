@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { MobileBookingShortcut } from "@/components/mobile-booking-shortcut"
+import { MobileBookingShortcut } from "@/components/booking/mobile-booking-shortcut"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -14,13 +14,13 @@ import { pickLocaleText } from "@/lib/locale-config"
 import { addToCart } from "@/lib/cart"
 import { useCustomerFavorites } from "@/lib/customer-account"
 import { formatTourDateRange, localizeTourDuration, localizeTourLocation } from "@/lib/tour-format"
-import { TourReviewsSection } from "@/components/reviews"
+import { TourReviewsSection } from "@/components/reviews/reviews"
 import { TourVideoGallery } from "./tour-video-gallery"
-import { AskQuestionButton } from "@/components/ask-question"
-import { HorizontalSlider } from "@/components/horizontal-slider"
+import { AskQuestionButton } from "@/components/shared/ask-question"
+import { HorizontalSlider } from "@/components/shared/horizontal-slider"
 import { TourLocationMap } from "./tour-detail"
 import { useDbDestinations } from '@/lib/catalogue-client'
-import { DateInput } from "@/components/date-input"
+import { DateInput } from "@/components/shared/date-input"
 import { localizePublicTour } from '@/lib/tour-public-locale'
 import { RichTextRenderer } from '@/components/rich-text-renderer'
 
