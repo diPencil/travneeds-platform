@@ -22,18 +22,23 @@ export const SHOWCASE_PAGES: Record<ShowcaseHeroId, { name: string; route: strin
 }
 export function isShowcaseHeroId(id: string): id is ShowcaseHeroId { return Object.hasOwn(showcaseDefaults, id) }
 export type ShowcaseHero = {
-  text: Record<EnabledLocale, Record<string, string>>
+  text: Record<string, Record<string, string>>
   links: Record<string, string>
   image: string
   mobileImage: string
-  alt: Record<EnabledLocale, string>
+  alt: Record<string, string>
   position: 'source' | 'center' | 'top' | 'bottom' | 'left' | 'right'
   overlay: number | null
 }
 export type ShowcaseHeroState = Omit<HeroState, 'draft' | 'published'> & { draft: ShowcaseHero | null; published: ShowcaseHero | null }
 export type PublicShowcaseHero = { hidden: boolean; content: ShowcaseHero | null; unavailable?: boolean }
 export function originalShowcaseHero(id: ShowcaseHeroId): ShowcaseHero {
-  return { ...structuredClone(showcaseDefaults[id]), mobileImage: '', alt: { en: '', es: '', it: '' }, position: 'source', overlay: null }
+  const base = structuredClone(showcaseDefaults[id])
+  const text = {
+    ...base.text,
+    ar: (base.text as Record<string, Record<string, string>>).ar ?? base.text.en,
+  }
+  return { ...base, text, mobileImage: '', alt: { en: '', ar: '', es: '', it: '' }, position: 'source', overlay: null }
 }
 export function initialShowcaseState(): ShowcaseHeroState { return { ...initialHeroState(), draft: null, published: null } }
 function record(value: unknown): Record<string, unknown> {

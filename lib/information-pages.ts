@@ -6,9 +6,9 @@ export function isInformationPageId(value: string): value is InformationPageId {
   return INFORMATION_PAGE_IDS.some((id) => id === value)
 }
 
-function section(id: string, href: string, en: [string, string, string], es: [string, string, string], it: [string, string, string]): EditorialSection {
+function section(id: string, href: string, en: [string, string, string], es: [string, string, string], it: [string, string, string], ar?: [string, string, string]): EditorialSection {
   const fields = ([heading, description, action]: [string, string, string]) => ({ heading, description, action })
-  return { id, href, text: { en: fields(en), es: fields(es), it: fields(it) } }
+  return { id, href, text: { en: fields(en), es: fields(es), it: fields(it), ar: fields(ar ?? en) } }
 }
 
 export function originalInformationPage(id: InformationPageId): FaqHero {

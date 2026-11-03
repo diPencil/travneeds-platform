@@ -6,8 +6,8 @@ import { HeroValidationError, validateHeroMedia, type HeroAction } from './websi
 
 export const CMS_ICON_IDS = ['Users', 'Award', 'MapPin', 'Star', 'MousePointerClick', 'CalendarDays', 'ThumbsUp', 'Landmark', 'Leaf', 'Compass', 'Heart', 'ShieldCheck', 'Clock3', 'Sun', 'Ship', 'CheckCircle', 'HeartHandshake', 'Route', 'Anchor', 'CalendarCheck', 'Gift', 'Headphones'] as const
 export type CmsIconId = typeof CMS_ICON_IDS[number]
-export type SectionItem = { id: string; visible: boolean; text: Record<EnabledLocale, Record<string, string>>; icon?: CmsIconId; href?: string; image?: string; value?: number; prefix?: string; suffix?: string; decimals?: number }
-export type PageSection = { id: string; visible: boolean; text: Record<EnabledLocale, Record<string, string>>; items?: SectionItem[]; href?: string; image?: string; selection?: string[]; selectionMode?: 'automatic' | 'selected'; limit?: number; media?: Record<string, string>; links?: Record<string, string> }
+export type SectionItem = { id: string; visible: boolean; text: Record<string, Record<string, string>>; icon?: CmsIconId; href?: string; image?: string; value?: number; prefix?: string; suffix?: string; decimals?: number }
+export type PageSection = { id: string; visible: boolean; text: Record<string, Record<string, string>>; items?: SectionItem[]; href?: string; image?: string; selection?: string[]; selectionMode?: 'automatic' | 'selected'; limit?: number; media?: Record<string, string>; links?: Record<string, string> }
 export type PageContent = { sections: PageSection[]; seo: SeoContent }
 export type PageContentState = { version: 1; revision: number; mode: 'original' | 'published' | 'hidden'; draft: PageContent | null; published: PageContent | null; updatedAt: string | null; seoDraft?: SeoContent | null; seoManaged?: boolean }
 export type PublicPageContent = { content: PageContent | null; unavailable?: boolean }

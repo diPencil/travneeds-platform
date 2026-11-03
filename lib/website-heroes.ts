@@ -3,7 +3,7 @@ import { ENABLED_LOCALES, type EnabledLocale } from './locale-config'
 export const HERO_SETTING_KEY = 'cms.hero.homepage.v1'
 export const MAX_HERO_VIDEO_BYTES = 20 * 1024 * 1024
 export class HeroValidationError extends Error {}
-export type HeroText = Record<EnabledLocale, { heading: string; eyebrow: string; alt: string }>
+export type HeroText = Record<string, { heading: string; eyebrow: string; alt: string }>
 export type HomeHero = {
   text: HeroText
   mediaType: 'image' | 'video'
@@ -25,6 +25,7 @@ export function originalHomeHero(): HomeHero {
   return {
     text: {
       en: { heading: 'Exciting Journey With Us', eyebrow: 'Get started your', alt: 'Egyptian temple columns in warm desert light at sunset' },
+      ar: { heading: 'رحلتك الممتعة معنا', eyebrow: 'ابدأ', alt: 'أعمدة معبد مصري في ضوء الغروب الدافئ' },
       es: { heading: 'Viaje fascinante con nosotros', eyebrow: 'Empieza tu', alt: 'Columnas de un templo egipcio al atardecer' },
       it: { heading: 'Viaggio emozionante con noi', eyebrow: 'Inizia la tua', alt: 'Colonne di un tempio egizio al tramonto' },
     },

@@ -85,7 +85,7 @@ export function PageVisualEditor({ pageId = 'homepage' }: { pageId?: PageDocumen
     finally { lock.current = false; setBusy(false) }
   }
   const moveItem = (index: number, delta: number) => { const next = [...(section.items ?? [])]; const target = index + delta; if (target < 0 || target >= next.length) return; [next[index], next[target]] = [next[target], next[index]]; changeSection({ ...section, items: next }) }
-  const addItem = () => { const fields = Object.fromEntries((definition.itemFields ?? []).map((field) => [field, ''])); changeSection({ ...section, items: [...(section.items ?? []), { id: 'item-' + crypto.randomUUID(), visible: true, text: { en: { ...fields }, es: { ...fields }, it: { ...fields } }, ...(definition.icons ? { icon: 'Star' as const } : {}), ...(definition.numbers ? { value: 0, prefix: '', suffix: '', decimals: 0 } : {}), ...(active === 'how' || definition.itemHref ? { href: '/contact' } : {}), ...(definition.itemImage ? { image: '/egypt-hero.png' } : {}) }] }) }
+  const addItem = () => { const fields = Object.fromEntries((definition.itemFields ?? []).map((field) => [field, ''])); changeSection({ ...section, items: [...(section.items ?? []), { id: 'item-' + crypto.randomUUID(), visible: true, text: Object.fromEntries(ENABLED_LOCALES.map((locale) => [locale, { ...fields }])) as Record<EnabledLocale, Record<string, string>>, ...(definition.icons ? { icon: 'Star' as const } : {}), ...(definition.numbers ? { value: 0, prefix: '', suffix: '', decimals: 0 } : {}), ...(active === 'how' || definition.itemHref ? { href: '/contact' } : {}), ...(definition.itemImage ? { image: '/egypt-hero.png' } : {}) }] }) }
   const action = async (command: HeroAction) => {
     if (!state || !canEdit || lock.current) return
     setError('')

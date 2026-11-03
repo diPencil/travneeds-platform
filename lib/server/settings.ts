@@ -61,6 +61,7 @@ export const PUBLIC_SETTING_KEYS = [
   // Website defaults / SEO
   'site.seoTitle',
   'site.seoDescriptionEn',
+  'site.seoDescriptionAr',
   'site.seoDescriptionEs',
   'site.seoDescriptionIt',
   'site.seoImage',
@@ -324,7 +325,7 @@ export function validateSettingsPatch(input: {
       case 'app.defaultLocale':
         // Dormant Arabic/RTL must never become publicly enabled here.
         if (!(ENABLED_LOCALES as readonly string[]).includes(trimmed)) {
-          fail('Select an enabled public language (EN, ES, or IT).');
+          fail('Select an enabled public language (EN, AR, ES, or IT).');
           break;
         }
         clean[key] = trimmed;
@@ -381,6 +382,7 @@ export function validateSettingsPatch(input: {
         if (bounded(1, 160, 'Enter an SEO title (1-160 characters).')) clean[key] = trimmed;
         break;
       case 'site.seoDescriptionEn':
+      case 'site.seoDescriptionAr':
       case 'site.seoDescriptionEs':
       case 'site.seoDescriptionIt':
         if (value.length > 320 || hasControlChars(value) || /[<>]/.test(value)) {

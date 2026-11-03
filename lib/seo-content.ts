@@ -54,7 +54,7 @@ export function seoMetadata(seo: SeoContent, locale: EnabledLocale, siteUrl: str
     ...(seo.canonical ? { alternates: { canonical: siteUrl + seo.canonical, languages: { en: siteUrl + seo.canonical, 'x-default': siteUrl + seo.canonical } } } : {}),
     ...(seo.index !== undefined || seo.follow !== undefined ? { robots: { index: seo.index ?? true, follow: seo.follow ?? true } } : {}),
     ...(title || description || seo.image || seo.card !== undefined ? {
-      openGraph: { ...(title ? { title } : {}), ...(description ? { description } : {}), locale: { en: 'en_US', es: 'es_ES', it: 'it_IT' }[locale], ...(seo.image ? { images: [{ url: seo.image }] } : {}) },
+      openGraph: { ...(title ? { title } : {}), ...(description ? { description } : {}), locale: { en: 'en_US', ar: 'ar_EG', es: 'es_ES', it: 'it_IT' }[locale], ...(seo.image ? { images: [{ url: seo.image }] } : {}) },
       twitter: { card: seo.card ?? 'summary_large_image', ...(title ? { title } : {}), ...(description ? { description } : {}), ...(seo.image ? { images: [seo.image] } : {}) },
     } : {}),
   }

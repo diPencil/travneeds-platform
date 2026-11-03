@@ -4,11 +4,11 @@ import { HeroValidationError, initialHeroState, validateHeroMedia, type HeroActi
 export const FAQ_HERO_KEY = 'cms.hero.faq.v1'
 export type EditorialSection = {
   id: string
-  text: Record<EnabledLocale, { heading: string; description: string; action: string }>
+  text: Record<string, { heading: string; description: string; action: string }>
   href: string
 }
 export type FaqHero = {
-  text: Record<EnabledLocale, { heading: string; eyebrow: string; description: string; action: string; alt: string }>
+  text: Record<string, { heading: string; eyebrow: string; description: string; action: string; alt: string }>
   image: string
   href: string
   sections?: EditorialSection[]
@@ -18,6 +18,7 @@ export function originalFaqHero(): FaqHero {
   return {
     text: {
       en: { heading: 'A smoother way to plan Egypt', eyebrow: 'Questions, answered', description: 'Find clear answers to common questions, then talk to our team when you are ready for the details.', action: 'Ask a question', alt: '' },
+      ar: { heading: 'طريقة أسهل لتخطيط رحلتك إلى مصر', eyebrow: 'إجابات على أسئلتك', description: 'اعثر على إجابات واضحة للأسئلة الشائعة، ثم تحدث مع فريقنا عندما تكون جاهزاً للتفاصيل.', action: 'اطرح سؤالاً', alt: '' },
       es: { heading: 'Una forma más fácil de planificar Egipto', eyebrow: 'Preguntas con respuesta', description: 'Encuentra respuestas claras a las preguntas frecuentes y habla con nuestro equipo cuando quieras los detalles.', action: 'Haz una pregunta', alt: '' },
       it: { heading: 'Un modo più semplice per pianificare.', eyebrow: 'Domande e risposte', description: 'Trova risposte chiare alle domande frequenti, poi parla con il nostro team quando vuoi i dettagli.', action: 'Fai una domanda', alt: '' },
     },

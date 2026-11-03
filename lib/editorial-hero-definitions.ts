@@ -17,6 +17,7 @@ export function originalEditorialHero(id: EditorialHeroId): FaqHero {
   return {
     text: {
       en: { eyebrow: 'See the full picture', heading: 'Egypt Destinations', description: 'Build a trip around the places that make you curious, from ancient capitals to salt-white deserts and coral-blue seas.', action: 'Build my route', alt: '' },
+      ar: { eyebrow: 'شاهد الصورة كاملة', heading: 'وجهات مصر', description: 'صمم رحلة حول الأماكن التي تثير فضولك، من العواصم القديمة إلى الصحاري البيضاء والبحار المرجانية.', action: 'صمم مساري', alt: '' },
       es: { eyebrow: 'Mira el panorama completo', heading: 'Destinos Egipto', description: 'Crea un viaje en torno a los lugares que despierten tu curiosidad, desde capitales antiguas hasta desiertos blancos y mares de coral.', action: 'Crea mi ruta', alt: '' },
       it: { eyebrow: 'Guarda il quadro completo', heading: "Destinazioni Egitto", description: 'Costruisci un viaggio intorno ai luoghi che accendono la tua curiosità, dalle antiche capitali ai deserti bianchi e ai mari corallini.', action: 'Crea il mio itinerario', alt: '' },
     }, image: desertImage, href: '/make-your-trip',

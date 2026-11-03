@@ -44,6 +44,7 @@ async function load(kind: RecordSeoKind, slug: string, client: Prisma.Transactio
       published: {
         text: {
           en: { title: row.seoTitle || '', description: row.seoDescription || '' },
+          ar: { title: '', description: '' },
           es: { title: '', description: '' },
           it: { title: '', description: '' },
         },

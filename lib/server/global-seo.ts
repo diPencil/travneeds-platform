@@ -8,7 +8,8 @@ import { getSetting, validateSettingsPatch } from './settings';
 /** Public defaults only. The root owns the existing site.seoTitle fallback. */
 export const getGlobalSeo = cache(async (locale: string): Promise<Metadata> => {
   const language = isLocaleEnabled(locale) ? locale : 'en';
-  const descriptionKey = `site.seoDescription${{ en: 'En', es: 'Es', it: 'It' }[language]}`;
+  const suffixMap: Record<string, string> = { en: 'En', ar: 'Ar', es: 'Es', it: 'It' };
+  const descriptionKey = `site.seoDescription${suffixMap[language] ?? 'En'}`;
   const keys = [descriptionKey, 'site.seoImage', 'site.googleSiteVerification'];
   const stored = await Promise.all(keys.map(key => getSetting(key)));
   const values: Record<string, string> = {};

@@ -5,7 +5,7 @@ import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react'
 import { AdminConfirmDialog } from './admin-confirm-dialog'
 import { SharedSelect } from '@/components/shared-select'
 import { FAQ_HERO_DESTINATIONS, type EditorialSection } from '@/lib/faq-hero'
-import type { EnabledLocale } from '@/lib/locale-config'
+import { ENABLED_LOCALES, type EnabledLocale } from '@/lib/locale-config'
 
 export function EditorialSectionsEditor({ sections, locale, disabled, onChange }: {
   sections: EditorialSection[]; locale: EnabledLocale; disabled: boolean; onChange: (sections: EditorialSection[]) => void
@@ -24,7 +24,7 @@ export function EditorialSectionsEditor({ sections, locale, disabled, onChange }
   const add = () => {
     if (disabled || sections.length >= 8) return
     const fields = () => ({ heading: '', description: '', action: '' })
-    onChange([...sections, { id: 'section-' + crypto.randomUUID(), text: { en: fields(), es: fields(), it: fields() }, href: '/contact' }])
+    onChange([...sections, { id: 'section-' + crypto.randomUUID(), text: Object.fromEntries(ENABLED_LOCALES.map((locale) => [locale, fields()])) as Record<EnabledLocale, { heading: string; description: string; action: string }>, href: '/contact' }])
   }
   return <section className="cms-page-sections" aria-labelledby="cms-page-sections-title">
     <h2 id="cms-page-sections-title">Page sections</h2>

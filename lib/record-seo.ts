@@ -14,7 +14,7 @@ export function initialRecordSeoState(): RecordSeoState {
   return { version: 1, revision: 0, draft: null, published: null, updatedAt: null }
 }
 export function emptyRecordSeoContent(): RecordSeoContent {
-  return { text: { en: { title: '', description: '' }, es: { title: '', description: '' }, it: { title: '', description: '' } }, image: '' }
+  return { text: { en: { title: '', description: '' }, ar: { title: '', description: '' }, es: { title: '', description: '' }, it: { title: '', description: '' } }, image: '' }
 }
 export function validateRecordSeoContent(value: unknown): RecordSeoContent {
   const raw = recordSeoObject(value)

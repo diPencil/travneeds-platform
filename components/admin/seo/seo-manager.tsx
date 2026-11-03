@@ -220,4 +220,4 @@ export function SeoEditor({ pageKey, recordKey }: { pageKey: PageDocumentId; rec
   </div>
 }
 
-function emptyRecordSeo(): SeoContent { return { text: { en: { title: '', description: '' }, es: { title: '', description: '' }, it: { title: '', description: '' } }, image: '' } }
+function emptyRecordSeo(): SeoContent { return { text: Object.fromEntries(ENABLED_LOCALES.map((l) => [l, { title: '', description: '' }])) as SeoContent['text'], image: '' } }
