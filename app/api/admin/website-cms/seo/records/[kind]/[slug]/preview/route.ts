@@ -7,7 +7,8 @@ import { ENABLED_LOCALES, type EnabledLocale } from '@/lib/locale-config'
 import { getSiteUrl } from '@/lib/seo'
 import { findTourBySlug } from '@/lib/server/tours'
 import { findBlogBySlug } from '@/lib/server/blogs'
-import { generateTouristTripJsonLd, generateBlogPostingJsonLd, generateRecordPageJsonLd } from '@/lib/structured-data'
+import { db } from '@/lib/server/db'
+import { generateTouristTripJsonLd, generateBlogPostingJsonLd, generateRecordPageJsonLd, generateHotelJsonLd } from '@/lib/structured-data'
 export async function GET(request: Request, { params }: { params: Promise<{ kind: string; slug: string }> }) {
   const { kind, slug } = await params
   if (!isRecordSeoKind(kind) || !/^[a-z0-9][a-z0-9-]{0,99}$/.test(slug)) return NextResponse.json({ error: 'Unknown SEO record.' }, { status: 404, headers: SEO_PRIVATE_HEADERS })
@@ -24,7 +25,26 @@ export async function GET(request: Request, { params }: { params: Promise<{ kind
     if (content.structuredData !== false) {
       if (kind === 'tour' && record.published) { const tour = await findTourBySlug(slug); if (tour) structuredData = generateTouristTripJsonLd(tour) }
       else if (kind === 'blog' && record.published) { const blog = await findBlogBySlug(slug); if (blog) structuredData = generateBlogPostingJsonLd(blog) }
-      else if (kind !== 'tour' && kind !== 'blog') structuredData = generateRecordPageJsonLd({ name: record.name, path: record.canonicalPaths[0], collection: kind === 'category' })
+      else if (kind === 'hotel' && record.published) {
+        const hotel = await db.hotel.findUnique({ where: { slug } })
+        if (hotel) {
+          structuredData = generateHotelJsonLd({
+            name: hotel.name,
+            description: hotel.description,
+            city: hotel.city,
+            countryCode: hotel.countryCode,
+            address: hotel.address,
+            postalCode: hotel.postalCode,
+            latitude: hotel.latitude ? Number(hotel.latitude) : null,
+            longitude: hotel.longitude ? Number(hotel.longitude) : null,
+            phone: hotel.phone,
+            starRating: hotel.starRating,
+            coverImage: hotel.coverImage,
+            slug: hotel.slug,
+          })
+        }
+      }
+      else if (kind !== 'tour' && kind !== 'blog' && kind !== 'hotel') structuredData = generateRecordPageJsonLd({ name: record.name, path: record.canonicalPaths[0], collection: kind === 'category' })
     }
     return NextResponse.json({ ...snapshot, structuredData }, { headers: SEO_PRIVATE_HEADERS })
   } catch { return NextResponse.json({ error: 'Preview is unavailable.' }, { status: 503, headers: SEO_PRIVATE_HEADERS }) }

@@ -183,12 +183,25 @@ export const HotelsModuleManifest: ModuleManifest = {
   isCore: false,
   requiredDependencies: ['core'],
   optionalDependencies: [],
-  permissions: [],
+  permissions: [
+    { key: 'hotels.view', action: 'view', label: { en: 'View Hotels', ar: 'عرض الفنادق', es: 'Ver Hoteles', it: 'Visualizza Hotel' } },
+    { key: 'hotels.edit', action: 'edit', label: { en: 'Edit Hotels & Rooms', ar: 'تعديل الفنادق والغرف', es: 'Editar Hoteles y Habitaciones', it: 'Modifica Hotel e Camere' } },
+    { key: 'hotels.manage', action: 'manage', label: { en: 'Manage Inventory & Allotments', ar: 'إدارة الغرف والمخصصات', es: 'Gestionar Inventario y Cupos', it: 'Gestisci Inventario e Allotment' } },
+    { key: 'hotels.rates', action: 'manage', label: { en: 'Configure Rate Plans', ar: 'إعداد خطط الأسعار', es: 'Configurar Planes de Tarifas', it: 'Configura Piani Tariffari' } },
+  ],
   features: [
     { key: 'hotels.allotments', name: { en: 'Room Allotments', ar: 'المخصصات الفندقية' } },
+    { key: 'hotels.rate_plans', name: { en: 'Rate Plans & Board Basis', ar: 'خطط الأسعار ونظام الوجبات' } },
+    { key: 'hotels.policies', name: { en: 'Hotel & Room Policies', ar: 'سياسات الفنادق والغرف' } },
+    { key: 'hotels.inventory_calendar', name: { en: 'Daily Inventory Calendar', ar: 'تقويم الإشغال اليومي' } },
+    { key: 'hotels.booking_integration', name: { en: 'Booking Engine Integration', ar: 'الربط مع محرك الحجز' } },
   ],
   navigation: [],
-  routes: {},
+  routes: {
+    adminPrefix: '/admin/hotels',
+    publicPrefix: '/hotels',
+    apiPrefix: '/api/hotels',
+  },
 };
 
 export const FlightsModuleManifest: ModuleManifest = {
@@ -748,6 +761,74 @@ export const SupplierExtranetModuleManifest: ModuleManifest = {
   routes: {},
 };
 
+export const SeoManagerModuleManifest: ModuleManifest = {
+  id: 'seo_manager',
+  name: 'SEO Manager & Content Discovery',
+  displayName: {
+    en: 'SEO Manager',
+    ar: 'مدير تحسين محركات البحث',
+    es: 'Gestor de SEO',
+    it: 'Gestore SEO',
+  },
+  description: {
+    en: 'Central SEO management, cross-module content discovery, metadata audits, schema management, and search visibility.',
+    ar: 'إدارة مركزية للـ SEO، استكشاف محتوى البرامج والفنادق، تدقيق الميتا، وإدارة مخططات البيانات الوصفية والظهور.',
+    es: 'Gestión central de SEO, descubrimiento de contenido entre módulos, auditorías de metadatos y visibilidad en búsquedas.',
+    it: 'Gestione centrale SEO, scoperta di contenuti cross-modulo, audit dei metadati e visibilità nei motori di ricerca.',
+  },
+  version: '1.0.0',
+  category: 'business_management',
+  lifecycle: 'available_for_subscription',
+  isCore: false,
+  requiredDependencies: ['core'],
+  optionalDependencies: ['tours', 'hotels'],
+  permissions: [
+    {
+      key: 'seo.view',
+      action: 'view',
+      label: { en: 'View SEO metadata & audits', ar: 'عرض بيانات وتدقيق محركات البحث' },
+    },
+    {
+      key: 'seo.manage',
+      action: 'manage',
+      label: { en: 'Manage and publish SEO overrides', ar: 'إدارة ونشر تخصيصات محركات البحث' },
+    },
+  ],
+  features: [
+    {
+      key: 'seo.cross_module_discovery',
+      name: { en: 'Cross-Module Content Discovery', ar: 'استكشاف المحتوى عبر الوحدات' },
+    },
+    {
+      key: 'seo.health_audits',
+      name: { en: 'Technical SEO & Diagnostics', ar: 'التدقيق الفني وتشخيصات SEO' },
+    },
+    {
+      key: 'seo.schema_management',
+      name: { en: 'Structured Data & Schema Management', ar: 'إدارة البيانات المنظمة ومخططات Schema' },
+    },
+    {
+      key: 'seo.social_previews',
+      name: { en: 'Social Card & OpenGraph Previews', ar: 'معاينة بطاقات التواصل وOpenGraph' },
+    },
+  ],
+  navigation: [
+    {
+      key: 'nav.website_cms_seo',
+      section: 'distribution',
+      label: { en: 'SEO Manager', ar: 'مدير SEO' },
+      href: '/admin/website-cms/seo',
+      icon: 'Search',
+      requiredPermission: 'seo.view',
+      order: 45,
+    },
+  ],
+  routes: {
+    adminPrefix: '/admin/website-cms/seo',
+    apiPrefix: '/api/admin/website-cms/seo',
+  },
+};
+
 // ============================================================================
 // 5. REGISTRATION REGISTRY HELPER
 // ============================================================================
@@ -779,12 +860,13 @@ export const ALL_INITIAL_MANIFESTS: readonly ModuleManifest[] = [
   SuppliersModuleManifest,
   CorporateTravelModuleManifest,
 
-  // 4. Business Management
+  // 4. Business Management & Growth
   TravelCrmModuleManifest,
   FinanceInvoicingModuleManifest,
   TravelExpensesModuleManifest,
   B2bPortalModuleManifest,
   SupplierExtranetModuleManifest,
+  SeoManagerModuleManifest,
 ];
 
 /**

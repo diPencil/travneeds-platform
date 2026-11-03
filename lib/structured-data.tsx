@@ -228,6 +228,59 @@ export function generateBlogPostingJsonLd(blog: Blog, locale: 'en' | 'es' | 'it'
 }
 
 /**
+ * Generate Hotel JSON-LD schema for hotel properties.
+ */
+export function generateHotelJsonLd(hotel: {
+  name: string
+  description?: string
+  city?: string
+  countryCode?: string
+  address?: string
+  postalCode?: string | null
+  latitude?: number | string | { toString(): string } | null
+  longitude?: number | string | { toString(): string } | null
+  phone?: string | null
+  starRating?: number | null
+  coverImage?: string | null
+  slug: string
+}): object {
+  const SITE_URL = resolveSiteUrl()
+  const hotelUrl = `${SITE_URL}/hotels/${hotel.slug}`
+  const description = hotel.description ? stripHtmlToPlainText(hotel.description).slice(0, 300) : undefined
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Hotel',
+    '@id': hotelUrl,
+    name: hotel.name,
+    ...(description ? { description } : {}),
+    url: hotelUrl,
+    ...(hotel.coverImage ? { image: [hotel.coverImage] } : {}),
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: hotel.address || undefined,
+      addressLocality: hotel.city || 'Cairo',
+      addressCountry: hotel.countryCode || 'EG',
+      ...(hotel.postalCode ? { postalCode: hotel.postalCode } : {}),
+    },
+    ...(hotel.latitude && hotel.longitude ? {
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: Number(hotel.latitude),
+        longitude: Number(hotel.longitude),
+      },
+    } : {}),
+    ...(hotel.phone ? { telephone: hotel.phone } : {}),
+    ...(hotel.starRating ? {
+      starRating: {
+        '@type': 'Rating',
+        ratingValue: hotel.starRating,
+      },
+    } : {}),
+  }
+}
+
+/**
  * Helper to safely render JSON-LD script tag
  */
 export function renderJsonLd(data: object): React.ReactElement {

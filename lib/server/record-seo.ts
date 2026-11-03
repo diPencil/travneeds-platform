@@ -8,23 +8,28 @@ import { recordSeoObject, recordSeoStateFromPayload, transitionRecordSeo, type R
 
 export class RecordSeoNotFoundError extends Error { readonly status = 404; readonly statusCode = 404 }
 export class RecordSeoNotEligibleError extends RecordSeoNotFoundError {}
-type Row = { slug: string; title?: string; name?: string; summary?: string; excerpt?: string; copy?: string; image?: string; status?: string; isPublished?: boolean; active?: boolean; showInDestinations?: boolean; showInOneDayTours?: boolean; tourSlug?: string | null; startsAt?: Date | null; deadline?: string | null; detail?: string | null; content?: string; updatedAt: Date }
+type Row = { id?: string; slug: string; title?: string; name?: string; summary?: string; excerpt?: string; copy?: string; image?: string; coverImage?: string; status?: string; isPublished?: boolean; active?: boolean; showInDestinations?: boolean; showInOneDayTours?: boolean; tourSlug?: string | null; startsAt?: Date | null; deadline?: string | null; detail?: string | null; content?: string; translations?: string | null; seoTitle?: string | null; seoDescription?: string | null; updatedAt: Date }
 type Delegate = {
   findUnique(args: { where: { slug: string } }): Promise<Row | null>
   findMany(): Promise<Row[]>
   updateMany(args: { where: Record<string, unknown>; data: Record<string, unknown> }): Promise<{ count: number }>
 }
 function delegate(kind: RecordSeoKind, client: Prisma.TransactionClient = db): Delegate {
+  if (kind === 'hotel') return client.hotel as unknown as Delegate
   return client[kind === 'category' ? 'multiDayCategory' : kind] as unknown as Delegate
 }
-function field(kind: RecordSeoKind) { return kind === 'tour' || kind === 'destination' ? 'detail' : 'content' }
+function field(kind: RecordSeoKind) {
+  if (kind === 'hotel') return 'translations'
+  return kind === 'tour' || kind === 'destination' ? 'detail' : 'content'
+}
 function descriptor(kind: RecordSeoKind, row: Row): RecordSeoDescriptor {
-  const paths = { tour: '/all-tours/', blog: '/blogs/', destination: '/destinations/', event: '/events/', offer: '/special-offers/', category: '/all-tours/multi-days-tours/' }
+  const paths: Record<RecordSeoKind, string> = { tour: '/all-tours/', blog: '/blogs/', destination: '/destinations/', event: '/events/', offer: '/special-offers/', category: '/all-tours/multi-days-tours/', hotel: '/hotels/' }
   const publicUrl = kind === 'offer' ? offerHref(row) : paths[kind] + row.slug
-  const published = kind === 'tour' ? isTourPublished(row) : kind === 'category' ? row.active === true : kind === 'offer' ? isOfferActive(row) : row.isPublished === true
-  const module = { tour: 'trips', blog: 'blogs', destination: 'destinations', event: 'events', offer: 'offers', category: 'multi-day-categories' }[kind]
+  const published = kind === 'tour' ? isTourPublished(row) : kind === 'category' ? row.active === true : kind === 'offer' ? isOfferActive(row) : kind === 'hotel' ? row.status === 'PUBLISHED' : row.isPublished === true
+  const module = { tour: 'trips', blog: 'blogs', destination: 'destinations', event: 'events', offer: 'offers', category: 'multi-day-categories', hotel: 'hotels' }[kind]
+  const sourceEditor = kind === 'hotel' ? `/admin/hotels/${row.id || row.slug}` : `/admin/${module}/${kind === 'tour' ? 'builder' : 'new'}?slug=${encodeURIComponent(row.slug)}`
   const canonicalPaths = [publicUrl, ...(kind === 'destination' && row.showInOneDayTours ? [`/all-tours/one-day-tours/${row.slug}`] : [])]
-  return { kind, slug: row.slug, name: row.title ?? row.name ?? row.slug, publicUrl, published, canonicalPaths, sourceEditor: `/admin/${module}/${kind === 'tour' ? 'builder' : 'new'}?slug=${encodeURIComponent(row.slug)}`, description: row.summary ?? row.excerpt ?? row.copy ?? '', image: row.image ?? '', updatedAt: row.updatedAt.toISOString() }
+  return { kind, slug: row.slug, name: row.title ?? row.name ?? row.slug, publicUrl, published, canonicalPaths, sourceEditor, description: row.seoDescription ?? row.summary ?? row.excerpt ?? row.copy ?? '', image: row.coverImage ?? row.image ?? '', updatedAt: row.updatedAt.toISOString() }
 }
 async function load(kind: RecordSeoKind, slug: string, client: Prisma.TransactionClient = db) {
   const row = await delegate(kind, client).findUnique({ where: { slug } })
@@ -32,7 +37,20 @@ async function load(kind: RecordSeoKind, slug: string, client: Prisma.Transactio
   if (kind === 'offer' && row.tourSlug) throw new RecordSeoNotEligibleError('Linked offers use their tour SEO.')
   const translation = kind === 'category' ? await client.catalogueTranslation.findUnique({ where: { entityType_slug: { entityType: 'category', slug } } }) : null
   const raw = kind === 'category' ? translation?.payload ?? '{}' : row[field(kind)]
-  const state = recordSeoStateFromPayload(raw, kind === 'tour')
+  let state = recordSeoStateFromPayload(raw, kind === 'tour')
+  if (kind === 'hotel' && !state.published && !state.draft && (row.seoTitle || row.seoDescription)) {
+    state = {
+      ...state,
+      published: {
+        text: {
+          en: { title: row.seoTitle || '', description: row.seoDescription || '' },
+          es: { title: '', description: '' },
+          it: { title: '', description: '' },
+        },
+        image: row.coverImage || '',
+      },
+    }
+  }
   const record = descriptor(kind, row)
   return { row, raw, translation, record, state }
 }
@@ -50,7 +68,17 @@ export async function changeRecordSeo(kind: RecordSeoKind, slug: string, action:
     const state = transitionRecordSeo(current.state, action, content)
     const value = JSON.stringify({ ...recordSeoObject(current.raw, kind === 'tour'), seoManager: state })
     let count: number
-    if (kind === 'category') {
+    if (kind === 'hotel') {
+      const publishedText = state.published?.text.en ?? state.draft?.text.en
+      count = (await client.hotel.updateMany({
+        where: { slug, updatedAt: current.row.updatedAt },
+        data: {
+          translations: value,
+          ...(publishedText?.title ? { seoTitle: publishedText.title } : {}),
+          ...(publishedText?.description ? { seoDescription: publishedText.description } : {}),
+        },
+      })).count
+    } else if (kind === 'category') {
       if (current.translation) {
         count = (await client.catalogueTranslation.updateMany({ where: { entityType: 'category', slug, payload: current.translation.payload }, data: { payload: value } })).count
       } else {
@@ -67,7 +95,7 @@ export async function changeRecordSeo(kind: RecordSeoKind, slug: string, action:
 }
 /** Admin-private inventory; callers must authorize before exposing this result. */
 export async function listRecordSeo() {
-  const kinds: RecordSeoKind[] = ['tour', 'blog', 'destination', 'event', 'offer', 'category']
+  const kinds: RecordSeoKind[] = ['tour', 'blog', 'destination', 'event', 'offer', 'category', 'hotel']
   const groups = await Promise.all(kinds.map(async kind => {
     const rows = await delegate(kind).findMany()
     const translations = kind === 'category' ? await db.catalogueTranslation.findMany({ where: { entityType: 'category' } }) : []

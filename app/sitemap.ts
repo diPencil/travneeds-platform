@@ -5,6 +5,7 @@ import { listBlogSlugs } from '@/lib/server/blogs';
 import { getPublishedDbEvents } from '@/lib/server/events';
 import { getPublishedDbOffers } from '@/lib/server/offers';
 import { getPublishedCategories } from '@/lib/server/categories';
+import { db } from '@/lib/server/db';
 import { cruiseTypes } from '@/data/tours';
 import { isTourPublished } from '@/lib/tour-publish';
 import { getSiteUrl } from '@/lib/seo';
@@ -19,7 +20,7 @@ export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = await getSiteUrl();
   const staticPaths = [
-    '', '/trips', '/all-tours/one-day-tours', '/all-tours/multi-days-tours',
+    '', '/trips', '/hotels', '/all-tours/one-day-tours', '/all-tours/multi-days-tours',
     '/all-tours/nile-cruises', '/all-tours/shore-excursions', '/destinations',
     '/special-offers', '/blogs', '/events', '/rent-car', '/about', '/contact',
     '/faq', '/accessible-travel', '/egypt-travel-guide', '/make-your-trip',
@@ -40,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   )).filter((path): path is string => path !== null));
 
   // On repository failure omit that collection rather than inventing fallback URLs.
-  const [tours, destinations, blogs, events, offers, regions, categories] = await Promise.all([
+  const [tours, destinations, blogs, events, offers, regions, categories, hotels] = await Promise.all([
     listTours().catch(() => []),
     getPublishedDestinationDetails().catch(() => []),
     listBlogSlugs().catch(() => []),
@@ -48,10 +49,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getPublishedDbOffers().catch(() => []),
     getPublishedOneDayDestinations().catch(() => []),
     getPublishedCategories().catch(() => []),
+    db.hotel.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { slug: true },
+    }).catch(() => []),
   ]);
 
   const dynamicRecords: { kind: RecordSeoKind; slug: string; path: string }[] = [
     ...tours.filter(isTourPublished).map(({ slug }) => ({ kind: 'tour' as const, slug, path: `/all-tours/${slug}` })),
+    ...hotels.map(({ slug }) => ({ kind: 'hotel' as const, slug, path: `/hotels/${slug}` })),
     ...destinations.map(({ slug }) => ({ kind: 'destination' as const, slug, path: `/destinations/${slug}` })),
     ...blogs.map((slug) => ({ kind: 'blog' as const, slug, path: `/blogs/${slug}` })),
     ...events.map(({ slug }) => ({ kind: 'event' as const, slug, path: `/events/${slug}` })),

@@ -1,13 +1,14 @@
 import { validateSeoContent, type SeoContent } from './seo-content'
 
-export type RecordSeoKind = 'tour' | 'blog' | 'destination' | 'event' | 'offer' | 'category'
+export const RECORD_KINDS = ['tour', 'blog', 'destination', 'event', 'offer', 'category', 'hotel'] as const
+export type RecordSeoKind = typeof RECORD_KINDS[number]
 export type RecordSeoContent = SeoContent & { structuredData?: boolean }
 export type RecordSeoAction = 'save-draft' | 'publish' | 'restore'
 export type RecordSeoState = { version: 1; revision: number; draft: RecordSeoContent | null; published: RecordSeoContent | null; updatedAt: string | null }
 export type RecordSeoDescriptor = { kind: RecordSeoKind; slug: string; name: string; publicUrl: string | null; published: boolean; canonicalPaths: string[]; sourceEditor: string; description?: string; image?: string; updatedAt?: string | null }
 
 export function isRecordSeoKind(value: string): value is RecordSeoKind {
-  return ['tour', 'blog', 'destination', 'event', 'offer', 'category'].includes(value)
+  return (RECORD_KINDS as readonly string[]).includes(value)
 }
 export function initialRecordSeoState(): RecordSeoState {
   return { version: 1, revision: 0, draft: null, published: null, updatedAt: null }
@@ -63,6 +64,7 @@ export function remapRecordSeoCanonical(value: unknown, rename: RecordSeoRename)
   const prefixes: Record<RecordSeoKind, string[]> = {
     tour: ['/all-tours/'], blog: ['/blogs/'], destination: ['/destinations/', '/all-tours/one-day-tours/'],
     event: ['/events/'], offer: ['/special-offers/'], category: ['/all-tours/multi-days-tours/'],
+    hotel: ['/hotels/'],
   }
   const paths = new Map(prefixes[rename.kind].map(prefix => [prefix + rename.oldSlug, prefix + rename.newSlug]))
   const remap = (content: RecordSeoContent | null) => {
