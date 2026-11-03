@@ -504,6 +504,7 @@ model Booking {
   payments       Payment[]
   accessTokens   BookingAccessToken[]
   documents      BookingDocument[]
+  hotelBookings  HotelBooking[]
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
@@ -1515,3 +1516,295 @@ enum CarRoundTripMode {
   AUTOMATIC
   MANUAL
 }
+
+// ============================================================================
+// PHASE 2B.1 — HOTEL RESERVATIONS & LODGING DOMAIN
+// ============================================================================
+
+enum HotelPropertyType {
+  HOTEL
+  RESORT
+  BOUTIQUE
+  APARTMENT
+  VILLA
+  MOTEL
+  GUESTHOUSE
+  BED_AND_BREAKFAST
+}
+
+enum HotelStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum HotelBoardBasis {
+  ROOM_ONLY
+  BED_AND_BREAKFAST
+  HALF_BOARD
+  FULL_BOARD
+  ALL_INCLUSIVE
+  ULTRA_ALL_INCLUSIVE
+}
+
+enum HotelBookingStatus {
+  HOLD
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+/// Normalized Hotel property model.
+/// Stores canonical English content alongside localized overlays,
+/// property metadata, facilities, policies, and room inventory links.
+model Hotel {
+  id              String            @id @default(cuid())
+  slug            String            @unique @db.VarChar(120)
+  name            String            @db.VarChar(200)
+  nameAr          String?           @db.VarChar(200)
+  description     String            @db.Text
+  propertyType    HotelPropertyType @default(HOTEL)
+  starRating      Int?              @db.TinyInt
+  countryCode     String            @db.Char(2)
+  city            String            @db.VarChar(100)
+  address         String            @db.VarChar(255)
+  postalCode      String?           @db.VarChar(32)
+  latitude        Decimal?          @db.Decimal(10, 7)
+  longitude       Decimal?          @db.Decimal(10, 7)
+  phone           String?           @db.VarChar(32)
+  email           String?           @db.VarChar(190)
+  website         String?           @db.VarChar(255)
+  checkInTime     String            @default("15:00") @db.VarChar(8)
+  checkOutTime    String            @default("11:00") @db.VarChar(8)
+  coverImage      String?           @db.VarChar(500)
+  gallery         String            @default("[]") @db.LongText
+  amenities       String            @default("[]") @db.LongText
+  seoTitle        String?           @db.VarChar(200)
+  seoDescription  String?           @db.VarChar(500)
+  translations    String?           @db.LongText
+  status          HotelStatus       @default(DRAFT)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  policy          HotelPolicy?
+  roomTypes       HotelRoomType[]
+  bookings        HotelBooking[]
+
+  @@index([status, city])
+  @@index([countryCode, city])
+  @@index([starRating])
+  @@map("hotels")
+}
+
+/// Structured hotel policies (check-in age, child/infant definitions,
+/// extra beds, cribs, pets, and deposit rules).
+model HotelPolicy {
+  id                    String   @id @default(cuid())
+  hotelId               String   @unique
+  checkInAge            Int      @default(18)
+  checkInInstructions   String?  @db.Text
+  childAgeMax           Int      @default(11)
+  infantAgeMax          Int      @default(2)
+  allowExtraBeds        Boolean  @default(false)
+  extraBedPricePerNight Decimal? @db.Decimal(10, 2)
+  allowCribs            Boolean  @default(false)
+  cribPricePerNight     Decimal? @db.Decimal(10, 2)
+  petsAllowed           Boolean  @default(false)
+  petFeePerStay         Decimal? @db.Decimal(10, 2)
+  cancellationSummary   String?  @db.Text
+  paymentPolicy         String?  @db.Text
+  depositRequired       Boolean  @default(false)
+  depositPercentage     Decimal? @default(0.00) @db.Decimal(5, 2)
+  customPolicies        String?  @db.LongText
+  translations          String?  @db.LongText
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  hotel                 Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@map("hotel_policies")
+}
+
+/// Physical room types under a hotel property.
+model HotelRoomType {
+  id               String               @id @default(cuid())
+  hotelId          String
+  name             String               @db.VarChar(150)
+  code             String               @db.VarChar(50)
+  description      String?              @db.Text
+  maxAdults        Int                  @default(2)
+  maxChildren      Int                  @default(1)
+  maxOccupancy     Int                  @default(3)
+  bedConfiguration String?              @db.VarChar(120)
+  roomSizeSqm      Decimal?             @db.Decimal(6, 2)
+  amenities        String               @default("[]") @db.LongText
+  gallery          String               @default("[]") @db.LongText
+  isActive         Boolean              @default(true)
+  sortOrder        Int                  @default(0)
+  translations     String?              @db.LongText
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  hotel            Hotel                @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  ratePlans        HotelRatePlan[]
+  inventory        HotelRoomInventory[]
+  bookingRooms     HotelBookingRoom[]
+  locks            HotelInventoryLock[]
+
+  @@unique([hotelId, code])
+  @@index([hotelId, isActive])
+  @@map("hotel_room_types")
+}
+
+/// Commercial rate plans defining board basis, refundability, cancellation,
+/// currency, and baseline pricing per room type.
+model HotelRatePlan {
+  id                         String            @id @default(cuid())
+  roomTypeId                 String
+  name                       String            @db.VarChar(150)
+  code                       String            @db.VarChar(50)
+  description                String?           @db.Text
+  boardBasis                 HotelBoardBasis   @default(ROOM_ONLY)
+  isRefundable               Boolean           @default(true)
+  cancellationPolicy         String?           @db.Text
+  cancellationDeadlineDays   Int?              @default(2)
+  cancellationPenaltyPercent Decimal?          @default(100.00) @db.Decimal(5, 2)
+  currency                   String            @default("USD") @db.Char(3)
+  basePrice                  Decimal           @db.Decimal(10, 2)
+  minStayNights              Int               @default(1)
+  maxStayNights              Int?
+  isActive                   Boolean           @default(true)
+  translations               String?           @db.LongText
+  createdAt                  DateTime          @default(now())
+  updatedAt                  DateTime          @updatedAt
+
+  roomType                   HotelRoomType     @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  dailyRates                 HotelDailyRate[]
+  bookingRooms               HotelBookingRoom[]
+
+  @@unique([roomTypeId, code])
+  @@index([roomTypeId, isActive])
+  @@map("hotel_rate_plans")
+}
+
+/// Date-based physical room inventory and allotments.
+model HotelRoomInventory {
+  id                String        @id @default(cuid())
+  roomTypeId        String
+  date              DateTime      @db.Date
+  totalRooms        Int           @default(1)
+  bookedRooms       Int           @default(0)
+  heldRooms         Int           @default(0)
+  stopSale          Boolean       @default(false)
+  closedToArrival   Boolean       @default(false)
+  closedToDeparture Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  roomType          HotelRoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([roomTypeId, date])
+  @@index([date, stopSale])
+  @@map("hotel_room_inventory")
+}
+
+/// Date-based nightly price overrides and restrictions per rate plan.
+model HotelDailyRate {
+  id                String        @id @default(cuid())
+  ratePlanId        String
+  date              DateTime      @db.Date
+  price             Decimal       @db.Decimal(10, 2)
+  stopSale          Boolean       @default(false)
+  closedToArrival   Boolean       @default(false)
+  closedToDeparture Boolean       @default(false)
+  minStay           Int?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  ratePlan          HotelRatePlan @relation(fields: [ratePlanId], references: [id], onDelete: Cascade)
+
+  @@unique([ratePlanId, date])
+  @@index([date])
+  @@map("hotel_daily_rates")
+}
+
+/// Temporary inventory reservation lock during the booking/checkout flow.
+model HotelInventoryLock {
+  id          String        @id @default(cuid())
+  lockToken   String        @unique @db.VarChar(64)
+  roomTypeId  String
+  ratePlanId  String?
+  checkInDate DateTime      @db.Date
+  checkOutDate DateTime     @db.Date
+  quantity    Int           @default(1)
+  expiresAt   DateTime
+  releasedAt  DateTime?
+  isConfirmed Boolean       @default(false)
+  bookingRef  String?       @db.VarChar(32)
+  createdAt   DateTime      @default(now())
+
+  roomType    HotelRoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@index([roomTypeId, checkInDate, checkOutDate])
+  @@index([expiresAt, isConfirmed])
+  @@map("hotel_inventory_locks")
+}
+
+/// Reservation details for hotel bookings attached to the main Booking record.
+model HotelBooking {
+  id                 String             @id @default(cuid())
+  bookingId          String
+  hotelId            String
+  hotelName          String             @db.VarChar(200)
+  checkInDate        DateTime           @db.Date
+  checkOutDate       DateTime           @db.Date
+  nights             Int
+  guestName          String             @db.VarChar(100)
+  guestEmail         String             @db.VarChar(190)
+  guestPhone         String?            @db.VarChar(32)
+  specialRequests    String?            @db.Text
+  status             HotelBookingStatus @default(PENDING)
+  cancellationReason String?            @db.VarChar(255)
+  cancelledAt        DateTime?
+  totalPrice         Decimal            @db.Decimal(10, 2)
+  currency           String             @default("USD") @db.Char(3)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  booking            Booking            @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  hotel              Hotel              @relation(fields: [hotelId], references: [id])
+  rooms              HotelBookingRoom[]
+
+  @@index([bookingId])
+  @@index([hotelId, checkInDate])
+  @@index([status, createdAt])
+  @@map("hotel_bookings")
+}
+
+/// Room item line snapshots under a hotel reservation (supports multiple rooms).
+model HotelBookingRoom {
+  id               String          @id @default(cuid())
+  hotelBookingId   String
+  roomTypeId       String
+  ratePlanId       String
+  roomTypeName     String          @db.VarChar(150)
+  ratePlanName     String          @db.VarChar(150)
+  boardBasis       HotelBoardBasis
+  adults           Int             @default(2)
+  children         Int             @default(0)
+  childAges        String?         @db.VarChar(100)
+  nightlyBreakdown String          @db.LongText
+  lineTotal        Decimal         @db.Decimal(10, 2)
+  createdAt        DateTime        @default(now())
+
+  hotelBooking     HotelBooking    @relation(fields: [hotelBookingId], references: [id], onDelete: Cascade)
+  roomType         HotelRoomType   @relation(fields: [roomTypeId], references: [id])
+  ratePlan         HotelRatePlan   @relation(fields: [ratePlanId], references: [id])
+
+  @@index([hotelBookingId])
+  @@index([roomTypeId])
+  @@map("hotel_booking_rooms")
+}
+
