@@ -17,7 +17,7 @@ import { defaultCurrencySettings, defaultLocalizationSettings } from '@/componen
 import { defaultBrandSettings, defaultSocialLinks, SOCIAL_NETWORKS, type SocialLink } from '@/lib/admin-store'
 import { FacebookIcon, GoogleIcon } from '@/components/brand-icons'
 import { ImageField } from '@/components/admin/image-field'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import { countryFromPhone } from '@/data/countries'
 import { toInternational } from '@/lib/phone'

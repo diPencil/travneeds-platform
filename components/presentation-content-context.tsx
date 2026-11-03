@@ -3,7 +3,7 @@ import { Children, createContext, isValidElement, useContext, type ReactNode } f
 import { originalPageContent, type PublicPageContent } from '@/lib/page-sections'
 import { originalTemplateContent, templateSections, type TemplatePageId } from '@/lib/template-presentation'
 import { useLocale } from './locale'
-import { cmsIcons } from './cms-icons'
+import { cmsIcons } from '@/components/cms/cms-icons'
 
 export type PresentationStates = Partial<Record<TemplatePageId | 'faq', PublicPageContent>>
 const Context = createContext<PresentationStates>({})

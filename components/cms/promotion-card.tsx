@@ -5,7 +5,7 @@ import { offerDeadline } from '@/lib/special-offers'
 import { useEffect, useState } from 'react'
 import { ArrowRight, Check, Star } from 'lucide-react'
 import { CardGallery } from '@/components/site'
-import { formatPrice, useLocale, tx } from './locale'
+import { formatPrice, useLocale, tx } from '@/components/locale'
 import type { Tour } from '@/data/types'
 
 export function promotionGalleryForTour(tour: Tour, fallbackImages: readonly string[]) {

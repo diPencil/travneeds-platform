@@ -15,7 +15,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { Breadcrumb, HelpCTA, SiteShell } from '@/components/site';
-import { SharedSelect } from '@/components/shared-select';
+import { SharedSelect } from '@/components/shared/shared-select';
 import { tx, useLocale } from '@/components/locale';
 import { HotelCard } from './hotel-card';
 import { usePublicHotelsList } from '@/lib/hotels/hotels-client';

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, Copy, RefreshCw, Search, Save } from 'lucide-react'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { useRouter } from 'next/navigation'
 import { AdminConfirmDialog } from './admin-confirm-dialog'
 import { useCurrentUser } from '@/lib/use-current-user'

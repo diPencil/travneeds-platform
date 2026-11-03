@@ -2,12 +2,12 @@ import { CRUISE_HERO_IDS } from './compact-hero-defaults'
 import { SHOWCASE_PAGES } from './showcase-heroes'
 // Verified route templates, not copies of dynamic source records.
 export const heroCatalogue = [
-  { id: 'guide', name: 'Egypt travel guide', route: '/egypt-travel-guide', group: 'Company & information', type: 'Editorial + page content', source: 'components/information-page.tsx', editor: '/admin/website-cms/hero-sections/guide', cms: true },
-  { id: 'accessible', name: 'Accessible travel', route: '/accessible-travel', group: 'Company & information', type: 'Editorial + page content', source: 'components/information-page.tsx', editor: '/admin/website-cms/hero-sections/accessible', cms: true },
+  { id: 'guide', name: 'Egypt travel guide', route: '/egypt-travel-guide', group: 'Company & information', type: 'Editorial + page content', source: 'components/cms/information-page.tsx', editor: '/admin/website-cms/hero-sections/guide', cms: true },
+  { id: 'accessible', name: 'Accessible travel', route: '/accessible-travel', group: 'Company & information', type: 'Editorial + page content', source: 'components/cms/information-page.tsx', editor: '/admin/website-cms/hero-sections/accessible', cms: true },
   { id: 'trips', name: 'All trips', route: '/trips', group: 'Tours & destinations', type: 'Catalogue introduction', source: 'components/trips-page.tsx', editor: '/admin/website-cms/hero-sections/trips', cms: true },
   ...CRUISE_HERO_IDS.map((id) => ({ id, ...SHOWCASE_PAGES[id], group: 'Tours & destinations', type: 'Cruise introduction', source: 'components/site.tsx', editor: '/admin/website-cms/hero-sections/' + id, cms: true as const })),
   { id: 'homepage', name: 'Homepage', route: '/', group: 'Homepage', type: 'Search hero', source: 'components/homepage.tsx', editor: '/admin/website-cms/hero-sections/homepage', cms: true },
-  { id: 'about', name: 'About company', route: '/about', group: 'Company & information', type: 'Showcase', source: 'components/about-page.tsx', editor: '/admin/website-cms/hero-sections/about', cms: true },
+  { id: 'about', name: 'About company', route: '/about', group: 'Company & information', type: 'Showcase', source: 'components/cms/about-page.tsx', editor: '/admin/website-cms/hero-sections/about', cms: true },
   { id: 'contact', name: 'Contact', route: '/contact', group: 'Company & information', type: 'Showcase', source: 'components/extended-pages.tsx', editor: '/admin/website-cms/hero-sections/contact', cms: true },
   { id: 'destinations', name: 'Destinations', route: '/destinations', group: 'Tours & destinations', type: 'Editorial', source: 'components/extended-pages.tsx', editor: '/admin/website-cms/hero-sections/destinations', cms: true },
   { id: 'blogs', name: 'Blogs', route: '/blogs', group: 'Content', type: 'Showcase', source: 'components/extended-pages.tsx', editor: '/admin/website-cms/hero-sections/blogs', cms: true },

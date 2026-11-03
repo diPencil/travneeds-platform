@@ -8,7 +8,7 @@ import { AdminText, Card } from '@/components/admin/admin-ui'
 import { ImageField } from '@/components/admin/image-field'
 import { TourCtaPicker } from '@/components/admin/tour-cta-picker'
 import { TranslatedInput, TranslatedTextarea, useContentLanguage } from '@/components/admin/content-language-tabs'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { useAdminLocale } from '@/components/admin/admin-locale'
 
 export type BlogEditorialFormSection = 'hero' | 'facts' | 'sections' | 'navigation' | 'practical' | 'cta'

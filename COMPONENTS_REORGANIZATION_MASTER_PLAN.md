@@ -22,7 +22,7 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 
 ## 2. Complete Remaining Component Inventory & Classification
 
-### A. Root `components/` Directory (75 Files Remaining)
+### A. Root `components/` Directory (41 Files Remaining directly in root)
 
 | Current File | Domain | Responsibility | Importing Files | Target Location | Risk |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -54,24 +54,24 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`homepage-hero.tsx`** | CMS | Interactive hero banner with search | `homepage.tsx` | `components/cms/` | Med |
 | **`homepage-hero-preview.tsx`** | CMS | Live hero preview renderer | `homepage-hero.tsx` | `components/cms/` | Low |
 | **`cms-additional-pages.tsx`** | CMS | Dynamic CMS page dispatcher | `extended-pages.tsx` | `components/cms/` | Med |
-| **`cms-icons.tsx`** | CMS | SVG iconography for CMS sections | `page-visual-editor.tsx`, `extended-pages.tsx` | `components/cms/` | Low |
-| **`cms-image.tsx`** | CMS | Adaptive image renderer | CMS pages | `components/cms/` | Low |
-| **`cms-public-link.tsx`** | CMS | Smart CMS internal/external link | CMS pages | `components/cms/` | Low |
+| **`cms-icons.tsx`** | CMS | SVG iconography for CMS sections | `page-visual-editor.tsx`, `extended-pages.tsx` | `components/cms/` (Completed in Batch 12) | Low |
+| **`cms-image.tsx`** | CMS | Adaptive image renderer | CMS pages | `components/cms/` (Completed in Batch 12) | Low |
+| **`cms-public-link.tsx`** | CMS | Smart CMS internal/external link | CMS pages | `components/cms/` (Completed in Batch 12) | Low |
 | **`empty-fleet-hero.tsx`** | CMS | Empty state fallback hero | `extended-pages.tsx` | `components/cms/` | Low |
 | **`faq-hero-context.tsx`** | CMS | FAQ hero configuration context | `extended-pages.tsx` | `components/cms/` | Low |
-| **`information-page.tsx`** & **`.css`** | CMS | Standard legal/informational layout | `extended-pages.tsx` | `components/cms/` | Low |
+| **`information-page.tsx`** & **`.css`** | CMS | Standard legal/informational layout | `extended-pages.tsx` | `components/cms/` (Completed in Batch 13) | Low |
 | **`offer-campaigns.tsx`** & **`campaigns.css`** | CMS | Special offer campaigns grid | `extended-pages.tsx` | `components/cms/` | Low |
 | **`page-sections-context.tsx`** & **`.css`** | CMS | Page sections dynamic renderer | `extended-pages.tsx` | `components/cms/` | Low |
 | **`presentation-content-context.tsx`** | CMS | Presentation translations | `extended-pages.tsx` | `components/cms/` | Low |
 | **`promo-bar-icons.tsx`** | CMS | Top banner promo icons | `site.tsx` | `components/cms/` | Low |
-| **`promotion-card.tsx`** | CMS | Promotional visual card | `homepage.tsx` | `components/cms/` | Low |
+| **`promotion-card.tsx`** | CMS | Promotional visual card | `homepage.tsx` | `components/cms/` (Completed in Batch 12) | Low |
 | **`public-appearance.tsx`** | CMS | Custom theme injection | `site.tsx` | `components/cms/` | Low |
 | **`server-showcase-hero.tsx`** | CMS | SSR showcase hero banner | CMS routes | `components/cms/` | Low |
 | **`server-template-preview.tsx`** | CMS | SSR CMS template preview | CMS preview routes | `components/cms/` | Low |
 | **`showcase-hero-context.tsx`** | CMS | Showcase hero context | CMS routes | `components/cms/` | Low |
 | **`showcase-hero-preview.tsx`** | CMS | Client showcase preview | CMS preview | `components/cms/` | Low |
 | **`extended-pages.tsx`** | CMS | Static content page aggregator | Route wrappers | `components/` (Root) | High |
-| **`about-page.tsx`** | CMS | About Us presentation page | `/about/page.tsx` | `components/cms/` | Low |
+| **`about-page.tsx`** | CMS | About Us presentation page | `/about/page.tsx` | `components/cms/` (Completed in Batch 13) | Low |
 | **`ask-question.tsx`** | Shared | Ask a Question modal & trigger | `day-tour-detail.tsx`, `tour-detail.tsx` | `components/shared/` (Completed in Batch 10) | Low |
 | **`country-flag.tsx`** | Shared | Country flag SVG component | Country select | `components/ui/` (Completed in Batch 11A) | Low |
 | **`country-select.tsx`** | Shared | Country dropdown with dialing codes | Auth & booking forms | `components/shared/` (Completed in Batch 11A) | Low |
@@ -85,9 +85,9 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`live-chat.tsx`** | Shared | Live chat widget trigger | Shell | `components/shared/` (Completed in Batch 10) | Low |
 | **`locale.tsx`** | Shared | Locale context & formatters | Everywhere | `components/shared/` (or root) | High |
 | **`public-search-page.tsx`** | Shared | Global search results page | `/search/page.tsx` | `components/shared/` | Low |
-| **`rich-text-renderer.tsx`** | Shared | Sanitized rich text viewer | Content pages | `components/shared/` | Low |
+| **`rich-text-renderer.tsx`** | Shared | Sanitized rich text viewer | Content pages | `components/shared/` (Completed in Batch 13) | Low |
 | **`shared-help-cta.tsx`** & **`.css`** | Shared | Bottom CTA banner | Extended pages | `components/shared/` | Low |
-| **`shared-select.tsx`** | Shared | Base UI custom select | Forms | `components/shared/` | Low |
+| **`shared-select.tsx`** | Shared | Base UI custom select | Forms | `components/shared/` (Completed in Batch 11C) | Low |
 | **`social-icons.tsx`** | Shared | Social media SVGs | Footer | `components/shared/` | Low |
 | **`staff-preview-bootstrap.tsx`** | Shared | Preview mode bootstrap | Admin preview | `components/shared/` | Low |
 | **`sustainability-badge.tsx`** | Shared | Sustainability pledge pill | Footer | `components/shared/` | Low |
@@ -142,33 +142,51 @@ flowchart TD
     B10 --> B11["Batch 11: Admin Operations & Core Encapsulation (High Risk)"]
 ```
 
-### Batch 6 (Selected for Immediate Execution): Public Reviews Widgets
-- **Target**: `components/reviews/`
-- **Files**:
-  - `components/review-marquee.tsx`
-  - `components/website-reviews.tsx`
-  - `components/provider-reviews.tsx`
-  - `components/reviews.tsx`
-  - `components/reviews-phase6.css`
-- **Risk Level**: **Very Low**. The files form a self-contained dependency cluster imported solely by `components/homepage.tsx` and the tour detail pages.
+### Batches 6–11B Retrospective (Completed in Commit `15ca2c2`)
+- **Batch 6**: Public Reviews Widgets (`components/reviews/`)
+- **Batch 7**: Customer Account Portal (`components/account/`)
+- **Batch 8**: Booking, Cart & Checkout (`components/booking/`)
+- **Batch 9**: Public Auth Pages (`components/auth/`)
+- **Batch 10**: Shared UI Presentation Widgets (`components/shared/` - `ask-question.tsx`, `gallery-lightbox.tsx`, `horizontal-slider.tsx`, `live-chat.tsx`, `whatsapp-chat.tsx`)
+- **Batch 11A**: Shared International Inputs (`components/shared/` - `country-select.tsx`, `international-phone-input.tsx`, `components/ui/country-flag.tsx`)
+- **Batch 11B**: Shared Date Input (`components/shared/date-input.tsx`)
 
-### Batch 7: Customer Account Portal
-- **Target**: `components/account/`
-- **Files**:
-  - `components/account-portal.tsx`
-  - `components/account-custom-trip.tsx`
-  - `components/account-event-requests.tsx`
-  - `components/authenticated-user.tsx`
-  - `components/impersonation-banner.tsx`
+### Batch 11C: Shared Custom Select (Completed)
+- **Target**: `components/shared/`
+- **File**: `components/shared-select.tsx` $\rightarrow$ `components/shared/shared-select.tsx`
+- **Consumers**: 49 consuming files updated across admin, forms, and public pages.
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
 
-### Batch 8: Booking, Cart & Checkout
-- **Target**: `components/booking/`
+### Batch 12: Public CMS Utilities (Completed)
+- **Target**: `components/cms/`
 - **Files**:
-  - `components/booking-payment.tsx`
-  - `components/booking-print-document.tsx`
-  - `components/cart-page.tsx`
-  - `components/checkout-page.tsx`
-  - `components/mobile-booking-shortcut.tsx`
+  - `components/cms-icons.tsx` $\rightarrow$ `components/cms/cms-icons.tsx`
+  - `components/cms-image.tsx` $\rightarrow$ `components/cms/cms-image.tsx`
+  - `components/cms-public-link.tsx` $\rightarrow$ `components/cms/cms-public-link.tsx`
+  - `components/promotion-card.tsx` $\rightarrow$ `components/cms/promotion-card.tsx`
+- **Consumers**: 6 consuming files updated.
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
+
+### Batch 13: Public CMS Content Pages & Shared Rich Text (Completed)
+- **Target**: `components/cms/` & `components/shared/`
+- **Files**:
+  - `components/about-page.tsx` $\rightarrow$ `components/cms/about-page.tsx`
+  - `components/information-page.tsx` $\rightarrow$ `components/cms/information-page.tsx`
+  - `components/information-page.css` $\rightarrow$ `components/cms/information-page.css`
+  - `components/rich-text-renderer.tsx` $\rightarrow$ `components/shared/rich-text-renderer.tsx`
+- **Consumers**: 8 consuming files updated (`extended-pages.tsx`, `hero-catalogue.ts`, `accessible-travel`, `egypt-travel-guide`, `website-cms-preview`, hotel preview, trip preview, hotel & tour detail pages).
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
+
+### Recommended Batch 14: Shared Public CTAs & Brand Utilities
+- **Target**: `components/shared/`
+- **Candidate Files**:
+  - `components/shared-help-cta.tsx` & `components/shared-help-cta.css` $\rightarrow$ `components/shared/shared-help-cta.tsx` & `.css`
+  - `components/language-selector.tsx` $\rightarrow$ `components/shared/language-selector.tsx`
+  - `components/event-request-form.tsx` $\rightarrow$ `components/shared/event-request-form.tsx`
+  - `components/enquiry-history-tracking.tsx` $\rightarrow$ `components/shared/enquiry-history-tracking.tsx`
+  - `components/social-icons.tsx` $\rightarrow$ `components/shared/social-icons.tsx`
+  - `components/sustainability-badge.tsx` $\rightarrow$ `components/shared/sustainability-badge.tsx`
+- **Risk Level**: **Low**. Self-contained UI components consumed by shell footer, header, and informational pages.
 
 ---
 

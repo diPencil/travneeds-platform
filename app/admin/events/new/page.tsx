@@ -15,7 +15,7 @@ import { invalidateEventsCarsCache, useDbEvents, normalizeEventRow } from '@/lib
 import { sanitizeEvent } from '@/lib/events'
 import { CURRENCY_OPTIONS, normalizeCurrency } from '@/lib/currency'
 import { ImageField } from '@/components/admin/image-field'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { events } from '@/data/content'
 import type { Event } from '@/data/types'
 import { InternationalPhoneInput } from '@/components/shared/international-phone-input'

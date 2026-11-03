@@ -2,15 +2,15 @@
 
 import Link from 'next/link'
 import { ArrowRight, ChevronDown } from 'lucide-react'
-import { EditorialHero } from './extended-pages'
-import { Breadcrumb, SiteShell } from './site'
-import { useLocale, tx } from './locale'
-import { useFaqHero } from './faq-hero-context'
+import { EditorialHero } from '@/components/extended-pages'
+import { Breadcrumb, SiteShell } from '@/components/site'
+import { useLocale, tx } from '@/components/locale'
+import { useFaqHero } from '@/components/faq-hero-context'
 import { originalInformationPage, type InformationPageId } from '@/lib/information-pages'
 import './information-page.css'
 import type { PublicPageContent } from '@/lib/page-sections'
 import { originalPageContent } from '@/lib/page-sections'
-import { CmsPublicLink } from './cms-public-link'
+import { CmsPublicLink } from '@/components/cms/cms-public-link'
 
 export function InformationPage({ id, pageContent }: { id: InformationPageId; pageContent?: PublicPageContent }) {
   return <SiteShell><InformationPageContent id={id} pageContent={pageContent} /></SiteShell>

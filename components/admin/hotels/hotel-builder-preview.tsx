@@ -16,7 +16,7 @@ import {
   Star,
   Users,
 } from 'lucide-react';
-import { RichTextRenderer } from '@/components/rich-text-renderer';
+import { RichTextRenderer } from '@/components/shared/rich-text-renderer';
 import { StatusPill } from '@/components/admin/admin-ui';
 import { ALL_LOCALES, LOCALE_LABELS, type Locale } from '@/lib/locale-config';
 import { formatPrice } from '@/components/locale';

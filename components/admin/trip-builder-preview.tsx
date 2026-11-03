@@ -1,6 +1,6 @@
 'use client'
 
-import { RichTextRenderer } from '@/components/rich-text-renderer'
+import { RichTextRenderer } from '@/components/shared/rich-text-renderer'
 
 import { useId, useState } from 'react'
 import { Dialog } from '@base-ui/react/dialog'

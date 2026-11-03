@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { AdminText } from './admin-ui'
 import { useAdminLocale } from './admin-locale'
-import { SharedSelect } from '../shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { useDbToursStatus } from '@/lib/tours-client'
 
 /**

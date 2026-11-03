@@ -9,7 +9,7 @@ import { useAdminLocale } from '@/components/admin/admin-locale'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
 import { useDbCars } from '@/lib/events-cars-client'
 import { cars } from '@/data/content'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { toast } from '@/components/admin/admin-toaster'
 import { carRequestStatusLabel, type CarRequestStatus, type StaffCarRequest } from '@/lib/car-request'
 

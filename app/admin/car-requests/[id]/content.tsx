@@ -12,7 +12,7 @@ import { useAdminLocale } from '@/components/admin/admin-locale'
 import { useDbCars } from '@/lib/events-cars-client'
 import { cars } from '@/data/content'
 import { phoneHref, whatsappHref } from '@/data/company'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import {
   canTransitionCarRequest,
   carActivityLabel,

@@ -11,7 +11,7 @@ import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-so
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { useAdminCurrency } from '@/components/admin/admin-currency'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { invalidateOffersBlogsCache, useDbOffersStatus } from '@/lib/offers-blogs-client'
 import { isPromoBar } from '@/lib/marketing-campaigns'
 import { toast } from '@/components/admin/admin-toaster'

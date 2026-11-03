@@ -5,7 +5,7 @@ import { Eye, FileText, Layers, Pencil, Send } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { Card, AdminStats, AdminTableTools, AdminTableWrap, AdminTableActions, AdminIconAction } from '@/components/admin/admin-ui'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import type { CmsPageDefinition } from '@/lib/cms-coverage'
 import { cmsSharedRegistry } from '@/lib/cms-coverage'
 type CmsPageRow = CmsPageDefinition & { statuses: { scope: string; mode: string; draft: boolean }[]; updatedAt: string | null; hasDraft: boolean; hasPublication: boolean }

@@ -8,7 +8,7 @@ import { Card, AdminStats, AdminTableTools, AdminTableWrap, AdminTableActions, A
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import { toast } from '@/components/admin/admin-toaster'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { SEO_PAGES, currentSeo, type SeoAction } from '@/lib/seo-manager'
 import { validateSeoContent, type SeoContent } from '@/lib/seo-content'
 import type { PageContentState } from '@/lib/page-sections'

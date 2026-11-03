@@ -10,7 +10,7 @@ import { AdminPagination, usePagination } from '@/components/admin/admin-paginat
 import { destinations } from '@/data/content'
 import { useDbDestinations } from '@/lib/catalogue-client'
 import { findTour } from '@/data/tours'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { tripRequestStatusLabel, type StaffTripRequest, type TripRequestStatus } from '@/lib/trip-request'
 
 const statusTabs = [

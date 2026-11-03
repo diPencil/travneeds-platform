@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { ArrowDown, ArrowUp, X } from 'lucide-react'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { CMS_STATIC_LINKS } from '@/lib/page-sections'
 
 type Option = { value: string; label: string; href: string }

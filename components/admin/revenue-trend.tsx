@@ -6,7 +6,7 @@ import { Card } from './admin-ui'
 import { AdminText } from './admin-ui'
 import { useAdminLocale } from './admin-locale'
 import { useAdminCurrency } from './admin-currency'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import type { RevenuePoint } from '@/lib/analytics'
 import { revenueRange } from '@/lib/revenue-periods'
 

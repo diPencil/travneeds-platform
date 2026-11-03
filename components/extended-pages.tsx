@@ -1,7 +1,7 @@
 'use client'
 import { EmptyFleetHero, EmptyOffersHero } from './empty-fleet-hero'
 import { carTripTypeForKey } from '@/lib/car-request'
-import { CmsPublicLink } from '@/components/cms-public-link'
+import { CmsPublicLink } from '@/components/cms/cms-public-link'
 
 import { usePresentation, PresentationSection, PresentationOrder, useSharedFaqs } from '@/components/presentation-content-context'
 
@@ -42,7 +42,7 @@ import { Breadcrumb, Heading, HelpCTA, Logo, PageShowcaseHero, SiteShell, TourCa
 import { LanguageSelector } from './language-selector'
 import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import { useCurrentUser } from '@/lib/use-current-user'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { telLink, whatsappLink } from '@/lib/phone'
 import { DateInput } from '@/components/shared/date-input'
 import { customerErrorText } from '@/lib/customer-error-copy'
@@ -72,7 +72,7 @@ export function ContentCard({ item, type = 'blog' }: { item: Blog | Event | Offe
   return <article className="content-card"><Link href={href} className="content-image"><img src={item.image} alt={item.title}/>{badge && <b>{badge}</b>}</Link><div className="content-card-body">{meta && <small>{meta}</small>}<h3><Link href={href}>{item.title}</Link></h3><p>{description}</p><Link className="text-link" href={href}>{tx(locale, { en: 'Read more', es: 'Leer más', it: 'Leggi di più', ar: 'اقرأ المزيد' })} <ArrowRight size={15}/></Link></div></article>
 }
 
-export { AboutPage } from './about-page'
+export { AboutPage } from './cms/about-page'
 
 export function ContactPage() {
   return <SiteShell><ContactPageContent /></SiteShell>

@@ -1,6 +1,6 @@
 'use client'
-import { CmsPublicLink } from '@/components/cms-public-link'
-import { CmsImage } from '@/components/cms-image'
+import { CmsPublicLink } from '@/components/cms/cms-public-link'
+import { CmsImage } from '@/components/cms/cms-image'
 
 import { usePresentation, PresentationSection, PresentationOrder } from '@/components/presentation-content-context'
 

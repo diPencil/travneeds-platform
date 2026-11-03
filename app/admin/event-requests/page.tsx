@@ -8,7 +8,7 @@ import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-so
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
 import { eventDisplayTitle, eventRequestStatusLabel, type EventRequestStatus, type StaffEventRequest } from '@/lib/event-request'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 
 const statusTabs = [
   { id: 'all', en: 'All', ar: 'الكل' },

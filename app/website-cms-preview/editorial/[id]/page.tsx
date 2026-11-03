@@ -7,7 +7,7 @@ import { FaqHeroProvider } from '@/components/faq-hero-context'
 import { InitialLocaleProvider, LocaleProvider } from '@/components/locale'
 import { sanitizeLocale } from '@/lib/locale-config'
 import { isEditorialHeroId, originalEditorialHero } from '@/lib/editorial-hero-definitions'
-import { InformationPage } from '@/components/information-page'
+import { InformationPage } from '@/components/cms/information-page'
 import { isInformationPageId } from '@/lib/information-pages'
 export const metadata = { robots: { index: false, follow: false, nocache: true } }
 export default async function Preview({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ locale?: string }> }) {

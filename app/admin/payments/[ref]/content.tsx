@@ -9,7 +9,7 @@ import { useAdminLocale } from '@/components/admin/admin-locale'
 import { formatCurrency, TOUR_BOOKING_CURRENCY } from '@/lib/currency'
 import { toast } from '@/components/admin/admin-toaster'
 import { useCurrentUser } from '@/lib/use-current-user'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { paymentActivityLabel, paymentStatusLabel, type StaffPayment } from '@/lib/payment'
 
 async function apiStaffPaymentDetail(reference: string): Promise<StaffPayment> {

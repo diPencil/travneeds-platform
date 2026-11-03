@@ -22,7 +22,7 @@ import { TourLocationMap } from "./tour-detail"
 import { useDbDestinations } from '@/lib/catalogue-client'
 import { DateInput } from "@/components/shared/date-input"
 import { localizePublicTour } from '@/lib/tour-public-locale'
-import { RichTextRenderer } from '@/components/rich-text-renderer'
+import { RichTextRenderer } from '@/components/shared/rich-text-renderer'
 
 type GalleryImage = { src: string; alt: string }
 

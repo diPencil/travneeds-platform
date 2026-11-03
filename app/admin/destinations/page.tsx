@@ -11,7 +11,7 @@ import { AdminPagination, usePagination } from '@/components/admin/admin-paginat
 import { invalidateCatalogueCache, useDbDestinationsStatus } from '@/lib/catalogue-client'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import { toast } from '@/components/admin/admin-toaster'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { useCurrentUser } from '@/lib/use-current-user'
 
 export default function DestinationsPage() {

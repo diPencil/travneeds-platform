@@ -18,7 +18,7 @@ import { slugify } from '@/lib/admin-store'
 import { useDbOffers, invalidateOffersBlogsCache } from '@/lib/offers-blogs-client'
 import { useDbToursStatus, invalidateToursCache } from '@/lib/tours-client'
 import { ImageField } from '@/components/admin/image-field'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import type { Offer } from '@/data/types'
 import { DateInput } from '@/components/shared/date-input'
 

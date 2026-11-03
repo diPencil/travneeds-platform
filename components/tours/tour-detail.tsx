@@ -23,7 +23,7 @@ import { localizePublicTour, tourDisplayText } from '@/lib/tour-public-locale'
 import type { TourTranslations } from '@/lib/tour-translations'
 import { DateInput } from "@/components/shared/date-input"
 import { isLocaleRTL, pickLocaleText, type Locale } from '@/lib/locale-config'
-import { RichTextRenderer } from '@/components/rich-text-renderer'
+import { RichTextRenderer } from '@/components/shared/rich-text-renderer'
 import { stripHtmlToPlainText } from '@/lib/rich-text'
 
 const arabicUi: Record<string, string> = {

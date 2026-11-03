@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react'
 import { AdminConfirmDialog } from './admin-confirm-dialog'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { FAQ_HERO_DESTINATIONS, type EditorialSection } from '@/lib/faq-hero'
 import { ENABLED_LOCALES, type EnabledLocale } from '@/lib/locale-config'
 

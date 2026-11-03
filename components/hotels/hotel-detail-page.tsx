@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { SiteShell, Breadcrumb, HelpCTA } from '@/components/site';
 import { DateInput } from '@/components/shared/date-input';
-import { RichTextRenderer } from '@/components/rich-text-renderer';
+import { RichTextRenderer } from '@/components/shared/rich-text-renderer';
 import { formatPrice, tx, useLocale } from '@/components/locale';
 import { useCustomerFavorites } from '@/lib/customer-account';
 import { RoomSelectionCard } from './room-selection-card';

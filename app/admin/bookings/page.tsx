@@ -9,7 +9,7 @@ import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-so
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { formatCurrency } from '@/lib/currency'
 import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
-import { SharedSelect } from '@/components/shared-select'
+import { SharedSelect } from '@/components/shared/shared-select'
 import { type BookingStatus, type StaffBooking } from '@/lib/booking'
 
 const statusTabs = [

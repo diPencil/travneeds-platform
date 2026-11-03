@@ -1,5 +1,5 @@
 'use client'
-import { CmsPublicLink } from '@/components/cms-public-link'
+import { CmsPublicLink } from '@/components/cms/cms-public-link'
 
 import { usePresentation, PresentationSection, PresentationOrder } from '@/components/presentation-content-context'
 
@@ -11,7 +11,7 @@ import { placedOffers, readCampaign, resolveTourCtaHref, safeCampaignHref, type 
 import { useDbTours } from '@/lib/tours-client'
 import { catalogTours } from '@/data/tours'
 import { isOfferActive, offerHref } from '@/lib/special-offers'
-import { PromotionCard, usePromotionCountdown } from './promotion-card'
+import { PromotionCard, usePromotionCountdown } from '@/components/cms/promotion-card'
 import { AskQuestionButton } from '@/components/shared/ask-question'
 import { SiteShell } from './site'
 import { formatPrice, tx, useLocale } from './locale'
