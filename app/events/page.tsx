@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { pageContentMetadata } from '@/lib/server/page-content-metadata'
-import { ServerShowcaseHero } from '@/components/server-showcase-hero'
+import { ServerShowcaseHero } from '@/components/cms/server-showcase-hero'
 import { EventsPage } from '@/components/extended-pages'
 import { getSiteUrl, getHreflangEntries } from '@/lib/seo'
 

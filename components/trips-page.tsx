@@ -12,7 +12,7 @@ import { Breadcrumb, HelpCTA, SiteShell, TourCard } from '@/components/site'
 import { SharedSelect } from '@/components/shared/shared-select'
 import { formatPrice, tx, useLocale } from '@/components/locale'
 import { useDbTours } from '@/lib/tours-client'
-import { useShowcaseHero } from './showcase-hero-context'
+import { useShowcaseHero } from '@/components/cms/showcase-hero-context'
 
 const categories = Object.keys(tourCategories) as TourCategory[]
 const durations = ['day', 'short', 'long'] as const

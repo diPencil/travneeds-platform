@@ -3,7 +3,7 @@ import { currencyChoices } from '@/lib/currency'
 
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { PublicAppearancePortal } from './public-appearance'
+import { PublicAppearancePortal } from '@/components/cms/public-appearance'
 import { Globe2, X } from 'lucide-react'
 import { tx, useLocale, type Currency, type Locale } from './locale'
 import { ALL_LOCALES, LOCALE_LABELS, LOCALE_SHORT_LABELS } from '@/lib/locale-config'

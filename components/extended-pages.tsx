@@ -47,7 +47,7 @@ import { telLink, whatsappLink } from '@/lib/phone'
 import { DateInput } from '@/components/shared/date-input'
 import { customerErrorText } from '@/lib/customer-error-copy'
 import { useFaqHero } from '@/components/cms/faq-hero-context'
-import { useShowcaseHero } from './showcase-hero-context'
+import { useShowcaseHero } from '@/components/cms/showcase-hero-context'
 
 export function EditorialHero({ eyebrow, title, copy, image = siteImages.pyramids, action = 'Explore with us', href = '/all-tours/one-day-tours' }: { eyebrow?: string; title: string; copy: string; image?: string; action?: string; href?: string }) {
   const state = useFaqHero()

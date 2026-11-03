@@ -22,7 +22,7 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 
 ## 2. Complete Remaining Component Inventory & Classification
 
-### A. Root `components/` Directory (29 Files Remaining directly in root)
+### A. Root `components/` Directory (24 Files Remaining directly in root)
 
 | Current File | Domain | Responsibility | Importing Files | Target Location | Risk |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -65,11 +65,11 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`presentation-content-context.tsx`** | CMS | Presentation translations | `extended-pages.tsx` | `components/cms/` | Low |
 | **`promo-bar-icons.tsx`** | CMS | Top banner promo icons | `site.tsx` | `components/cms/` (Completed in Batch 15) | Low |
 | **`promotion-card.tsx`** | CMS | Promotional visual card | `homepage.tsx` | `components/cms/` (Completed in Batch 12) | Low |
-| **`public-appearance.tsx`** | CMS | Custom theme injection | `site.tsx` | `components/cms/` | Low |
-| **`server-showcase-hero.tsx`** | CMS | SSR showcase hero banner | CMS routes | `components/cms/` | Low |
-| **`server-template-preview.tsx`** | CMS | SSR CMS template preview | CMS preview routes | `components/cms/` | Low |
-| **`showcase-hero-context.tsx`** | CMS | Showcase hero context | CMS routes | `components/cms/` | Low |
-| **`showcase-hero-preview.tsx`** | CMS | Client showcase preview | CMS preview | `components/cms/` | Low |
+| **`public-appearance.tsx`** | CMS | Custom theme injection | `site.tsx`, `layout.tsx` | `components/cms/` (Completed in Batch 16) | Low |
+| **`server-showcase-hero.tsx`** | CMS | SSR showcase hero banner | CMS routes | `components/cms/` (Completed in Batch 16) | Low |
+| **`server-template-preview.tsx`** | CMS | SSR CMS template preview | CMS preview routes | `components/cms/` (Completed in Batch 16) | Low |
+| **`showcase-hero-context.tsx`** | CMS | Showcase hero context | CMS routes | `components/cms/` (Completed in Batch 16) | Low |
+| **`showcase-hero-preview.tsx`** | CMS | Client showcase preview | CMS preview | `components/cms/` (Completed in Batch 16) | Low |
 | **`extended-pages.tsx`** | CMS | Static content page aggregator | Route wrappers | `components/` (Root) | High |
 | **`about-page.tsx`** | CMS | About Us presentation page | `/about/page.tsx` | `components/cms/` (Completed in Batch 13) | Low |
 | **`ask-question.tsx`** | Shared | Ask a Question modal & trigger | `day-tour-detail.tsx`, `tour-detail.tsx` | `components/shared/` (Completed in Batch 10) | Low |
@@ -203,17 +203,29 @@ flowchart TD
 - **Consumers**: 10 consuming files updated across App Router routes (`/privacy`, `/terms`, `/faq`, `/destinations`, `/accessible-travel`, `/egypt-travel-guide`, CMS preview routes), `extended-pages.tsx`, `homepage.tsx`, `trips-page.tsx`, `promo-bar-fields.tsx`, `globals.css`, and `hero-catalogue.ts`.
 - **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
 
-### Recommended Batch 16: Public CMS Showcase Heroes & Page Section Renderers
-- **Target**: `components/cms/` & `components/shared/`
+### Batch 16: Public CMS Showcase & Preview Components (Completed)
+- **Target**: `components/cms/`
+- **Files**:
+  - `components/server-showcase-hero.tsx` $\rightarrow$ `components/cms/server-showcase-hero.tsx`
+  - `components/server-template-preview.tsx` $\rightarrow$ `components/cms/server-template-preview.tsx`
+  - `components/showcase-hero-context.tsx` $\rightarrow$ `components/cms/showcase-hero-context.tsx`
+  - `components/showcase-hero-preview.tsx` $\rightarrow$ `components/cms/showcase-hero-preview.tsx`
+  - `components/public-appearance.tsx` $\rightarrow$ `components/cms/public-appearance.tsx`
+- **Protected / Excluded**: `public-search-page.tsx` and `staff-preview-bootstrap.tsx` were kept untouched per batch guardrails.
+- **Consumers**: 21 consuming files + 2 internal files updated across App Router routes (`/about`, `/all-tours/**`, `/blogs`, `/contact`, `/events`, `/rent-car`, `/special-offers`, `/trips`, `/website-cms-preview/**`, `layout.tsx`), `extended-pages.tsx`, `site.tsx`, `trips-page.tsx`, `destination-builder-preview.tsx`, `language-selector.tsx`, `reviews.tsx`, and `gallery-lightbox.tsx`.
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
+
+### Recommended Batch 17: Layout Brand Identity & Navigation Helpers
+- **Target**: `components/layout/`
 - **Candidate Files**:
-  - `components/server-showcase-hero.tsx` $\rightarrow$ `components/cms/`
-  - `components/server-template-preview.tsx` $\rightarrow$ `components/cms/`
-  - `components/showcase-hero-context.tsx` $\rightarrow$ `components/cms/`
-  - `components/showcase-hero-preview.tsx` $\rightarrow$ `components/cms/`
-  - `components/public-appearance.tsx` $\rightarrow$ `components/cms/`
-  - `components/public-search-page.tsx` $\rightarrow$ `components/shared/`
-  - `components/staff-preview-bootstrap.tsx` $\rightarrow$ `components/shared/`
-- **Risk Level**: **Low**. Self-contained CMS hero renderers and shared preview bootstrap.
+  - `components/brand-context.tsx` $\rightarrow$ `components/layout/`
+  - `components/brand-favicon.tsx` $\rightarrow$ `components/layout/`
+  - `components/brand-icons.tsx` $\rightarrow$ `components/layout/`
+  - `components/brand-mark.tsx` $\rightarrow$ `components/layout/`
+  - `components/header-search.tsx` $\rightarrow$ `components/layout/`
+  - `components/navigation-context.tsx` $\rightarrow$ `components/layout/`
+  - `components/notification-panel.tsx` & `.module.css` $\rightarrow$ `components/layout/`
+- **Risk Level**: **Low to Medium**. Layout identity and search helpers consumed primarily by `site.tsx` and root layout.
 
 ---
 

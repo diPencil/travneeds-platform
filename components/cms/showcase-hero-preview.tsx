@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState, type ReactNode } from 'react'
-import { InitialLocaleProvider, LocaleProvider } from './locale'
+import { InitialLocaleProvider, LocaleProvider } from '@/components/locale'
 import { ShowcaseHeroProvider } from './showcase-hero-context'
 import { readShowcasePreviewMessage, type ShowcaseHero, type ShowcaseHeroId } from '@/lib/showcase-heroes'
 import type { Locale } from '@/lib/locale-config'

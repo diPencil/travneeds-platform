@@ -17,7 +17,7 @@ import { PresentationProvider } from '@/components/presentation-content-context'
 import { getSetting } from '@/lib/server/settings'
 import { getGlobalSeo } from '@/lib/server/global-seo'
 import { readPublishedAppearance } from '@/lib/server/website-appearance'
-import { PublicAppearance } from '@/components/public-appearance'
+import { PublicAppearance } from '@/components/cms/public-appearance'
 import { getTrackingSettings } from '@/lib/server/tracking'
 import {
   buildGtmIntegrationSnippet,

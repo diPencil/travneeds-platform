@@ -1,4 +1,4 @@
-import { AboutPage, ContactPage, CarsPage, DestinationsPage, BlogsPage, OffersPage, BlogDetailPage, DestinationDetailPage, EventDetailPage } from './extended-pages'
+import { AboutPage, ContactPage, CarsPage, DestinationsPage, BlogsPage, OffersPage, BlogDetailPage, DestinationDetailPage, EventDetailPage } from '@/components/extended-pages'
 import { CampaignDetail } from '@/components/cms/offer-campaigns'
 import { ServerShowcaseHero } from './server-showcase-hero'
 import { FaqHeroProvider } from '@/components/cms/faq-hero-context'
@@ -8,7 +8,7 @@ import { getPublishedDbBlogs } from '@/lib/server/blogs'
 import { getPublishedDbOffers } from '@/lib/server/offers'
 import { db } from '@/lib/server/db'
 import type { TemplatePageId } from '@/lib/template-presentation'
-import { SiteShell, HelpCTA } from './site'
+import { SiteShell, HelpCTA } from '@/components/site'
 
 export async function ServerTemplatePreview({ id }: { id: TemplatePageId }) {
   if (id === 'shared') return <SiteShell><main className="section container"><HelpCTA /></main></SiteShell>
