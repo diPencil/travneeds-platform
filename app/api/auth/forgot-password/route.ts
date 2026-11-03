@@ -56,10 +56,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   }
 
-  // Send reset email. The raw token travels ONLY inside the
+  // Send reset or activation email. The raw token travels ONLY inside the
   // email link; it is never returned in any API response.
-  const { token, userId } = result;
-  const resetUrl = `${new URL(request.url).origin}/reset-password?token=${encodeURIComponent(token)}`;
+  const { token, userId, isPending } = result;
+  const baseUrl = new URL(request.url).origin;
+  const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
 
   const user = await db.user.findUnique({
     where: { id: userId },
@@ -72,10 +73,18 @@ export async function POST(request: Request) {
   // No idempotency key: password-reset emails must be
   // re-requestable, and we must not persist any token material.
   // Rate limiting above bounds how often this can fire.
-  await sendCustomerEmailSafe('password_reset', email, {
-    name,
-    resetUrl,
-  });
+  if (isPending) {
+    await sendCustomerEmailSafe('account_setup', email, {
+      name,
+      reference: 'Your Account',
+      setupUrl: resetUrl,
+    });
+  } else {
+    await sendCustomerEmailSafe('password_reset', email, {
+      name,
+      resetUrl,
+    });
+  }
 
   return NextResponse.json({ success: true });
 }

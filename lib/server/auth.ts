@@ -147,15 +147,15 @@ export type ResetTokenFailureReason =
 
 export async function createPasswordResetToken(
   email: string,
-): Promise<{ token: string; userId: string } | { failure: 'not-found' }> {
+): Promise<{ token: string; userId: string; isPending: boolean } | { failure: 'not-found' }> {
   const normalized = normalizeEmail(email);
   const user = await db.user.findUnique({
     where: { emailNormalized: normalized },
     select: { id: true, status: true },
   });
-  // Prevent account enumeration: always return success shape.
-  // Token is only created if user exists and is active.
-  if (!user || user.status !== 'ACTIVE') {
+  // Prevent account enumeration: always return generic failure shape for missing or suspended users.
+  // Both ACTIVE accounts and PENDING (unactivated guest checkout) accounts can request a reset/setup token.
+  if (!user || user.status === 'SUSPENDED') {
     return { failure: 'not-found' };
   }
   const rawToken = generateOpaqueToken(RESET_TOKEN_BYTES);
@@ -165,11 +165,11 @@ export async function createPasswordResetToken(
     data: {
       tokenHash,
       userId: user.id,
-      type: SetupTokenType.PASSWORD_RESET,
+      type: user.status === 'PENDING' ? SetupTokenType.PASSWORD_SETUP : SetupTokenType.PASSWORD_RESET,
       expiresAt,
     },
   });
-  return { token: rawToken, userId: user.id };
+  return { token: rawToken, userId: user.id, isPending: user.status === 'PENDING' };
 }
 
 export async function validatePasswordResetToken(
@@ -208,7 +208,7 @@ export async function consumePasswordResetToken(
         status: 'ACTIVE',
         emailVerifiedAt: new Date(),
       },
-      select: { email: true, id: true },
+      select: { email: true, emailNormalized: true, id: true },
     });
 
     await tx.accountSetupToken.update({
@@ -219,15 +219,18 @@ export async function consumePasswordResetToken(
     // Revoke all existing sessions for this user on password update
     await tx.session.deleteMany({ where: { userId } });
 
-    // Link any guest bookings for this customer's email
+    // Link any guest bookings for this customer's email (checking both raw and normalized)
+    const emailsToMatch = Array.from(
+      new Set([user.email, user.emailNormalized].filter((e): e is string => Boolean(e))),
+    );
     const guestBookings = await tx.booking.findMany({
-      where: { contactEmail: user.email, userId: null },
+      where: { contactEmail: { in: emailsToMatch }, userId: null },
       select: { reference: true },
     });
 
     if (guestBookings.length > 0) {
       await tx.booking.updateMany({
-        where: { contactEmail: user.email, userId: null },
+        where: { contactEmail: { in: emailsToMatch }, userId: null },
         data: { userId: user.id },
       });
     }

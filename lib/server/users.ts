@@ -226,53 +226,70 @@ export async function createGuestCustomerPendingUser(
   const tokenHash = hashToken(rawToken);
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour token validity
 
-  const row = await db.$transaction(async (tx) => {
-    const newUser = await tx.user.create({
-      data: {
-        email,
-        emailNormalized: normalized,
-        firstName,
-        lastName,
-        username: candidateUsername,
-        phone: input.phone ? normalizePhone(input.phone) : null,
-        status: 'PENDING',
-        roles: {
-          create: {
-            assignedBy: 'guest-checkout-auto-register',
-            role: { connect: { key: 'CUSTOMER' } },
+  try {
+    const row = await db.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          email,
+          emailNormalized: normalized,
+          firstName,
+          lastName,
+          username: candidateUsername,
+          phone: input.phone ? normalizePhone(input.phone) : null,
+          status: 'PENDING',
+          roles: {
+            create: {
+              assignedBy: 'guest-checkout-auto-register',
+              role: { connect: { key: 'CUSTOMER' } },
+            },
           },
         },
-      },
-      select: publicSelect,
+        select: publicSelect,
+      });
+
+      await tx.accountSetupToken.create({
+        data: {
+          tokenHash,
+          userId: newUser.id,
+          type: SetupTokenType.PASSWORD_SETUP,
+          expiresAt,
+        },
+      });
+
+      return newUser;
     });
 
-    await tx.accountSetupToken.create({
-      data: {
-        tokenHash,
-        userId: newUser.id,
-        type: SetupTokenType.PASSWORD_SETUP,
-        expiresAt,
+    const baseSiteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://travneeds.com';
+    const setupUrl = `${baseSiteUrl.replace(/\/+$/, '')}/verify-account?token=${encodeURIComponent(rawToken)}`;
+
+    await sendCustomerEmailSafe(
+      'account_setup',
+      email,
+      {
+        name: input.name,
+        reference: input.bookingReference,
+        setupUrl,
       },
-    });
+      { relatedReference: input.bookingReference, idempotencyKey: `account_setup:${input.bookingReference}` },
+    ).catch(() => undefined);
 
-    return newUser;
-  });
-
-  const baseSiteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://travneeds.com';
-  const setupUrl = `${baseSiteUrl.replace(/\/+$/, '')}/verify-account?token=${encodeURIComponent(rawToken)}`;
-
-  await sendCustomerEmailSafe(
-    'account_setup',
-    email,
-    {
-      name: input.name,
-      reference: input.bookingReference,
-      setupUrl,
-    },
-    { relatedReference: input.bookingReference, idempotencyKey: `account_setup:${input.bookingReference}` },
-  ).catch(() => undefined);
-
-  return { user: toPublicUser(row), token: rawToken, created: true };
+    return { user: toPublicUser(row), token: rawToken, created: true };
+  } catch (error) {
+    const code =
+      typeof error === 'object' && error !== null
+        ? (error as { code?: unknown }).code
+        : undefined;
+    if (code === 'P2002') {
+      const existingNow = await db.user.findUnique({
+        where: { emailNormalized: normalized },
+        select: publicSelect,
+      });
+      if (existingNow) {
+        return { user: toPublicUser(existingNow), token: null, created: false };
+      }
+    }
+    throw error;
+  }
 }
 
 export async function updateCustomerIdentity(

@@ -769,19 +769,23 @@ export async function createBookingRecord(
         guestAccessUrl: userId === null ? detailUrl : null,
       };
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      const code =
+        typeof error === 'object' && error !== null
+          ? (error as { code?: unknown }).code
+          : undefined;
+      if (code === 'P2002' && draft.idempotencyKey) {
         // Idempotency-key race: another request won  -  return the winner.
-        const target = (error.meta?.target as string[] | undefined) ?? [];
-        if (target.includes('idempotencyKey')) {
-          const winner = await db.booking.findUnique({
-            where: { idempotencyKey: draft.idempotencyKey },
-            include: rowInclude,
-          });
-          if (winner) {
-            assertReplayOwnership(winner);
-            return { booking: toCustomerView(winner), created: false, guestAccessUrl: null };
-          }
+        const winner = await db.booking.findUnique({
+          where: { idempotencyKey: draft.idempotencyKey },
+          include: rowInclude,
+        });
+        if (winner) {
+          assertReplayOwnership(winner);
+          return { booking: toCustomerView(winner), created: false, guestAccessUrl: null };
         }
+      }
+      if (code === 'P2002') {
+        // Reference collision race: retry minting candidate reference
         lastError = error;
         continue;
       }
