@@ -38,6 +38,9 @@ export async function POST(request: Request) {
   const confirmPassword = typeof (body as { confirmPassword?: unknown }).confirmPassword === 'string'
     ? (body as { confirmPassword: string }).confirmPassword
     : '';
+  const claimToken = typeof (body as { claimToken?: unknown }).claimToken === 'string'
+    ? (body as { claimToken: string }).claimToken
+    : undefined;
   const ipAddress = requestIp(request);
 
   if (!token) {
@@ -90,7 +93,7 @@ export async function POST(request: Request) {
   }
 
   // Consume token and update password.
-  const result = await consumePasswordResetToken(token, password);
+  const result = await consumePasswordResetToken(token, password, claimToken);
   if ('failure' in result) {
     const message =
       result.failure === 'expired'

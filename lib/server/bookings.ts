@@ -860,6 +860,74 @@ export async function getCustomerBooking(
 }
 
 /**
+ * Claim an unlinked guest booking into an authenticated customer account.
+ * Requires BOTH proof of control of the booking's private guest access bearer
+ * token AND a verified customer account whose email matches the booking contact.
+ */
+export async function claimGuestBooking(
+  userId: string,
+  guestToken: string,
+): Promise<{ success: true; reference: string } | { failure: 'invalid-token' | 'already-claimed' | 'email-mismatch' }> {
+  let reference: string;
+  try {
+    const resolved = await resolveGuestBookingToken(guestToken);
+    reference = resolved.reference;
+  } catch {
+    return { failure: 'invalid-token' };
+  }
+
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true, emailNormalized: true, status: true },
+  });
+  if (!user || user.status === 'SUSPENDED') {
+    return { failure: 'invalid-token' };
+  }
+
+  const emailsToMatch = Array.from(
+    new Set([user.email, user.emailNormalized].filter((e): e is string => Boolean(e))),
+  );
+
+  const result = await db.$transaction(async (tx) => {
+    const booking = await tx.booking.findUnique({
+      where: { reference },
+      select: { id: true, reference: true, userId: true, contactEmail: true },
+    });
+    if (!booking) return { failure: 'invalid-token' as const };
+    if (booking.userId) {
+      if (booking.userId === user.id) return { success: true as const, reference };
+      return { failure: 'already-claimed' as const };
+    }
+    if (!emailsToMatch.includes(booking.contactEmail)) {
+      return { failure: 'email-mismatch' as const };
+    }
+
+    await tx.booking.update({
+      where: { reference },
+      data: { userId: user.id },
+    });
+
+    await tx.bookingActivity.create({
+      data: {
+        bookingId: booking.id,
+        actorRole: 'customer',
+        action: 'Booking claimed',
+        note: `Claimed by user ${user.id} via verified guest credential`,
+        isInternal: true,
+      },
+    });
+
+    return { success: true as const, reference };
+  });
+
+  if ('success' in result) {
+    await revokeGuestBookingTokens(reference).catch(() => undefined);
+  }
+
+  return result;
+}
+
+/**
  * Guest booking read, authorised ONLY by a valid access token.
  *
  * The reference is derived from the token server-side; it is never accepted

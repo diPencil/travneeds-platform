@@ -187,11 +187,12 @@ export async function validatePasswordResetToken(
   return { userId: record.userId };
 }
 
-import { revokeGuestBookingTokens } from './booking-access';
+import { revokeGuestBookingTokens, resolveGuestBookingToken } from './booking-access';
 
 export async function consumePasswordResetToken(
   token: string,
   newPassword: string,
+  claimToken?: string,
 ): Promise<{ success: true } | { failure: ResetTokenFailureReason }> {
   const validation = await validatePasswordResetToken(token);
   if ('failure' in validation) return { failure: validation.failure };
@@ -219,23 +220,79 @@ export async function consumePasswordResetToken(
     // Revoke all existing sessions for this user on password update
     await tx.session.deleteMany({ where: { userId } });
 
-    // Link any guest bookings for this customer's email (checking both raw and normalized)
     const emailsToMatch = Array.from(
       new Set([user.email, user.emailNormalized].filter((e): e is string => Boolean(e))),
     );
-    const guestBookings = await tx.booking.findMany({
-      where: { contactEmail: { in: emailsToMatch }, userId: null },
-      select: { reference: true },
+
+    // Safe booking linking:
+    // 1. Link the specific booking that initiated this user's auto-registration
+    const autoRegisteredActivities = await tx.bookingActivity.findMany({
+      where: {
+        action: 'guest_pending_user_created',
+        note: user.id,
+      },
+      select: {
+        booking: {
+          select: { id: true, reference: true, contactEmail: true, userId: true },
+        },
+      },
     });
 
-    if (guestBookings.length > 0) {
-      await tx.booking.updateMany({
-        where: { contactEmail: { in: emailsToMatch }, userId: null },
-        data: { userId: user.id },
-      });
+    const candidateRefs = new Set<string>();
+    for (const act of autoRegisteredActivities) {
+      if (
+        act.booking &&
+        act.booking.userId === null &&
+        emailsToMatch.includes(act.booking.contactEmail)
+      ) {
+        candidateRefs.add(act.booking.reference);
+      }
     }
 
-    return guestBookings.map((b) => b.reference);
+    // 2. Link any booking verified via provided guest access token (claim credential)
+    if (claimToken && typeof claimToken === 'string') {
+      try {
+        const resolved = await resolveGuestBookingToken(claimToken);
+        const claimed = await tx.booking.findUnique({
+          where: { reference: resolved.reference },
+          select: { reference: true, contactEmail: true, userId: true },
+        });
+        if (
+          claimed &&
+          claimed.userId === null &&
+          emailsToMatch.includes(claimed.contactEmail)
+        ) {
+          candidateRefs.add(claimed.reference);
+        }
+      } catch {
+        // Invalid claim token does not abort password setup, but links nothing
+      }
+    }
+
+    const linkedBookingRefs = Array.from(candidateRefs);
+    if (linkedBookingRefs.length > 0) {
+      await tx.booking.updateMany({
+        where: { reference: { in: linkedBookingRefs }, userId: null },
+        data: { userId: user.id },
+      });
+
+      for (const ref of linkedBookingRefs) {
+        const b = await tx.booking.findUnique({ where: { reference: ref }, select: { id: true } });
+        if (b) {
+          await tx.bookingActivity.create({
+            data: {
+              bookingId: b.id,
+              actorRole: 'system',
+              action: 'Booking linked',
+              note: `Linked to verified customer account (${user.id})`,
+              isInternal: true,
+            },
+          });
+        }
+      }
+    }
+
+    return linkedBookingRefs;
   });
 
   // Revoke temporary guest tokens for linked bookings

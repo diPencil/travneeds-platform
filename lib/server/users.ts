@@ -256,11 +256,23 @@ export async function createGuestCustomerPendingUser(
         },
       });
 
+      if (input.bookingReference) {
+        await tx.bookingActivity.create({
+          data: {
+            booking: { connect: { reference: input.bookingReference } },
+            actorRole: 'system',
+            action: 'guest_pending_user_created',
+            note: newUser.id,
+            isInternal: true,
+          },
+        });
+      }
+
       return newUser;
     });
 
     const baseSiteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://travneeds.com';
-    const setupUrl = `${baseSiteUrl.replace(/\/+$/, '')}/verify-account?token=${encodeURIComponent(rawToken)}`;
+    const setupUrl = `${baseSiteUrl.replace(/\/+$/, '')}/verify-account?token=${encodeURIComponent(rawToken)}${input.bookingReference ? `&ref=${encodeURIComponent(input.bookingReference)}` : ''}`;
 
     await sendCustomerEmailSafe(
       'account_setup',
