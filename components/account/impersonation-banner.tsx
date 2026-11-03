@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { LogOut } from 'lucide-react'
 import { readImpersonation, stopImpersonation, type ImpersonatedCustomer } from '@/lib/admin-store'
 import { useStaffPreviewBookings } from '@/lib/staff-preview-client'
-import { useLocale, tx } from './locale'
+import { useLocale, tx } from '@/components/locale'
 
 /**
  * Banner shown while staff preview a customer's account.

@@ -22,7 +22,7 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 
 ## 2. Complete Remaining Component Inventory & Classification
 
-### A. Root `components/` Directory (24 Files Remaining directly in root)
+### A. Root `components/` Directory (6 Intentionally Retained Core Orchestrators & Localization Providers)
 
 | Current File | Domain | Responsibility | Importing Files | Target Location | Risk |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -34,25 +34,25 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`account-custom-trip.tsx`** | Account | Customer custom trip request list | `account-portal.tsx` | `components/account/` | Low |
 | **`account-event-requests.tsx`** | Account | Customer event requests list | `account-portal.tsx` | `components/account/` | Low |
 | **`authenticated-user.tsx`** | Account | React Context for logged-in user | `account/layout.tsx`, `account-portal.tsx` | `components/account/` | Low |
-| **`impersonation-banner.tsx`** | Account | Staff user impersonation notice | `extended-pages.tsx` | `components/account/` | Low |
+| **`impersonation-banner.tsx`** | Account | Staff user impersonation notice | `extended-pages.tsx` | `components/account/` (Completed in Batch 18) | Low |
 | **`booking-payment.tsx`** | Booking | Offline bank / Card payment panel | `account-portal.tsx`, `checkout-page.tsx`, `booking-print-document.tsx` | `components/booking/` | Med |
 | **`booking-print-document.tsx`** | Booking | Print preview for vouchers & invoices | `account-portal.tsx` | `components/booking/` | Low |
 | **`cart-page.tsx`** | Booking | Shopping cart view & checkout CTA | `/cart/page.tsx` | `components/booking/` | Low |
 | **`checkout-page.tsx`** | Booking | Checkout stepper & payment selection | `/checkout/page.tsx` | `components/booking/` | Med |
 | **`mobile-booking-shortcut.tsx`** | Booking | Sticky mobile bottom booking bar | `day-tour-detail.tsx`, `tour-detail.tsx` | `components/booking/` | Low |
-| **`trips-page.tsx`** | Tours | Public catalog & filtering | `/trips/page.tsx` | `components/tours/` | Med |
-| **`brand-context.tsx`** | Layout | Dynamic white-label branding | `site.tsx` | `components/layout/` | Med |
-| **`brand-favicon.tsx`** | Layout | Dynamic favicon tags | `layout.tsx` | `components/layout/` | Low |
-| **`brand-icons.tsx`** | Layout | Brand logo SVG icons | `site.tsx`, `brand-mark.tsx` | `components/layout/` | Low |
-| **`brand-mark.tsx`** | Layout | Brand identity header mark | `site.tsx` | `components/layout/` | Low |
-| **`header-search.tsx`** | Layout | Header autocomplete instant search | `site.tsx` | `components/layout/` | Med |
-| **`navigation-context.tsx`** | Layout | Navigation state & drawer toggle | `site.tsx` | `components/layout/` | Low |
-| **`navigation-menu.tsx`** & **`.css`** | Layout | Public primary header navigation | `site.tsx` | `components/layout/` | Med |
-| **`notification-panel.tsx`** & **`.module.css`** | Layout | Marketing notification drawer | `site.tsx` | `components/layout/` | Low |
-| **`site.tsx`** | Layout | Master public shell (Header/Footer) | 20+ pages | `components/layout/` | High (Retain or late) |
-| **`homepage.tsx`** | CMS | Home page composition | `/page.tsx` | `components/cms/` | Med |
-| **`homepage-hero.tsx`** | CMS | Interactive hero banner with search | `homepage.tsx` | `components/cms/` | Med |
-| **`homepage-hero-preview.tsx`** | CMS | Live hero preview renderer | `homepage-hero.tsx` | `components/cms/` | Low |
+| **`trips-page.tsx`** | Tours | Public catalog & filtering | `/trips/page.tsx` | `components/` (Intentionally Retained in root) | High |
+| **`brand-context.tsx`** | Layout | Dynamic white-label branding | `site.tsx`, `layout.tsx` | `components/layout/` (Completed in Batch 17) | Med |
+| **`brand-favicon.tsx`** | Layout | Dynamic favicon tags | `layout.tsx` | `components/layout/` (Completed in Batch 17) | Low |
+| **`brand-icons.tsx`** | Layout | Brand logo SVG icons | `settings/page.tsx`, `auth-pages.tsx` | `components/layout/` (Completed in Batch 17) | Low |
+| **`brand-mark.tsx`** | Layout | Brand identity header mark | `admin-shell.tsx`, `account-portal.tsx` | `components/layout/` (Completed in Batch 17) | Low |
+| **`header-search.tsx`** | Layout | Header autocomplete instant search | `site.tsx` | `components/layout/` (Completed in Batch 17) | Med |
+| **`navigation-context.tsx`** | Layout | Navigation state & drawer toggle | `site.tsx`, `layout.tsx` | `components/layout/` (Completed in Batch 17) | Low |
+| **`navigation-menu.tsx`** & **`.css`** | Layout | Public primary header navigation | `site.tsx` | `components/layout/` (Completed in Batch 18) | Med |
+| **`notification-panel.tsx`** & **`.module.css`** | Layout | Marketing notification drawer | `admin-shell.tsx`, `account-portal.tsx` | `components/layout/` (Completed in Batch 17) | Low |
+| **`site.tsx`** | Layout | Master public shell (Header/Footer) | 20+ pages | `components/` (Intentionally Retained in root) | High |
+| **`homepage.tsx`** | CMS | Home page composition | `/page.tsx` | `components/` (Intentionally Retained in root) | High |
+| **`homepage-hero.tsx`** | CMS | Interactive hero banner with search | `homepage.tsx` | `components/cms/` (Completed in Batch 19) | Med |
+| **`homepage-hero-preview.tsx`** | CMS | Live hero preview renderer | `homepage-hero.tsx` | `components/cms/` (Completed in Batch 19) | Low |
 | **`cms-additional-pages.tsx`** | CMS | Dynamic CMS page dispatcher | `extended-pages.tsx` | `components/cms/` (Completed in Batch 15) | Med |
 | **`cms-icons.tsx`** | CMS | SVG iconography for CMS sections | `page-visual-editor.tsx`, `extended-pages.tsx` | `components/cms/` (Completed in Batch 12) | Low |
 | **`cms-image.tsx`** | CMS | Adaptive image renderer | CMS pages | `components/cms/` (Completed in Batch 12) | Low |
@@ -61,8 +61,8 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`faq-hero-context.tsx`** | CMS | FAQ hero configuration context | `extended-pages.tsx` | `components/cms/` (Completed in Batch 15) | Low |
 | **`information-page.tsx`** & **`.css`** | CMS | Standard legal/informational layout | `extended-pages.tsx` | `components/cms/` (Completed in Batch 13) | Low |
 | **`offer-campaigns.tsx`** & **`campaigns.css`** | CMS | Special offer campaigns grid | `extended-pages.tsx` | `components/cms/` (Completed in Batch 15) | Low |
-| **`page-sections-context.tsx`** & **`.css`** | CMS | Page sections dynamic renderer | `extended-pages.tsx` | `components/cms/` | Low |
-| **`presentation-content-context.tsx`** | CMS | Presentation translations | `extended-pages.tsx` | `components/cms/` | Low |
+| **`page-sections-context.tsx`** & **`.css`** | CMS | Page sections dynamic renderer | `homepage.tsx` | `components/cms/` (Completed in Batch 18) | Low |
+| **`presentation-content-context.tsx`** | CMS | Presentation translations | `extended-pages.tsx`, `layout.tsx` | `components/cms/` (Completed in Batch 18) | Low |
 | **`promo-bar-icons.tsx`** | CMS | Top banner promo icons | `site.tsx` | `components/cms/` (Completed in Batch 15) | Low |
 | **`promotion-card.tsx`** | CMS | Promotional visual card | `homepage.tsx` | `components/cms/` (Completed in Batch 12) | Low |
 | **`public-appearance.tsx`** | CMS | Custom theme injection | `site.tsx`, `layout.tsx` | `components/cms/` (Completed in Batch 16) | Low |
@@ -70,7 +70,7 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`server-template-preview.tsx`** | CMS | SSR CMS template preview | CMS preview routes | `components/cms/` (Completed in Batch 16) | Low |
 | **`showcase-hero-context.tsx`** | CMS | Showcase hero context | CMS routes | `components/cms/` (Completed in Batch 16) | Low |
 | **`showcase-hero-preview.tsx`** | CMS | Client showcase preview | CMS preview | `components/cms/` (Completed in Batch 16) | Low |
-| **`extended-pages.tsx`** | CMS | Static content page aggregator | Route wrappers | `components/` (Root) | High |
+| **`extended-pages.tsx`** | CMS | Static content page aggregator | Route wrappers | `components/` (Intentionally Retained in root) | High |
 | **`about-page.tsx`** | CMS | About Us presentation page | `/about/page.tsx` | `components/cms/` (Completed in Batch 13) | Low |
 | **`ask-question.tsx`** | Shared | Ask a Question modal & trigger | `day-tour-detail.tsx`, `tour-detail.tsx` | `components/shared/` (Completed in Batch 10) | Low |
 | **`country-flag.tsx`** | Shared | Country flag SVG component | Country select | `components/ui/` (Completed in Batch 11A) | Low |
@@ -81,15 +81,15 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`gallery-lightbox.tsx`** & **`.css`** | Shared | Fullscreen image lightbox | Image galleries | `components/shared/` (Completed in Batch 10) | Low |
 | **`horizontal-slider.tsx`** | Shared | Accessible horizontal scroll slider | Tour & video carousels | `components/shared/` (Completed in Batch 10) | Low |
 | **`international-phone-input.tsx`** | Shared | Phone input with validation | Auth, checkout | `components/shared/` (Completed in Batch 11A) | Low |
-| **`language-selector.tsx`** | Shared | Locale selector dropdown | Header | `components/shared/` (or root) | Low |
+| **`language-selector.tsx`** | Shared | Locale selector dropdown | Header | `components/` (Intentionally Retained in root) | High |
 | **`live-chat.tsx`** | Shared | Live chat widget trigger | Shell | `components/shared/` (Completed in Batch 10) | Low |
-| **`locale.tsx`** | Shared | Locale context & formatters | Everywhere | `components/shared/` (or root) | High |
-| **`public-search-page.tsx`** | Shared | Global search results page | `/search/page.tsx` | `components/shared/` | Low |
+| **`locale.tsx`** | Shared | Locale context & formatters | Everywhere | `components/` (Intentionally Retained in root) | High |
+| **`public-search-page.tsx`** | Shared | Global search results page | `/search/page.tsx` | `components/shared/` (Completed in Batch 19) | Low |
 | **`rich-text-renderer.tsx`** | Shared | Sanitized rich text viewer | Content pages | `components/shared/` (Completed in Batch 13) | Low |
 | **`shared-help-cta.tsx`** & **`.css`** | Shared | Bottom CTA banner | Extended pages | `components/shared/` (Completed in Batch 14) | Low |
 | **`shared-select.tsx`** | Shared | Base UI custom select | Forms | `components/shared/` (Completed in Batch 11C) | Low |
 | **`social-icons.tsx`** | Shared | Social media SVGs | Footer | `components/shared/` (Completed in Batch 14) | Low |
-| **`staff-preview-bootstrap.tsx`** | Shared | Preview mode bootstrap | Admin preview | `components/shared/` | Low |
+| **`staff-preview-bootstrap.tsx`** | Admin | Preview mode bootstrap | Account layout | `components/admin/` (Completed in Batch 19) | Low |
 | **`sustainability-badge.tsx`** | Shared | Sustainability pledge pill | Footer | `components/shared/` (Completed in Batch 14) | Low |
 | **`whatsapp-chat.tsx`** | Shared | Floating WhatsApp button | Shell | `components/shared/` (Completed in Batch 10) | Low |
 | **`auth-pages.tsx`** | Auth | Login & registration views | `/login`, `/register` | `components/auth/` (Completed in Batch 9) | Med |
@@ -215,21 +215,109 @@ flowchart TD
 - **Consumers**: 21 consuming files + 2 internal files updated across App Router routes (`/about`, `/all-tours/**`, `/blogs`, `/contact`, `/events`, `/rent-car`, `/special-offers`, `/trips`, `/website-cms-preview/**`, `layout.tsx`), `extended-pages.tsx`, `site.tsx`, `trips-page.tsx`, `destination-builder-preview.tsx`, `language-selector.tsx`, `reviews.tsx`, and `gallery-lightbox.tsx`.
 - **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
 
-### Recommended Batch 17: Layout Brand Identity & Navigation Helpers
+### Batch 17: Layout Brand Identity & Navigation Helpers (Completed)
 - **Target**: `components/layout/`
-- **Candidate Files**:
-  - `components/brand-context.tsx` $\rightarrow$ `components/layout/`
-  - `components/brand-favicon.tsx` $\rightarrow$ `components/layout/`
-  - `components/brand-icons.tsx` $\rightarrow$ `components/layout/`
-  - `components/brand-mark.tsx` $\rightarrow$ `components/layout/`
-  - `components/header-search.tsx` $\rightarrow$ `components/layout/`
-  - `components/navigation-context.tsx` $\rightarrow$ `components/layout/`
-  - `components/notification-panel.tsx` & `.module.css` $\rightarrow$ `components/layout/`
-- **Risk Level**: **Low to Medium**. Layout identity and search helpers consumed primarily by `site.tsx` and root layout.
+- **Files**:
+  - `components/brand-context.tsx` $\rightarrow$ `components/layout/brand-context.tsx`
+  - `components/brand-favicon.tsx` $\rightarrow$ `components/layout/brand-favicon.tsx`
+  - `components/brand-icons.tsx` $\rightarrow$ `components/layout/brand-icons.tsx`
+  - `components/brand-mark.tsx` $\rightarrow$ `components/layout/brand-mark.tsx`
+  - `components/header-search.tsx` $\rightarrow$ `components/layout/header-search.tsx`
+  - `components/navigation-context.tsx` $\rightarrow$ `components/layout/navigation-context.tsx`
+  - `components/notification-panel.tsx` $\rightarrow$ `components/layout/notification-panel.tsx`
+  - `components/notification-panel.module.css` $\rightarrow$ `components/layout/notification-panel.module.css`
+- **Consumers**: 11 consuming files updated (`app/layout.tsx`, `lib/admin-store.ts`, `app/admin/settings/page.tsx`, `components/auth/auth-pages.tsx`, `components/account/account-portal.tsx`, `components/admin/admin-shell.tsx`, `components/booking/booking-print-document.tsx`, `components/reviews/reviews.tsx`, `components/shared/live-chat.tsx`, `components/shared/whatsapp-chat.tsx`, `components/site.tsx`), plus internal relative-import normalization in `components/layout/header-search.tsx`.
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
+
+### Batch 18: Navigation Menu, Impersonation Banner & CMS Content Contexts (Completed)
+- **Target**: `components/layout/`, `components/account/`, & `components/cms/`
+- **Files**:
+  - `components/navigation-menu.tsx` $\rightarrow$ `components/layout/navigation-menu.tsx`
+  - `components/navigation-menu.css` $\rightarrow$ `components/layout/navigation-menu.css`
+  - `components/impersonation-banner.tsx` $\rightarrow$ `components/account/impersonation-banner.tsx`
+  - `components/page-sections-context.tsx` $\rightarrow$ `components/cms/page-sections-context.tsx`
+  - `components/page-sections.css` $\rightarrow$ `components/cms/page-sections.css`
+  - `components/presentation-content-context.tsx` $\rightarrow$ `components/cms/presentation-content-context.tsx`
+- **Consumers**: 7 consuming files updated (`components/site.tsx`, `components/admin/cms/navigation-manager.tsx`, `components/extended-pages.tsx`, `components/homepage.tsx`, `app/layout.tsx`, `app/website-cms-preview/pages/[pageKey]/page.tsx`, `components/cms/about-page.tsx`, `components/cms/offer-campaigns.tsx`, `components/shared/shared-help-cta.tsx`), plus internal relative-import normalizations in `components/account/impersonation-banner.tsx`, `components/cms/page-sections-context.tsx`, and `components/cms/presentation-content-context.tsx`.
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
+
+### Batch 19: Final Root Utilities & Homepage Heroes (Completed)
+- **Target**: `components/shared/`, `components/admin/`, & `components/cms/`
+- **Files**:
+  - `components/public-search-page.tsx` $\rightarrow$ `components/shared/public-search-page.tsx`
+  - `components/staff-preview-bootstrap.tsx` $\rightarrow$ `components/admin/staff-preview-bootstrap.tsx`
+  - `components/homepage-hero.tsx` $\rightarrow$ `components/cms/homepage-hero.tsx`
+  - `components/homepage-hero-preview.tsx` $\rightarrow$ `components/cms/homepage-hero-preview.tsx`
+- **Consumers**: 5 consuming files updated (`components/extended-pages.tsx`, `app/account/layout.tsx`, `app/page.tsx`, `components/homepage.tsx`, `app/website-cms-preview/homepage/page.tsx`), plus internal relative-import normalizations in `components/shared/public-search-page.tsx`, `components/cms/homepage-hero.tsx`, and `components/cms/homepage-hero-preview.tsx`.
+- **Verification**: 278/278 tests passed, 291 routes statically generated, 0 TypeScript errors.
 
 ---
 
-## 4. Execution Rules
+## 3. Root `components/` Inventory Final State
+
+All public components from the root `components/` directory (originally 75 files) have been safely and modularly organized across domain directories:
+
+| Component Category | Count | Final Location |
+|---|---|---|
+| **Cars Domain** | 5 | `components/cars/` & `components/admin/cars/` |
+| **SEO Domain** | 4 | `components/admin/seo/` |
+| **Tours Domain** | 4 | `components/tours/` |
+| **Reviews Domain** | 4 | `components/reviews/` |
+| **Booking Domain** | 5 | `components/booking/` |
+| **Account Domain** | 5 | `components/account/` |
+| **Auth Domain** | 1 | `components/auth/` |
+| **UI Primitives** | 1 | `components/ui/` |
+| **Shared Engagement & Form Controls** | 12 | `components/shared/` |
+| **Public CMS Feature Sections & Heroes** | 16 | `components/cms/` |
+| **Layout, Brand Identity & Navigation** | 10 | `components/layout/` |
+| **Admin Operations** | 1 | `components/admin/staff-preview-bootstrap.tsx` |
+| **Intentionally Retained Root Orchestrators** | **6** | `components/` (see below) |
+
+### Intentionally Retained Root Orchestrators & Providers
+1. `components/site.tsx` — Master public shell (Header, Footer, Floating CTAs)
+2. `components/homepage.tsx` — Public homepage view composition
+3. `components/extended-pages.tsx` — Public content pages aggregator
+4. `components/trips-page.tsx` — Tours catalogue & filter state orchestrator
+5. `components/locale.tsx` — Core localization context provider & formatters
+6. `components/language-selector.tsx` — Root header language switcher dropdown
+
+---
+
+## 4. Phase 3: Proposed Admin Components Reorganization
+
+With the root `components/` directory fully organized, **32 flat files** remain in root `components/admin/`. The proposed reorganization plan for Phase 3 divides these into low-risk, high-cohesion sub-batches:
+
+### A. Batch 20: Admin Shared UI & Form Controls $\rightarrow$ `components/admin/ui/`
+- `components/admin/content-language-tabs.tsx`
+- `components/admin/image-field.tsx`
+- `components/admin/rich-text-editor.tsx`
+- `components/admin/creation-timeline.tsx` & `.css`
+- `components/admin/gallery-form.tsx` & `gallery-text.tsx`
+- `components/admin/tour-cta-picker.tsx`
+- `components/admin/cms-reference-picker.tsx`
+
+### B. Batch 21: Admin CMS Customizer & Appearance $\rightarrow$ `components/admin/cms/`
+- `components/admin/campaign-fields.tsx`
+- `components/admin/promo-bar-fields.tsx`
+- `components/admin/website-appearance.tsx` & `.css`
+- `components/admin/editorial-sections-editor.tsx`
+- `components/admin/cms-nav.css`
+
+### C. Batch 22: Admin Operations & Dashboard Dashlets $\rightarrow$ `components/admin/operations/`
+- `components/admin/notifications-page.tsx`
+- `components/admin/revenue-trend.tsx`
+- `components/admin/review-integrations.tsx`
+- `components/admin/website-enquiries.tsx`
+
+### D. Protected Core Admin Orchestrators (Retained in `components/admin/`)
+- `admin-shell.tsx` — Admin master shell & sidebar layout
+- `admin-ui.tsx` — Shared admin table, stat, and card primitives
+- `trip-builder.tsx` & `trip-builder-preview.tsx` — Complex multi-step trip wizard
+- `admin-confirm-dialog.tsx`, `admin-pagination.tsx`, `admin-table-sort.tsx`, `admin-toaster.tsx`, `admin-locale.tsx`, `admin-currency.tsx`, `admin-back.tsx`, `module-ui.tsx`
+
+---
+
+## 5. Execution Rules
 1. Never move high-risk orchestrators (`admin-shell.tsx`, `admin-ui.tsx`, `site.tsx`, `trip-builder.tsx`, `locale.tsx`) in early batches.
 2. Execute exactly one verified batch at a time.
 3. Validate every move with `typecheck`, `test`, and Next.js production build (`npx next build --webpack`).

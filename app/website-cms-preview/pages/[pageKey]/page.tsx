@@ -16,7 +16,7 @@ import { readFaqHeroState } from '@/lib/server/faq-hero'
 import { publicEditorialHero } from '@/lib/editorial-hero-definitions'
 import { InformationPage } from '@/components/cms/information-page'
 import { isTemplatePageId } from '@/lib/template-presentation'
-import { PresentationProvider } from '@/components/presentation-content-context'
+import { PresentationProvider } from '@/components/cms/presentation-content-context'
 import { ServerTemplatePreview } from '@/components/cms/server-template-preview'
 export const metadata = { robots: { index: false, follow: false, nocache: true } }
 export default async function Preview({ params, searchParams }: { params: Promise<{ pageKey: string }>; searchParams: Promise<{ locale?: string }> }) {

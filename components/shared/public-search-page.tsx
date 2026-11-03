@@ -7,8 +7,8 @@ import { ArrowRight, Search } from 'lucide-react'
 import { usePublicSearch } from '@/lib/use-public-search'
 import { parseSearchQuery } from '@/lib/query'
 import { SEARCH_TYPE_LABELS } from '@/lib/site-search'
-import { SiteShell } from './site'
-import { tx, useLocale } from './locale'
+import { SiteShell } from '@/components/site'
+import { tx, useLocale } from '@/components/locale'
 
 export function SearchPage() {
   const initial = parseSearchQuery(useSearchParams()).q

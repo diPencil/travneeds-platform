@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { RebuiltHomePage } from './homepage'
-import { InitialLocaleProvider } from './locale'
+import { RebuiltHomePage } from '@/components/homepage'
+import { InitialLocaleProvider } from '@/components/locale'
 import type { Locale } from '@/lib/locale-config'
 import { readHeroPreviewMessage, type HomeHero } from '@/lib/website-heroes'
 import type { PublicPageContent } from '@/lib/page-sections'

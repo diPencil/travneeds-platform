@@ -1,5 +1,5 @@
 'use client'
-import { BrandMark } from '@/components/brand-mark'
+import { BrandMark } from '@/components/layout/brand-mark'
 
 import { formatCurrency } from '@/lib/currency'
 import { tx, useLocale } from '@/components/locale'

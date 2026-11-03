@@ -7,7 +7,7 @@ import { ArrowRight, AtSign, Check, Eye, EyeOff, LockKeyhole, Mail, MapPin, Phon
 import { countries, defaultCountry } from '@/data/countries'
 import { CountrySelect } from '@/components/shared/country-select'
 import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
-import { FacebookIcon, GoogleIcon } from '@/components/brand-icons'
+import { FacebookIcon, GoogleIcon } from '@/components/layout/brand-icons'
 import { siteImages } from '@/data/content'
 import { LocaleProvider, tx, useLocale } from '@/components/locale'
 import { LanguageSelector } from '@/components/language-selector'

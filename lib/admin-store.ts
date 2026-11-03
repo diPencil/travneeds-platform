@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { defaultBrandSettings, type BrandSettings } from './brand-settings'
 export { defaultBrandSettings, type BrandSettings } from './brand-settings'
-import { useBrandSeed } from '@/components/brand-context'
+import { useBrandSeed } from '@/components/layout/brand-context'
 import { ensureStorefrontBrandSeed, ensureStorefrontSettings, getDbAccessStrip, getDbBrand, getDbPromoText, getDbSeoTitle, getDbSocial } from './storefront-settings'
 import type { AccessStripOverride } from './access-strip'
 

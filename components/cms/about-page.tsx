@@ -2,7 +2,7 @@
 import { CmsPublicLink } from '@/components/cms/cms-public-link'
 import { CmsImage } from '@/components/cms/cms-image'
 
-import { usePresentation, PresentationSection, PresentationOrder } from '@/components/presentation-content-context'
+import { usePresentation, PresentationSection, PresentationOrder } from '@/components/cms/presentation-content-context'
 
 
 import Image from 'next/image'

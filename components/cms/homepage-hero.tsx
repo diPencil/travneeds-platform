@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { useLocale } from './locale'
+import { useLocale } from '@/components/locale'
 import type { HomeHero } from '@/lib/website-heroes'
 
 export type PublicHomeHero = { hidden: boolean; content: HomeHero | null; unavailable?: boolean }

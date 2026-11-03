@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { ArrowRight, Search } from 'lucide-react'
 import { nextSearchOption, searchHref, SEARCH_TYPE_LABELS, type SearchResult } from '@/lib/site-search'
 import { usePublicSearch } from '@/lib/use-public-search'
-import { tx, useLocale } from './locale'
+import { tx, useLocale } from '@/components/locale'
 
 type HeaderSearchProps = { mobile?: boolean; query: string; onQueryChange(value: string): void; placeholder: string; submitLabel: string }
 

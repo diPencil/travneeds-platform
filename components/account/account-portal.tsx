@@ -1,5 +1,5 @@
 'use client'
-import { BrandMark } from '@/components/brand-mark'
+import { BrandMark } from '@/components/layout/brand-mark'
 import { formatCurrency, CURRENCY_OPTIONS, type Currency } from '@/lib/currency'
 
 // 'use client' is required here: the access token is read from the router
@@ -41,7 +41,7 @@ import {
   useCustomerNotifications, type CustomerNotification,
 } from '@/lib/customer-notifications'
 import { localizedNotification } from '@/lib/marketing-notifications'
-import { NotificationPanel as SharedNotificationPanel } from '@/components/notification-panel'
+import { NotificationPanel as SharedNotificationPanel } from '@/components/layout/notification-panel'
 import { useSupportChat } from '@/lib/support-chat'
 import { whatsappHref } from '@/data/company'
 import { CountrySelect } from '@/components/shared/country-select'

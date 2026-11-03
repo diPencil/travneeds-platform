@@ -1,5 +1,5 @@
 'use client'
-import { BrandMark } from '@/components/brand-mark'
+import { BrandMark } from '@/components/layout/brand-mark'
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'

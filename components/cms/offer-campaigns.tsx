@@ -1,7 +1,7 @@
 'use client'
 import { CmsPublicLink } from '@/components/cms/cms-public-link'
 
-import { usePresentation, PresentationSection, PresentationOrder } from '@/components/presentation-content-context'
+import { usePresentation, PresentationSection, PresentationOrder } from '@/components/cms/presentation-content-context'
 
 
 import Link from 'next/link'

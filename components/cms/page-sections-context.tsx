@@ -2,7 +2,7 @@
 import { Children, createContext, isValidElement, useContext, type ReactNode } from 'react'
 import { HOME_SECTIONS, originalPageContent, type PageSection, type PublicPageContent } from '@/lib/page-sections'
 import { homeStrings } from '@/lib/homepage-copy'
-import { useLocale } from './locale'
+import { useLocale } from '@/components/locale'
 
 const PageContext = createContext<PublicPageContent | undefined>(undefined)
 const SectionContext = createContext<PageSection | undefined>(undefined)

@@ -1,5 +1,5 @@
 'use client'
-import { BrandMark } from '@/components/brand-mark'
+import { BrandMark } from '@/components/layout/brand-mark'
 import { currencyChoices, isCurrency, type Currency } from '@/lib/currency'
 
 import Link from 'next/link'
@@ -40,7 +40,7 @@ import {
 import { cn } from '@/lib/utils'
 import { useCurrentUser } from '@/lib/use-current-user'
 import { useAdminNotifications, type AdminNotification } from '@/lib/admin-notifications'
-import { NotificationPanel as SharedNotificationPanel } from '@/components/notification-panel'
+import { NotificationPanel as SharedNotificationPanel } from '@/components/layout/notification-panel'
 import { Avatar } from './admin-ui'
 import { AdminBackButton } from './admin-back'
 import { LanguageToggle } from '@/components/language-selector'

@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { requireStaff } from '@/lib/server/guards'
 import { hasPermission } from '@/lib/server/auth'
 import { readHeroState } from '@/lib/server/website-heroes'
-import { HomepageHeroPreview } from '@/components/homepage-hero-preview'
+import { HomepageHeroPreview } from '@/components/cms/homepage-hero-preview'
 import { sanitizeLocale } from '@/lib/locale-config'
 import { readPublishedPage } from '@/lib/server/page-sections'
 export const metadata = { robots: { index: false, follow: false, nocache: true } }
