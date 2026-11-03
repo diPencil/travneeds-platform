@@ -7,7 +7,7 @@ import { Film, Plus } from 'lucide-react'
 import { GalleryPageHead as PageHead, GalleryText as AdminText, galleryText, useGalleryLocale } from '@/components/admin/gallery-text'
 import { AdminTableTools, Card } from '@/components/admin/admin-ui'
 import { toast } from '@/components/admin/admin-toaster'
-import { ImageField } from '@/components/admin/image-field'
+import { ImageField } from '@/components/admin/ui/image-field'
 import { SharedSelect } from '@/components/shared/shared-select'
 import { invalidateJourneyGalleryCache } from '@/lib/journey-gallery-client'
 import {

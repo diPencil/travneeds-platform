@@ -11,7 +11,7 @@ import { FAQ_HERO_DESTINATIONS, type FaqHero, type FaqHeroState } from '@/lib/fa
 import { originalEditorialHero, EDITORIAL_HERO_PAGES, type EditorialHeroId } from '@/lib/editorial-hero-definitions'
 import type { HeroAction } from '@/lib/website-heroes'
 import { isInformationPageId } from '@/lib/information-pages'
-import { EditorialSectionsEditor } from '@/components/admin/editorial-sections-editor'
+import { EditorialSectionsEditor } from '@/components/admin/cms/editorial-sections-editor'
 import '@/app/admin/website-cms/hero-sections/homepage/hero-editor.css'
 
 export function EditorialHeroEditor({ id }: { id: EditorialHeroId }) {

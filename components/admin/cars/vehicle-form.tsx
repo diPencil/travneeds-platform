@@ -1,13 +1,13 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { ContentLanguageTabs, TranslatedInput, TranslatedTextarea } from '@/components/admin/content-language-tabs'
+import { ContentLanguageTabs, TranslatedInput, TranslatedTextarea } from '@/components/admin/ui/content-language-tabs'
 import { type CatalogueTranslations } from '@/lib/catalogue-translations'
 import { AdminText, Card } from '@/components/admin/admin-ui'
 import { useAdminLocale } from '@/components/admin/admin-locale'
 import { toast } from '@/components/admin/admin-toaster'
 import { SharedSelect } from '@/components/shared/shared-select'
-import { ImageField } from '@/components/admin/image-field'
+import { ImageField } from '@/components/admin/ui/image-field'
 import { slugify } from '@/lib/admin-store'
 import type { Car } from '@/data/types'
 

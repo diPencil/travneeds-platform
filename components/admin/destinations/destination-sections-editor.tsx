@@ -6,8 +6,8 @@ import type { Destination } from '@/data/types'
 import { changeDestinationRow, type DestinationRepeater } from '@/lib/destination-builder'
 import type { CatalogueTranslations } from '@/lib/catalogue-translations'
 import { Card } from '@/components/admin/admin-ui'
-import { ContentLanguageTabs, TranslatedInput, TranslatedTextarea, useContentLanguage } from '@/components/admin/content-language-tabs'
-import { ImageField } from '@/components/admin/image-field'
+import { ContentLanguageTabs, TranslatedInput, TranslatedTextarea, useContentLanguage } from '@/components/admin/ui/content-language-tabs'
+import { ImageField } from '@/components/admin/ui/image-field'
 
 type Props = {
   item: Destination

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CreationTimeline } from '@/components/admin/creation-timeline'
+import { CreationTimeline } from '@/components/admin/ui/creation-timeline'
 import { useEffect, useMemo, useState } from 'react'
 import { DestinationSectionsEditor, DestinationCoverEditor } from '@/components/admin/destinations/destination-sections-editor'
 import { DestinationBuilderPreview } from '@/components/admin/destinations/destination-builder-preview'

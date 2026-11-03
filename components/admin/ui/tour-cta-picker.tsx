@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
-import { AdminText } from './admin-ui'
-import { useAdminLocale } from './admin-locale'
+import { AdminText } from '@/components/admin/admin-ui'
+import { useAdminLocale } from '@/components/admin/admin-locale'
 import { SharedSelect } from '@/components/shared/shared-select'
 import { useDbToursStatus } from '@/lib/tours-client'
 

@@ -13,7 +13,7 @@ import { PAGE_DOCUMENTS, type PageDocumentId } from '@/lib/additional-page-conte
 import { isTemplatePageId } from '@/lib/template-presentation'
 import type { HeroAction } from '@/lib/website-heroes'
 import { CmsIcon } from '@/components/cms/cms-icons'
-import { CmsLinkField, CmsRecordPicker } from '@/components/admin/cms-reference-picker'
+import { CmsLinkField, CmsRecordPicker } from '@/components/admin/cms/cms-reference-picker'
 import { CmsDevicePreview } from './cms-device-preview'
 import { protectEnquiryNavigation } from '@/lib/enquiry-navigation'
 import { cmsFieldMax } from '@/lib/page-sections'

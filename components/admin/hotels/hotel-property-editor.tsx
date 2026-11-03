@@ -33,8 +33,8 @@ import {
 import { PageHead } from '@/components/admin/admin-shell';
 import { Card, AdminText, StatusPill } from '@/components/admin/admin-ui';
 import { toast } from '@/components/admin/admin-toaster';
-import { ImageField } from '@/components/admin/image-field';
-import { RichTextEditor } from '@/components/admin/rich-text-editor';
+import { ImageField } from '@/components/admin/ui/image-field';
+import { RichTextEditor } from '@/components/admin/ui/rich-text-editor';
 import { RoomRatesManager } from './room-rates-manager';
 import { InventoryCalendar } from './inventory-calendar';
 import { HotelBuilderPreview, type HotelBuilderDraft } from './hotel-builder-preview';

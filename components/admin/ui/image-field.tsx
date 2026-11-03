@@ -2,8 +2,8 @@
 
 import { useId, useState } from 'react'
 import { CheckCircle2, ImageIcon, Link2, Trash2, Upload } from 'lucide-react'
-import { AdminText } from './admin-ui'
-import { useAdminLocale } from './admin-locale'
+import { AdminText } from '@/components/admin/admin-ui'
+import { useAdminLocale } from '@/components/admin/admin-locale'
 import { uploadImageFile, type MediaScopeInput } from '@/lib/admin-store'
 import { tx } from '@/components/locale'
 import type { Locale } from '@/lib/locale-config'

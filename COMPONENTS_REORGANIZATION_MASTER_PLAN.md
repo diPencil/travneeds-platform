@@ -283,37 +283,49 @@ All public components from the root `components/` directory (originally 75 files
 
 ---
 
-## 4. Phase 3: Proposed Admin Components Reorganization
+## 4. Phase 3: Admin Components Reorganization
 
-With the root `components/` directory fully organized, **32 flat files** remain in root `components/admin/`. The proposed reorganization plan for Phase 3 divides these into low-risk, high-cohesion sub-batches:
+With the root `components/` directory fully organized, the admin reorganization proceeds domain-by-domain across `components/admin/`:
 
-### A. Batch 20: Admin Shared UI & Form Controls $\rightarrow$ `components/admin/ui/`
-- `components/admin/content-language-tabs.tsx`
-- `components/admin/image-field.tsx`
-- `components/admin/rich-text-editor.tsx`
-- `components/admin/creation-timeline.tsx` & `.css`
-- `components/admin/gallery-form.tsx` & `gallery-text.tsx`
-- `components/admin/tour-cta-picker.tsx`
-- `components/admin/cms-reference-picker.tsx`
+### A. Batch 20: Admin Shared UI & Form Controls (COMPLETED)
+- **Completed Relocations (7 files)**:
+  - `components/admin/content-language-tabs.tsx` $\rightarrow$ `components/admin/ui/content-language-tabs.tsx`
+  - `components/admin/image-field.tsx` $\rightarrow$ `components/admin/ui/image-field.tsx`
+  - `components/admin/rich-text-editor.tsx` $\rightarrow$ `components/admin/ui/rich-text-editor.tsx`
+  - `components/admin/creation-timeline.tsx` $\rightarrow$ `components/admin/ui/creation-timeline.tsx`
+  - `components/admin/creation-timeline.css` $\rightarrow$ `components/admin/ui/creation-timeline.css`
+  - `components/admin/tour-cta-picker.tsx` $\rightarrow$ `components/admin/ui/tour-cta-picker.tsx`
+  - `components/admin/cms-reference-picker.tsx` $\rightarrow$ `components/admin/cms/cms-reference-picker.tsx`
+- **Skipped Candidates & Reasons (2 files)**:
+  - `components/admin/gallery-form.tsx` & `gallery-text.tsx`: Classified as domain-specific to the Journey Gallery feature module (`/admin/gallery`) rather than generic shared form controls. Retained in root `components/admin/` pending a dedicated Gallery domain migration into `components/admin/gallery/`.
+- **Remaining Direct-Root Admin Inventory**: 26 files.
 
-### B. Batch 21: Admin CMS Customizer & Appearance $\rightarrow$ `components/admin/cms/`
-- `components/admin/campaign-fields.tsx`
-- `components/admin/promo-bar-fields.tsx`
-- `components/admin/website-appearance.tsx` & `.css`
-- `components/admin/editorial-sections-editor.tsx`
-- `components/admin/cms-nav.css`
+### B. Batch 21: Admin CMS Customizer & Appearance (COMPLETED)
+- **Completed Relocations (6 files)**:
+  - `components/admin/campaign-fields.tsx` $\rightarrow$ `components/admin/cms/campaign-fields.tsx`
+  - `components/admin/promo-bar-fields.tsx` $\rightarrow$ `components/admin/cms/promo-bar-fields.tsx`
+  - `components/admin/website-appearance.tsx` $\rightarrow$ `components/admin/cms/website-appearance.tsx`
+  - `components/admin/website-appearance.css` $\rightarrow$ `components/admin/cms/website-appearance.css`
+  - `components/admin/editorial-sections-editor.tsx` $\rightarrow$ `components/admin/cms/editorial-sections-editor.tsx`
+  - `components/admin/cms-nav.css` $\rightarrow$ `components/admin/cms/cms-nav.css`
+- **Skipped Candidates & Reasons**: None (all candidate files belonged to CMS customizer & appearance and were relocated cleanly).
+- **Remaining Direct-Root Admin Inventory**: 20 files.
 
-### C. Batch 22: Admin Operations & Dashboard Dashlets $\rightarrow$ `components/admin/operations/`
+### C. Batch 22: Admin Operations & Dashboard Dashlets $\rightarrow$ `components/admin/operations/` (RECOMMENDED NEXT)
 - `components/admin/notifications-page.tsx`
 - `components/admin/revenue-trend.tsx`
 - `components/admin/review-integrations.tsx`
 - `components/admin/website-enquiries.tsx`
 
-### D. Protected Core Admin Orchestrators (Retained in `components/admin/`)
+### D. Batch 23: Admin Gallery Feature Module $\rightarrow$ `components/admin/gallery/`
+- `components/admin/gallery-form.tsx`
+- `components/admin/gallery-text.tsx`
+
+### E. Protected Core Admin Orchestrators (Retained in `components/admin/`)
 - `admin-shell.tsx` — Admin master shell & sidebar layout
 - `admin-ui.tsx` — Shared admin table, stat, and card primitives
-- `trip-builder.tsx` & `trip-builder-preview.tsx` — Complex multi-step trip wizard
-- `admin-confirm-dialog.tsx`, `admin-pagination.tsx`, `admin-table-sort.tsx`, `admin-toaster.tsx`, `admin-locale.tsx`, `admin-currency.tsx`, `admin-back.tsx`, `module-ui.tsx`
+- `trip-builder.tsx` & `trip-builder-preview.tsx` / `trip-builder-preview.css` — Complex multi-step trip wizard
+- `admin-confirm-dialog.tsx`, `admin-pagination.tsx`, `admin-table-sort.tsx`, `admin-toaster.tsx`, `admin-locale.tsx`, `admin-currency.tsx`, `admin-back.tsx`, `module-ui.tsx`, `staff-preview-bootstrap.tsx`
 
 ---
 
