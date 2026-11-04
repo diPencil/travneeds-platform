@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore, type ReactNode } from 'react'
 import { AlertTriangle, CheckCircle2, Info, Loader2, X, XCircle } from 'lucide-react'
-import { useAdminLocale } from './admin-locale'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 
 export type ToastKind = 'success' | 'error' | 'warning' | 'info' | 'loading'
 

@@ -3,13 +3,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { AdminEmpty, AdminText, Avatar, Card } from '@/components/admin/admin-ui'
-import { useAdminLocale } from '@/components/admin/admin-locale'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 import { ImageField } from '@/components/admin/ui/image-field'
 import { CountrySelect } from '@/components/shared/country-select'
 import { CountryFlag } from '@/components/ui/country-flag'
 import { countries, defaultCountry } from '@/data/countries'
 import { mutateCustomerProfile, useDbCustomerDetail } from '@/lib/admin-customers-client'
-import { toast } from '@/components/admin/admin-toaster'
+import { toast } from '@/components/admin/ui/admin-toaster'
 
 /**
  * CRM editor backed entirely by the database.

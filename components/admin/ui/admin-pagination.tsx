@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { AdminText } from './admin-ui'
-import { useAdminLocale } from './admin-locale'
+import { AdminText } from '@/components/admin/admin-ui'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 import { SharedSelect } from '@/components/shared/shared-select'
 
 export function usePagination<T>(rows: readonly T[], initialSize = 10) {

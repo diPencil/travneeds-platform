@@ -5,12 +5,12 @@ import { useState } from 'react'
 import { Circle, Eye, Heart, MessageCircle, Pencil, UserCheck, UserX, Users } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableWrap, AdminText, Avatar, Card, StatusPill } from '@/components/admin/admin-ui'
-import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
-import { useAdminLocale } from '@/components/admin/admin-locale'
-import { useAdminCurrency } from '@/components/admin/admin-currency'
+import { AdminConfirmDialog } from '@/components/admin/ui/admin-confirm-dialog'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
+import { useAdminCurrency } from '@/components/admin/providers/admin-currency'
 import { mutateCustomerStatus, useDbCustomerDetail } from '@/lib/admin-customers-client'
 import { startImpersonation } from '@/lib/admin-store'
-import { toast } from '@/components/admin/admin-toaster'
+import { toast } from '@/components/admin/ui/admin-toaster'
 
 const accountStatusMeta = {
   ACTIVE: { en: 'Active', ar: 'نشط', color: '#22c55e' },

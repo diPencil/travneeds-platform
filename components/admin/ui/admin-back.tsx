@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { useAdminLocale } from './admin-locale'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 
 /**
  * Shared compact admin Back control.

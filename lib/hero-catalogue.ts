@@ -4,7 +4,7 @@ import { SHOWCASE_PAGES } from './showcase-heroes'
 export const heroCatalogue = [
   { id: 'guide', name: 'Egypt travel guide', route: '/egypt-travel-guide', group: 'Company & information', type: 'Editorial + page content', source: 'components/cms/information-page.tsx', editor: '/admin/website-cms/hero-sections/guide', cms: true },
   { id: 'accessible', name: 'Accessible travel', route: '/accessible-travel', group: 'Company & information', type: 'Editorial + page content', source: 'components/cms/information-page.tsx', editor: '/admin/website-cms/hero-sections/accessible', cms: true },
-  { id: 'trips', name: 'All trips', route: '/trips', group: 'Tours & destinations', type: 'Catalogue introduction', source: 'components/trips-page.tsx', editor: '/admin/website-cms/hero-sections/trips', cms: true },
+  { id: 'trips', name: 'All trips', route: '/trips', group: 'Tours & destinations', type: 'Catalogue introduction', source: 'components/tours/trips-page.tsx', editor: '/admin/website-cms/hero-sections/trips', cms: true },
   ...CRUISE_HERO_IDS.map((id) => ({ id, ...SHOWCASE_PAGES[id], group: 'Tours & destinations', type: 'Cruise introduction', source: 'components/site.tsx', editor: '/admin/website-cms/hero-sections/' + id, cms: true as const })),
   { id: 'homepage', name: 'Homepage', route: '/', group: 'Homepage', type: 'Search hero', source: 'components/homepage.tsx', editor: '/admin/website-cms/hero-sections/homepage', cms: true },
   { id: 'about', name: 'About company', route: '/about', group: 'Company & information', type: 'Showcase', source: 'components/cms/about-page.tsx', editor: '/admin/website-cms/hero-sections/about', cms: true },

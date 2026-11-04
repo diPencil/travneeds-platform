@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
 import { AdminText } from '@/components/admin/admin-ui'
-import { useAdminLocale } from '@/components/admin/admin-locale'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 import { TranslatedInput, TranslatedTextarea } from '@/components/admin/ui/content-language-tabs'
 import { TourCtaPicker } from '@/components/admin/ui/tour-cta-picker'
 import { BarIcons } from '@/components/cms/promo-bar-icons'

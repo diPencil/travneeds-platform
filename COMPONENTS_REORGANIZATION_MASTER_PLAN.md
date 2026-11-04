@@ -40,7 +40,7 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`cart-page.tsx`** | Booking | Shopping cart view & checkout CTA | `/cart/page.tsx` | `components/booking/` | Low |
 | **`checkout-page.tsx`** | Booking | Checkout stepper & payment selection | `/checkout/page.tsx` | `components/booking/` | Med |
 | **`mobile-booking-shortcut.tsx`** | Booking | Sticky mobile bottom booking bar | `day-tour-detail.tsx`, `tour-detail.tsx` | `components/booking/` | Low |
-| **`trips-page.tsx`** | Tours | Public catalog & filtering | `/trips/page.tsx` | `components/` (Intentionally Retained in root) | High |
+| **`trips-page.tsx`** | Tours | Public catalog & filtering | `/trips/page.tsx` | `components/tours/` (Completed in Batch 24) | Med |
 | **`brand-context.tsx`** | Layout | Dynamic white-label branding | `site.tsx`, `layout.tsx` | `components/layout/` (Completed in Batch 17) | Med |
 | **`brand-favicon.tsx`** | Layout | Dynamic favicon tags | `layout.tsx` | `components/layout/` (Completed in Batch 17) | Low |
 | **`brand-icons.tsx`** | Layout | Brand logo SVG icons | `settings/page.tsx`, `auth-pages.tsx` | `components/layout/` (Completed in Batch 17) | Low |
@@ -81,7 +81,7 @@ This Master Plan establishes the definitive domain-driven architectural roadmap 
 | **`gallery-lightbox.tsx`** & **`.css`** | Shared | Fullscreen image lightbox | Image galleries | `components/shared/` (Completed in Batch 10) | Low |
 | **`horizontal-slider.tsx`** | Shared | Accessible horizontal scroll slider | Tour & video carousels | `components/shared/` (Completed in Batch 10) | Low |
 | **`international-phone-input.tsx`** | Shared | Phone input with validation | Auth, checkout | `components/shared/` (Completed in Batch 11A) | Low |
-| **`language-selector.tsx`** | Shared | Locale selector dropdown | Header | `components/` (Intentionally Retained in root) | High |
+| **`language-selector.tsx`** | Layout | Locale selector dropdown | Header | `components/layout/` (Completed in Batch 24) | Med |
 | **`live-chat.tsx`** | Shared | Live chat widget trigger | Shell | `components/shared/` (Completed in Batch 10) | Low |
 | **`locale.tsx`** | Shared | Locale context & formatters | Everywhere | `components/` (Intentionally Retained in root) | High |
 | **`public-search-page.tsx`** | Shared | Global search results page | `/search/page.tsx` | `components/shared/` (Completed in Batch 19) | Low |
@@ -261,7 +261,7 @@ All public components from the root `components/` directory (originally 75 files
 |---|---|---|
 | **Cars Domain** | 5 | `components/cars/` & `components/admin/cars/` |
 | **SEO Domain** | 4 | `components/admin/seo/` |
-| **Tours Domain** | 4 | `components/tours/` |
+| **Tours Domain** | 5 | `components/tours/` |
 | **Reviews Domain** | 4 | `components/reviews/` |
 | **Booking Domain** | 5 | `components/booking/` |
 | **Account Domain** | 5 | `components/account/` |
@@ -269,17 +269,19 @@ All public components from the root `components/` directory (originally 75 files
 | **UI Primitives** | 1 | `components/ui/` |
 | **Shared Engagement & Form Controls** | 12 | `components/shared/` |
 | **Public CMS Feature Sections & Heroes** | 16 | `components/cms/` |
-| **Layout, Brand Identity & Navigation** | 10 | `components/layout/` |
+| **Layout, Brand Identity & Navigation** | 11 | `components/layout/` |
 | **Admin Operations** | 1 | `components/admin/staff-preview-bootstrap.tsx` |
-| **Intentionally Retained Root Orchestrators** | **6** | `components/` (see below) |
+| **Intentionally Retained Root Orchestrators** | **4** | `components/` (see below) |
 
 ### Intentionally Retained Root Orchestrators & Providers
 1. `components/site.tsx` — Master public shell (Header, Footer, Floating CTAs)
 2. `components/homepage.tsx` — Public homepage view composition
 3. `components/extended-pages.tsx` — Public content pages aggregator
-4. `components/trips-page.tsx` — Tours catalogue & filter state orchestrator
-5. `components/locale.tsx` — Core localization context provider & formatters
-6. `components/language-selector.tsx` — Root header language switcher dropdown
+4. `components/locale.tsx` — Core localization context provider & formatters
+
+### Batch 24: Final Root Cleanup (COMPLETED)
+- `components/trips-page.tsx` $\rightarrow$ `components/tours/trips-page.tsx` (Tours domain catalogue)
+- `components/language-selector.tsx` $\rightarrow$ `components/layout/language-selector.tsx` (Layout & header presentation)
 
 ---
 
@@ -327,28 +329,34 @@ With the root `components/` directory fully organized, the admin reorganization 
 - **Skipped Candidates & Reasons**: None (both files dedicated to the Journey Gallery feature module `/admin/gallery`).
 - **Remaining Direct-Root Admin Inventory**: 14 files.
 
-### E. Protected Core Admin Orchestrators & Primitives (Retained in `components/admin/`)
-The remaining 14 files in `components/admin/` represent the protected core architecture and foundational admin UI primitives:
+### E. Batch 25: Final Admin Components Cleanup (COMPLETED)
+- **Shared UI Controls $\rightarrow$ `components/admin/ui/` (6 files)**:
+  - `components/admin/admin-back.tsx` $\rightarrow$ `components/admin/ui/admin-back.tsx`
+  - `components/admin/admin-confirm-dialog.tsx` $\rightarrow$ `components/admin/ui/admin-confirm-dialog.tsx`
+  - `components/admin/admin-pagination.tsx` $\rightarrow$ `components/admin/ui/admin-pagination.tsx`
+  - `components/admin/admin-table-sort.tsx` $\rightarrow$ `components/admin/ui/admin-table-sort.tsx`
+  - `components/admin/admin-toaster.tsx` $\rightarrow$ `components/admin/ui/admin-toaster.tsx`
+  - `components/admin/module-ui.tsx` $\rightarrow$ `components/admin/ui/module-ui.tsx`
+- **Locale & Currency Providers $\rightarrow$ `components/admin/providers/` (2 files)**:
+  - `components/admin/admin-currency.tsx` $\rightarrow$ `components/admin/providers/admin-currency.tsx`
+  - `components/admin/admin-locale.tsx` $\rightarrow$ `components/admin/providers/admin-locale.tsx`
+- **Staff Preview Bootstrap $\rightarrow$ `components/admin/auth/` (1 file)**:
+  - `components/admin/staff-preview-bootstrap.tsx` $\rightarrow$ `components/admin/auth/staff-preview-bootstrap.tsx`
+- **Trip Builder Preview & CSS $\rightarrow$ `components/admin/tours/` (2 files)**:
+  - `components/admin/trip-builder-preview.tsx` $\rightarrow$ `components/admin/tours/trip-builder-preview.tsx`
+  - `components/admin/trip-builder-preview.css` $\rightarrow$ `components/admin/tours/trip-builder-preview.css`
+
+### F. Protected Core Admin Orchestrators (Retained in `components/admin/`)
+The root `components/admin/` directory now contains exactly the **3 protected core orchestrators**:
 1. `admin-shell.tsx` — Protected Core: Master shell layout, navigation sidebar, and header
 2. `admin-ui.tsx` — Protected Core: Central design system cards, tables, stat boxes, and action toolbars
 3. `trip-builder.tsx` — Protected Core: Complex multi-step trip wizard orchestrator
-4. `trip-builder-preview.tsx` — Trip builder live interactive preview container
-5. `trip-builder-preview.css` — Trip builder preview scoped styling
-6. `admin-back.tsx` — Standard admin back button navigation helper
-7. `admin-confirm-dialog.tsx` — Admin confirmation modal primitive
-8. `admin-currency.tsx` — Admin currency formatting and conversion helper
-9. `admin-locale.tsx` — Admin locale context and text localization helpers
-10. `admin-pagination.tsx` — Admin table pagination controls and state hook
-11. `admin-table-sort.tsx` — Admin sortable column header component and sort hook
-12. `admin-toaster.tsx` — Admin toast notification system and feedback container
-13. `module-ui.tsx` — Admin module container layout helper
-14. `staff-preview-bootstrap.tsx` — Staff preview bootstrap initialization helper
 
-### F. Final Admin Organization Audit Scope
-With all feature modules (Blogs, Destinations, Events, Offers, Tours, Hotels, CMS, UI, Operations, and Gallery) systematically decomposed into domain directories:
-- Verify that no extraneous feature code remains in root `components/admin/`.
-- Ensure zero circular dependencies between domain folders and root admin primitives.
-- Finalize and document the completed Admin component architecture.
+### G. Complete Component Architecture Status
+All public and administrative component domains are now cleanly compartmentalized:
+- **Root Public Components (`components/`)**: Exactly 4 core orchestrators (`site.tsx`, `homepage.tsx`, `extended-pages.tsx`, `locale.tsx`).
+- **Root Admin Components (`components/admin/`)**: Exactly 3 core orchestrators (`admin-shell.tsx`, `admin-ui.tsx`, `trip-builder.tsx`).
+- **Domain Subdirectories**: Fully partitioned into dedicated, acyclic domain libraries with zero stale cross-references.
 
 ---
 

@@ -6,15 +6,15 @@ import { BarChart3, CalendarCheck, CalendarDays, ChevronDown, Eye, ShoppingCart,
 import { Popover } from '@base-ui/react/popover'
 import { PageHead } from '@/components/admin/admin-shell'
 import { AdminEmpty, AdminIconAction, AdminText, Avatar, Card, Delta, StatusPill } from '@/components/admin/admin-ui'
-import { useAdminLocale } from '@/components/admin/admin-locale'
-import { useAdminCurrency } from '@/components/admin/admin-currency'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
+import { useAdminCurrency } from '@/components/admin/providers/admin-currency'
 import { RevenueTrend } from '@/components/admin/operations/revenue-trend'
 import { DateInput } from '@/components/shared/date-input'
 import { addDays, toISO, todayYMD } from '@/lib/date-calendar'
 import type { AnalyticsResponse } from '@/lib/analytics'
 import type { StaffBooking } from '@/lib/booking'
 import { tours } from '@/data/tours'
-import { useAdminTableSort } from '@/components/admin/admin-table-sort'
+import { useAdminTableSort } from '@/components/admin/ui/admin-table-sort'
 
 /** Shared category palette: donut segments and legend swatches stay in sync. */
 const DONUT_COLORS = ['#2b5ce6', '#f7951d', '#e11d48', '#cbd5e1']

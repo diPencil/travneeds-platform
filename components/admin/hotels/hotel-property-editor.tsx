@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { PageHead } from '@/components/admin/admin-shell';
 import { Card, AdminText, StatusPill } from '@/components/admin/admin-ui';
-import { toast } from '@/components/admin/admin-toaster';
+import { toast } from '@/components/admin/ui/admin-toaster';
 import { ImageField } from '@/components/admin/ui/image-field';
 import { RichTextEditor } from '@/components/admin/ui/rich-text-editor';
 import { RoomRatesManager } from './room-rates-manager';

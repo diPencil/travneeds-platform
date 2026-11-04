@@ -15,8 +15,8 @@ import {
   Tag,
   ShieldAlert,
 } from 'lucide-react';
-import { toast } from '@/components/admin/admin-toaster';
-import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog';
+import { toast } from '@/components/admin/ui/admin-toaster';
+import { AdminConfirmDialog } from '@/components/admin/ui/admin-confirm-dialog';
 import { Card, AdminText, StatusPill, AdminEmpty, AdminTableWrap, AdminTableActions, AdminIconAction } from '@/components/admin/admin-ui';
 
 export interface RoomRatesManagerProps {

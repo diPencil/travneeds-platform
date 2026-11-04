@@ -10,7 +10,7 @@ import { InternationalPhoneInput } from '@/components/shared/international-phone
 import { FacebookIcon, GoogleIcon } from '@/components/layout/brand-icons'
 import { siteImages } from '@/data/content'
 import { LocaleProvider, tx, useLocale } from '@/components/locale'
-import { LanguageSelector } from '@/components/language-selector'
+import { LanguageSelector } from '@/components/layout/language-selector'
 import { Logo } from '@/components/site'
 import { getCopy } from '@/lib/locale-helpers'
 import { customerErrorText } from '@/lib/customer-error-copy'

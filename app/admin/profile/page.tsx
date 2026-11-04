@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { AdminText, Avatar, Card } from '@/components/admin/admin-ui'
-import { useAdminLocale } from '@/components/admin/admin-locale'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 import { countries, defaultCountry } from '@/data/countries'
 import { saveAdminProfile } from '@/lib/admin-store'
 import { ImageField } from '@/components/admin/ui/image-field'
 import { CountrySelect } from '@/components/shared/country-select'
 import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import type { AuthenticatedUser } from '@/lib/auth-types'
-import { toast } from '@/components/admin/admin-toaster'
+import { toast } from '@/components/admin/ui/admin-toaster'
 
 export default function ProfilePage() {
   const ar = useAdminLocale() === 'ar'

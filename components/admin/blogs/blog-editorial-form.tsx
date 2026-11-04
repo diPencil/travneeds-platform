@@ -9,7 +9,7 @@ import { ImageField } from '@/components/admin/ui/image-field'
 import { TourCtaPicker } from '@/components/admin/ui/tour-cta-picker'
 import { TranslatedInput, TranslatedTextarea, useContentLanguage } from '@/components/admin/ui/content-language-tabs'
 import { SharedSelect } from '@/components/shared/shared-select'
-import { useAdminLocale } from '@/components/admin/admin-locale'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 
 export type BlogEditorialFormSection = 'hero' | 'facts' | 'sections' | 'navigation' | 'practical' | 'cta'
 

@@ -4,13 +4,13 @@ import { useMemo, useState } from 'react'
 import { Check, Circle, Eye, EyeOff, Lock, Pencil, Plus, ShieldCheck, UserCheck, Users } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Avatar, Card } from '@/components/admin/admin-ui'
-import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
-import { useAdminLocale } from '@/components/admin/admin-locale'
-import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
+import { AdminConfirmDialog } from '@/components/admin/ui/admin-confirm-dialog'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
+import { AdminPagination, usePagination } from '@/components/admin/ui/admin-pagination'
 import { SharedSelect } from '@/components/shared/shared-select'
 import { mutateDirectoryRole, mutateDirectoryUser, useDbRolesStatus, useDbUsersStatus, type CatalogPermission, type DirectoryRole, type DirectoryUser } from '@/lib/admin-users-client'
-import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
-import { toast } from '@/components/admin/admin-toaster'
+import { SortableTh, useAdminTableSort } from '@/components/admin/ui/admin-table-sort'
+import { toast } from '@/components/admin/ui/admin-toaster'
 
 const SYSTEM_ORDER = ['SUPER_ADMIN', 'ADMIN', 'STAFF']
 

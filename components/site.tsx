@@ -33,7 +33,7 @@ import { LocaleProvider, tx, useLocale, formatPrice, type Locale, type Currency 
 import { LiveChatWidget } from '@/components/shared/live-chat'
 import { WhatsAppGlyph, WhatsAppWidget } from '@/components/shared/whatsapp-chat'
 import { FooterSocials, HeaderSocials } from '@/components/shared/social-icons'
-import { LanguageModal, LanguageToggle } from './language-selector'
+import { LanguageModal, LanguageToggle } from '@/components/layout/language-selector'
 import { LOCALE_SHORT_LABELS, pickLocaleText } from '@/lib/locale-config'
 import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import { CountrySelect } from '@/components/shared/country-select'

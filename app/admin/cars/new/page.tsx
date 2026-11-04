@@ -6,8 +6,8 @@ import { PageHead } from '@/components/admin/admin-shell'
 import { AdminEmpty, AdminText, Card } from '@/components/admin/admin-ui'
 import { VehicleForm } from '@/components/admin/cars/vehicle-form'
 import { invalidateEventsCarsCache } from '@/lib/events-cars-client'
-import { toast } from '@/components/admin/admin-toaster'
-import { useAdminLocale } from '@/components/admin/admin-locale'
+import { toast } from '@/components/admin/ui/admin-toaster'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 import type { Car } from '@/data/types'
 
 function NewCarInner() {

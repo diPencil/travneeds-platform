@@ -1,6 +1,6 @@
 'use client';
 
-import { useAdminLocale } from '@/components/admin/admin-locale';
+import { useAdminLocale } from '@/components/admin/providers/admin-locale';
 import { HotelPropertyEditor } from '@/components/admin/hotels/hotel-property-editor';
 
 export default function NewHotelPage() {

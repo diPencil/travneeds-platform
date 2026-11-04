@@ -1,6 +1,6 @@
 'use client'
 import { AdminText } from '@/components/admin/admin-ui'
-import { useAdminLocale } from '@/components/admin/admin-locale'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 import { marketingPlacements, type CampaignContent, type CampaignPlacement } from '@/lib/marketing-campaigns'
 import { offerHref } from '@/lib/special-offers'
 import { TranslatedInput, TranslatedTextarea } from '@/components/admin/ui/content-language-tabs'

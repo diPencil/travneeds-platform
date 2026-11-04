@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useAdminLocale } from '@/components/admin/admin-locale';
+import { useAdminLocale } from '@/components/admin/providers/admin-locale';
 import { useHotelDetail } from '@/lib/hotels/hotels-client';
 import { HotelPropertyEditor } from '@/components/admin/hotels/hotel-property-editor';
 import { AdminEmpty, AdminText } from '@/components/admin/admin-ui';

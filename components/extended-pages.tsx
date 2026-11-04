@@ -39,7 +39,7 @@ import { CAR_LOCATION_MAX, CAR_NOTE_MAX, hasCarErrors, isCarReference, sanitizeC
 import { ImpersonationBanner } from '@/components/account/impersonation-banner'
 import { useLocale, formatPrice, tx, type Locale } from './locale'
 import { Breadcrumb, Heading, HelpCTA, Logo, PageShowcaseHero, SiteShell, TourCard, TourCardPresentation, extra, images } from '@/components/site'
-import { LanguageSelector } from './language-selector'
+import { LanguageSelector } from '@/components/layout/language-selector'
 import { InternationalPhoneInput } from '@/components/shared/international-phone-input'
 import { useCurrentUser } from '@/lib/use-current-user'
 import { SharedSelect } from '@/components/shared/shared-select'

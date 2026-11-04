@@ -68,7 +68,7 @@ persisted or secure production behavior.
 | Root metadata, fonts, and global layout | `app/layout.tsx` |
 | Homepage route | `app/page.tsx` |
 | Homepage composition and sections | `components/homepage.tsx` |
-| Unified trip catalogue and filters | `components/trips-page.tsx`; membership in `data/tours.ts` |
+| Unified trip catalogue and filters | `components/tours/trips-page.tsx`; membership in `data/tours.ts` |
 | Header, footer, shell, search engine, tour listing, shared travel UI | `components/site.tsx` |
 | Content, account, password recovery, cars, policies, search, and detail pages | `components/extended-pages.tsx` |
 | Login and registration experiences, social-auth previews, and registration fields | `components/auth/auth-pages.tsx`; country metadata in `data/countries.ts` |
@@ -91,7 +91,7 @@ genuinely route-specific behavior.
 | Routes | Implementation |
 | --- | --- |
 | `/` | `app/page.tsx` -> `components/homepage.tsx` |
-| `/trips` | `app/trips/page.tsx` -> `components/trips-page.tsx`; catalogue in `data/tours.ts` |
+| `/trips` | `app/trips/page.tsx` -> `components/tours/trips-page.tsx`; catalogue in `data/tours.ts` |
 | `/about`, `/contact`, `/faq`, `/accessible-travel`, `/egypt-travel-guide` | Thin route wrappers -> `components/extended-pages.tsx` |
 | `/blogs`, `/blogs/[slug]` | `components/extended-pages.tsx`; content in `data/content.ts` |
 | `/events`, `/events/[slug]` | `components/extended-pages.tsx`; content in `data/content.ts` |

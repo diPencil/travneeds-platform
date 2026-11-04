@@ -20,7 +20,7 @@ import { RichTextRenderer } from '@/components/shared/rich-text-renderer';
 import { StatusPill } from '@/components/admin/admin-ui';
 import { ALL_LOCALES, LOCALE_LABELS, type Locale } from '@/lib/locale-config';
 import { formatPrice } from '@/components/locale';
-import '@/components/admin/trip-builder-preview.css';
+import '@/components/admin/tours/trip-builder-preview.css';
 
 export interface HotelDraftPolicy {
   checkInTime?: string;

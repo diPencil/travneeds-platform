@@ -42,12 +42,12 @@ import { useCurrentUser } from '@/lib/use-current-user'
 import { useAdminNotifications, type AdminNotification } from '@/lib/admin-notifications'
 import { NotificationPanel as SharedNotificationPanel } from '@/components/layout/notification-panel'
 import { Avatar } from './admin-ui'
-import { AdminBackButton } from './admin-back'
-import { LanguageToggle } from '@/components/language-selector'
+import { AdminBackButton } from '@/components/admin/ui/admin-back'
+import { LanguageToggle } from '@/components/layout/language-selector'
 import { ALL_LOCALES, LOCALE_LABELS, LOCALE_REGIONS, LOCALE_SHORT_LABELS, sanitizeLocale, type Locale } from '@/lib/locale-config'
 import { readAdminProfile } from '@/lib/admin-store'
 import { useMobileDrawer } from '@/lib/use-mobile-drawer'
-import { Toaster } from './admin-toaster'
+import { Toaster } from '@/components/admin/ui/admin-toaster'
 
 function timeAgo(iso: string, ar: boolean): string {
   const then = new Date(iso).getTime()

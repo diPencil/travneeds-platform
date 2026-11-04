@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Eye, Pencil } from 'lucide-react'
 import { Card, AdminTableTools, AdminTableWrap, AdminTableActions, AdminIconAction } from '@/components/admin/admin-ui'
-import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
+import { AdminPagination, usePagination } from '@/components/admin/ui/admin-pagination'
 import { SharedSelect } from '@/components/shared/shared-select'
 import { SeoEditor } from './seo-manager'
 import type { RecordSeoDescriptor, RecordSeoState } from '@/lib/record-seo'

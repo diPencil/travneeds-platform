@@ -30,11 +30,11 @@ import {
   AdminTableActions,
   AdminIconAction,
 } from '@/components/admin/admin-ui';
-import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort';
-import { useAdminLocale } from '@/components/admin/admin-locale';
-import { AdminPagination, usePagination } from '@/components/admin/admin-pagination';
-import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog';
-import { toast } from '@/components/admin/admin-toaster';
+import { SortableTh, useAdminTableSort } from '@/components/admin/ui/admin-table-sort';
+import { useAdminLocale } from '@/components/admin/providers/admin-locale';
+import { AdminPagination, usePagination } from '@/components/admin/ui/admin-pagination';
+import { AdminConfirmDialog } from '@/components/admin/ui/admin-confirm-dialog';
+import { toast } from '@/components/admin/ui/admin-toaster';
 import { useHotelsList, type HotelListItem } from '@/lib/hotels/hotels-client';
 
 const LODGING_CATEGORIES: Array<{

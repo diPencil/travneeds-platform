@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 're
 import { ArrowLeft, Inbox, MessageCircle, MessagesSquare, Send } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { AdminEmpty, AdminStats, AdminText, Avatar, Card } from '@/components/admin/admin-ui'
-import { useAdminLocale } from '@/components/admin/admin-locale'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 import { formatSiteTime } from '@/components/locale'
 import { invalidateNotifications } from '@/lib/admin-notifications'
 import { cn } from '@/lib/utils'

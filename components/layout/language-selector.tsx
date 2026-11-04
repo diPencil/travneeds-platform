@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { PublicAppearancePortal } from '@/components/cms/public-appearance'
 import { Globe2, X } from 'lucide-react'
-import { tx, useLocale, type Currency, type Locale } from './locale'
+import { tx, useLocale, type Currency, type Locale } from '@/components/locale'
 import { ALL_LOCALES, LOCALE_LABELS, LOCALE_SHORT_LABELS } from '@/lib/locale-config'
 
 const copy = {

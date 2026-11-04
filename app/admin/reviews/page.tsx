@@ -6,12 +6,12 @@ import { WEBSITE_REVIEW_SCOPE } from '@/lib/review-scope'
 import { ArrowRight, CircleAlert, CheckCircle2, XCircle } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { AdminEmpty, AdminIconAction, AdminTableActions, AdminTableTools, AdminTableWrap, Avatar, Card, } from '@/components/admin/admin-ui'
-import { SortableTh } from '@/components/admin/admin-table-sort'
+import { SortableTh } from '@/components/admin/ui/admin-table-sort'
 import { useLocale } from '@/components/locale'
 import { reviewText } from '@/lib/review-copy'
 import { useCurrentUser } from '@/lib/use-current-user'
-import { AdminPagination } from '@/components/admin/admin-pagination'
-import { toast } from '@/components/admin/admin-toaster'
+import { AdminPagination } from '@/components/admin/ui/admin-pagination'
+import { toast } from '@/components/admin/ui/admin-toaster'
 
 const statusTabs = [
   { id: 'all', en: 'All', ar: 'الكل' },

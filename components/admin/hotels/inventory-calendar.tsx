@@ -11,7 +11,7 @@ import {
   ArrowRight,
   Sparkles,
 } from 'lucide-react';
-import { toast } from '@/components/admin/admin-toaster';
+import { toast } from '@/components/admin/ui/admin-toaster';
 import { Card, AdminText, StatusPill, AdminEmpty, AdminTableWrap } from '@/components/admin/admin-ui';
 
 export interface InventoryCalendarProps {

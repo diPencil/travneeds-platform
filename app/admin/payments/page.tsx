@@ -5,10 +5,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { CircleDollarSign, Clock3, CreditCard, Eye, ReceiptText } from 'lucide-react'
 import { PageHead } from '@/components/admin/admin-shell'
 import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, AdminText, Avatar, Card, StatusPill } from '@/components/admin/admin-ui'
-import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'
-import { useAdminLocale } from '@/components/admin/admin-locale'
+import { SortableTh, useAdminTableSort } from '@/components/admin/ui/admin-table-sort'
+import { useAdminLocale } from '@/components/admin/providers/admin-locale'
 import { formatCurrency } from '@/lib/currency'
-import { AdminPagination, usePagination } from '@/components/admin/admin-pagination'
+import { AdminPagination, usePagination } from '@/components/admin/ui/admin-pagination'
 import { PAYMENT_STATUSES, paymentStatusLabel, type PaymentStatus, type StaffPayment } from '@/lib/payment'
 
 const statusTabs = [
