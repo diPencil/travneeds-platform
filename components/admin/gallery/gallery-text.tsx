@@ -1,8 +1,8 @@
 'use client'
 import type { ComponentProps } from 'react'
-import { useLocale } from '../locale'
+import { useLocale } from '@/components/locale'
 import { sanitizeLocale } from '@/lib/locale-config'
-import { PageHead } from './admin-shell'
+import { PageHead } from '@/components/admin/admin-shell'
 
 const labels: Record<string, [string, string]> = {
   'Journey Gallery':['Galería de viajes','Galleria dei viaggi'], 'Content':['Contenido','Contenuti'],

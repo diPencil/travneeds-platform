@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowDown, ArrowUp, Eye, EyeOff, Film, Images, Pencil, Plus, Trash2 } from 'lucide-react'
-import { GalleryPageHead as PageHead, GalleryText as AdminText, galleryText, useGalleryLocale } from '@/components/admin/gallery-text'
+import { GalleryPageHead as PageHead, GalleryText as AdminText, galleryText, useGalleryLocale } from '@/components/admin/gallery/gallery-text'
 import { AdminEmpty, AdminIconAction, AdminStats, AdminTableActions, AdminTableTools, AdminTableWrap, Card } from '@/components/admin/admin-ui'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import { SortableTh, useAdminTableSort } from '@/components/admin/admin-table-sort'

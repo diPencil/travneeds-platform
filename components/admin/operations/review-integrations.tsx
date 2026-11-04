@@ -1,9 +1,9 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { REVIEW_LABELS, type ReviewAdmin, type ReviewConfig, type ReviewProvider } from '@/lib/review-integrations'
-import { AdminText, Card } from './admin-ui'
-import { toast } from './admin-toaster'
-import { useAdminLocale } from './admin-locale'
+import { AdminText, Card } from '@/components/admin/admin-ui'
+import { toast } from '@/components/admin/admin-toaster'
+import { useAdminLocale } from '@/components/admin/admin-locale'
 const configOf = (v: ReviewAdmin): ReviewConfig => ({ enabled: v.enabled, resourceId: v.resourceId, profileUrl: v.profileUrl, widgetId: v.widgetId })
 async function jsonResponse(response: Response): Promise<{ integrations: ReviewAdmin[]; testState?: ReviewAdmin['state'] }> {
   const data = await response.json().catch(() => null) as { integrations?: ReviewAdmin[]; error?: string; testState?: ReviewAdmin['state'] } | null

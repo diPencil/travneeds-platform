@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { requireStaff } from '@/lib/server/guards'
 import { hasPermission } from '@/lib/server/auth'
-import { AdminNotificationsPage } from '@/components/admin/notifications-page'
+import { AdminNotificationsPage } from '@/components/admin/operations/notifications-page'
 
 export default async function Page() {
   const user = await requireStaff()

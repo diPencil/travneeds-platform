@@ -1,7 +1,7 @@
 'use client'
 import { CURRENCY_OPTIONS, formatCurrency, type Currency } from '@/lib/currency'
 
-import { ReviewIntegrationsSettings } from '@/components/admin/review-integrations'
+import { ReviewIntegrationsSettings } from '@/components/admin/operations/review-integrations'
 import { WebsiteAppearance } from '@/components/admin/cms/website-appearance'
 import { AdminConfirmDialog } from '@/components/admin/admin-confirm-dialog'
 import './pro-additions.css'

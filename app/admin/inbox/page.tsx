@@ -9,7 +9,7 @@ import { formatSiteTime } from '@/components/locale'
 import { invalidateNotifications } from '@/lib/admin-notifications'
 import { cn } from '@/lib/utils'
 import { pickLocaleText } from '@/lib/locale-config'
-import { WebsiteEnquiries, useEnquiryLocale } from '@/components/admin/website-enquiries'
+import { WebsiteEnquiries, useEnquiryLocale } from '@/components/admin/operations/website-enquiries'
 
 interface SupportThreadSummary {
   reference: string

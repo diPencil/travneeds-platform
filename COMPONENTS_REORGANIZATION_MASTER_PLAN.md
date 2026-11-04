@@ -311,21 +311,44 @@ With the root `components/` directory fully organized, the admin reorganization 
 - **Skipped Candidates & Reasons**: None (all candidate files belonged to CMS customizer & appearance and were relocated cleanly).
 - **Remaining Direct-Root Admin Inventory**: 20 files.
 
-### C. Batch 22: Admin Operations & Dashboard Dashlets $\rightarrow$ `components/admin/operations/` (RECOMMENDED NEXT)
-- `components/admin/notifications-page.tsx`
-- `components/admin/revenue-trend.tsx`
-- `components/admin/review-integrations.tsx`
-- `components/admin/website-enquiries.tsx`
+### C. Batch 22: Admin Operations & Dashboard Dashlets (COMPLETED)
+- **Completed Relocations (4 files)**:
+  - `components/admin/notifications-page.tsx` $\rightarrow$ `components/admin/operations/notifications-page.tsx`
+  - `components/admin/revenue-trend.tsx` $\rightarrow$ `components/admin/operations/revenue-trend.tsx`
+  - `components/admin/review-integrations.tsx` $\rightarrow$ `components/admin/operations/review-integrations.tsx`
+  - `components/admin/website-enquiries.tsx` $\rightarrow$ `components/admin/operations/website-enquiries.tsx`
+- **Skipped Candidates & Reasons**: None (all 4 candidates belonged to Operations & Dashboard and were relocated cleanly).
+- **Remaining Direct-Root Admin Inventory**: 16 files.
 
-### D. Batch 23: Admin Gallery Feature Module $\rightarrow$ `components/admin/gallery/`
-- `components/admin/gallery-form.tsx`
-- `components/admin/gallery-text.tsx`
+### D. Batch 23: Admin Gallery Feature Module (COMPLETED)
+- **Completed Relocations (2 files)**:
+  - `components/admin/gallery-form.tsx` $\rightarrow$ `components/admin/gallery/gallery-form.tsx`
+  - `components/admin/gallery-text.tsx` $\rightarrow$ `components/admin/gallery/gallery-text.tsx`
+- **Skipped Candidates & Reasons**: None (both files dedicated to the Journey Gallery feature module `/admin/gallery`).
+- **Remaining Direct-Root Admin Inventory**: 14 files.
 
-### E. Protected Core Admin Orchestrators (Retained in `components/admin/`)
-- `admin-shell.tsx` — Admin master shell & sidebar layout
-- `admin-ui.tsx` — Shared admin table, stat, and card primitives
-- `trip-builder.tsx` & `trip-builder-preview.tsx` / `trip-builder-preview.css` — Complex multi-step trip wizard
-- `admin-confirm-dialog.tsx`, `admin-pagination.tsx`, `admin-table-sort.tsx`, `admin-toaster.tsx`, `admin-locale.tsx`, `admin-currency.tsx`, `admin-back.tsx`, `module-ui.tsx`, `staff-preview-bootstrap.tsx`
+### E. Protected Core Admin Orchestrators & Primitives (Retained in `components/admin/`)
+The remaining 14 files in `components/admin/` represent the protected core architecture and foundational admin UI primitives:
+1. `admin-shell.tsx` — Protected Core: Master shell layout, navigation sidebar, and header
+2. `admin-ui.tsx` — Protected Core: Central design system cards, tables, stat boxes, and action toolbars
+3. `trip-builder.tsx` — Protected Core: Complex multi-step trip wizard orchestrator
+4. `trip-builder-preview.tsx` — Trip builder live interactive preview container
+5. `trip-builder-preview.css` — Trip builder preview scoped styling
+6. `admin-back.tsx` — Standard admin back button navigation helper
+7. `admin-confirm-dialog.tsx` — Admin confirmation modal primitive
+8. `admin-currency.tsx` — Admin currency formatting and conversion helper
+9. `admin-locale.tsx` — Admin locale context and text localization helpers
+10. `admin-pagination.tsx` — Admin table pagination controls and state hook
+11. `admin-table-sort.tsx` — Admin sortable column header component and sort hook
+12. `admin-toaster.tsx` — Admin toast notification system and feedback container
+13. `module-ui.tsx` — Admin module container layout helper
+14. `staff-preview-bootstrap.tsx` — Staff preview bootstrap initialization helper
+
+### F. Final Admin Organization Audit Scope
+With all feature modules (Blogs, Destinations, Events, Offers, Tours, Hotels, CMS, UI, Operations, and Gallery) systematically decomposed into domain directories:
+- Verify that no extraneous feature code remains in root `components/admin/`.
+- Ensure zero circular dependencies between domain folders and root admin primitives.
+- Finalize and document the completed Admin component architecture.
 
 ---
 
